@@ -10,6 +10,8 @@ interface JwtPayload {
   branchId: string;
   role: string;
   permissions: string[];
+  firstName: string;
+  lastName: string;
 }
 
 @Injectable()
@@ -18,7 +20,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   async login(email: string, password: string, branchId?: string) {
     const user = await this.prisma.user.findUnique({
@@ -59,6 +61,8 @@ export class AuthService {
       branchId: userBranch.branchId,
       role: userBranch.role.name,
       permissions,
+      firstName: user.firstName,
+      lastName: user.lastName,
     });
   }
 
@@ -86,6 +90,8 @@ export class AuthService {
       branchId: userBranch.branchId,
       role: userBranch.role.name,
       permissions,
+      firstName: user.firstName,
+      lastName: user.lastName,
     });
   }
 
@@ -118,6 +124,8 @@ export class AuthService {
         branchId: userBranch.branchId,
         role: userBranch.role.name,
         permissions,
+        firstName: user.firstName,
+        lastName: user.lastName,
       });
     } catch {
       throw new UnauthorizedException('Token de refresh inválido');
@@ -140,6 +148,8 @@ export class AuthService {
         branchId: payload.branchId,
         role: payload.role,
         permissions: payload.permissions,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
       },
     };
   }

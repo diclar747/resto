@@ -7,6 +7,8 @@ interface User {
   branchId: string;
   role: string;
   permissions: string[];
+  firstName: string;
+  lastName: string;
 }
 
 interface AuthState {
