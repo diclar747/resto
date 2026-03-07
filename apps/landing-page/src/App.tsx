@@ -22,9 +22,22 @@ export default function App() {
             {['Incio', 'Funciones', 'Precios', 'Contacto'].map((item) => (
               <a key={item} href={`#${item.toLowerCase()}`} className="text-sm font-bold text-text-secondary hover:text-primary transition-colors uppercase tracking-widest">{item}</a>
             ))}
-            <button className="px-6 py-2.5 bg-primary text-white rounded-xl font-bold text-sm shadow-md hover:opacity-90 transition-all">
-              EMPEZAR GRATIS
-            </button>
+            <div className="flex items-center gap-4">
+              <a
+                href="/pos/login"
+                className="text-sm font-bold text-secondary uppercase tracking-widest hover:text-primary transition-colors"
+                id="nav-login-btn"
+              >
+                Ingresar
+              </a>
+              <a
+                href="/pos/login"
+                className="px-6 py-2.5 bg-primary text-white rounded-xl font-bold text-sm shadow-md hover:opacity-90 transition-all uppercase tracking-widest"
+                id="nav-demo-btn"
+              >
+                VER DEMO
+              </a>
+            </div>
           </div>
 
           <button className="md:hidden text-secondary" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -48,8 +61,19 @@ export default function App() {
               Gestiona ventas, pedidos por QR, cocina y reportes financieros desde una sola plataforma premium diseñada para crecer tu negocio.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
-              <button className="px-8 py-4 rounded-2xl font-black transition-all duration-300 bg-primary text-white shadow-[0_8px_16px_rgba(0,48,173,0.2)] hover:scale-[1.05] hover:shadow-[0_12px_24px_rgba(0,48,173,0.3)] active:scale-95 uppercase tracking-wider text-sm w-full sm:w-auto">Hacer Demo Gratis</button>
-              <button className="px-8 py-4 rounded-2xl font-bold text-secondary border-2 border-gray-100 hover:bg-white hover:shadow-md transition-all w-full sm:w-auto uppercase tracking-wider text-sm">Ver Precios</button>
+              <a
+                href="/pos/login"
+                className="px-8 py-4 rounded-2xl font-black transition-all duration-300 bg-primary text-white shadow-[0_8px_16px_rgba(0,48,173,0.2)] hover:scale-[1.05] hover:shadow-[0_12px_24px_rgba(0,48,173,0.3)] active:scale-95 uppercase tracking-wider text-sm w-full sm:w-auto text-center"
+                id="hero-demo-btn"
+              >
+                Hacer Demo Gratis
+              </a>
+              <button
+                className="px-8 py-4 rounded-2xl font-bold text-secondary border-2 border-gray-100 hover:bg-white hover:shadow-md transition-all w-full sm:w-auto uppercase tracking-wider text-sm"
+                onClick={() => document.getElementById('precios')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Ver Precios
+              </button>
             </div>
             <div className="flex items-center justify-center lg:justify-start gap-8 pt-8 opacity-50 grayscale hover:grayscale-0 transition-all duration-700">
               {/* Logos de confianza simulados */}
