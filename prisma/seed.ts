@@ -196,6 +196,86 @@ async function main() {
     },
   });
 
+  // Create superadmin user
+  const superHash = await bcrypt.hash('super123', 10);
+  await prisma.user.upsert({
+    where: { email: 'superadmin@restaurante.com' },
+    update: {},
+    create: {
+      email: 'superadmin@restaurante.com',
+      passwordHash: superHash,
+      firstName: 'Super',
+      lastName: 'Admin',
+      pin: '9999',
+      branches: {
+        create: {
+          branchId: branch.id,
+          roleId: adminRole.id,
+        },
+      },
+    },
+  });
+
+  // Create manager user
+  const managerHash = await bcrypt.hash('manager123', 10);
+  await prisma.user.upsert({
+    where: { email: 'gerente@restaurante.com' },
+    update: {},
+    create: {
+      email: 'gerente@restaurante.com',
+      passwordHash: managerHash,
+      firstName: 'Laura',
+      lastName: 'Gerente',
+      pin: '4444',
+      branches: {
+        create: {
+          branchId: branch.id,
+          roleId: managerRole.id,
+        },
+      },
+    },
+  });
+
+  // Create driver user
+  const driverHash = await bcrypt.hash('driver123', 10);
+  await prisma.user.upsert({
+    where: { email: 'delivery@restaurante.com' },
+    update: {},
+    create: {
+      email: 'delivery@restaurante.com',
+      passwordHash: driverHash,
+      firstName: 'Diego',
+      lastName: 'Repartidor',
+      pin: '5555',
+      branches: {
+        create: {
+          branchId: branch.id,
+          roleId: driverRole.id,
+        },
+      },
+    },
+  });
+
+  // Create second waiter
+  const waiter2Hash = await bcrypt.hash('waiter123', 10);
+  await prisma.user.upsert({
+    where: { email: 'camarero2@restaurante.com' },
+    update: {},
+    create: {
+      email: 'camarero2@restaurante.com',
+      passwordHash: waiter2Hash,
+      firstName: 'Ana',
+      lastName: 'Camarera',
+      pin: '6666',
+      branches: {
+        create: {
+          branchId: branch.id,
+          roleId: waiterRole.id,
+        },
+      },
+    },
+  });
+
   // 4. Create kitchen stations
   const grillStation = await prisma.kitchenStation.create({
     data: { branchId: branch.id, name: 'Parrilla', color: '#EF4444' },
@@ -534,18 +614,29 @@ async function main() {
     },
   });
 
-  console.log('Seed completed!');
+  console.log('=== SEED COMPLETADO ===');
   console.log('');
-  console.log('Users created:');
-  console.log('  admin@restaurante.com / admin123 (PIN: 0000)');
-  console.log('  camarero@restaurante.com / waiter123 (PIN: 1111)');
-  console.log('  cajero@restaurante.com / cajero123 (PIN: 2222)');
-  console.log('  cocina@restaurante.com / cocina123 (PIN: 3333)');
+  console.log('USUARIOS DEMO:');
+  console.log('┌─────────────────────────────────┬──────────────┬──────┬────────────┐');
+  console.log('│ Email                           │ Password     │ PIN  │ Rol        │');
+  console.log('├─────────────────────────────────┼──────────────┼──────┼────────────┤');
+  console.log('│ superadmin@restaurante.com       │ super123     │ 9999 │ admin      │');
+  console.log('│ admin@restaurante.com            │ admin123     │ 0000 │ admin      │');
+  console.log('│ gerente@restaurante.com          │ manager123   │ 4444 │ manager    │');
+  console.log('│ cajero@restaurante.com           │ cajero123    │ 2222 │ cashier    │');
+  console.log('│ camarero@restaurante.com         │ waiter123    │ 1111 │ waiter     │');
+  console.log('│ camarero2@restaurante.com        │ waiter123    │ 6666 │ waiter     │');
+  console.log('│ cocina@restaurante.com           │ cocina123    │ 3333 │ kitchen    │');
+  console.log('│ delivery@restaurante.com         │ driver123    │ 5555 │ driver     │');
+  console.log('└─────────────────────────────────┴──────────────┴──────┴────────────┘');
   console.log('');
-  console.log('Branch: Restaurante Principal');
-  console.log('Tables: 12 (6 salon, 3 terraza, 3 bar)');
-  console.log('Products: 13 across 6 categories');
-  console.log('Kitchen stations: Parrilla, Cocina Fría, Bar, Postres');
+  console.log('DATOS DEMO:');
+  console.log('  Sucursal: Restaurante Principal');
+  console.log('  Mesas: 12 (6 salón, 3 terraza, 3 bar)');
+  console.log('  Productos: 13 en 6 categorías');
+  console.log('  Estaciones de cocina: Parrilla, Cocina Fría, Bar, Postres');
+  console.log('  Ingredientes: 5 con stock');
+  console.log('  Proveedor: Distribuidora Central');
 }
 
 main()
