@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './dist/serverless.js',
@@ -10,20 +11,21 @@ module.exports = {
     libraryTarget: 'commonjs2',
   },
   externals: {
+    // Only Prisma stays external (needs native binary engine)
     '@prisma/client': 'commonjs @prisma/client',
     '.prisma/client': 'commonjs .prisma/client',
-    // Optional NestJS peer deps
-    '@nestjs/microservices': 'commonjs @nestjs/microservices',
-    '@nestjs/microservices/microservices-module': 'commonjs @nestjs/microservices/microservices-module',
-    // Optional native addons
-    'bufferutil': 'commonjs bufferutil',
-    'utf-8-validate': 'commonjs utf-8-validate',
   },
+  plugins: [
+    // Ignore optional NestJS deps that aren't installed
+    new webpack.IgnorePlugin({ resourceRegExp: /^@nestjs\/microservices/ }),
+    new webpack.IgnorePlugin({ resourceRegExp: /^bufferutil$/ }),
+    new webpack.IgnorePlugin({ resourceRegExp: /^utf-8-validate$/ }),
+  ],
   resolve: {
     extensions: ['.js'],
   },
   optimization: {
     minimize: false,
   },
-  ignoreWarnings: [/Critical dependency/],
+  ignoreWarnings: [/Critical dependency/, /Module not found/],
 };
