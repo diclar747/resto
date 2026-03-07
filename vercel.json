@@ -1,20 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "node build-vercel.js",
-  "outputDirectory": "dist",
   "installCommand": "npm install",
-  "framework": null,
-  "functions": {
-    "api/index.js": {
-      "memory": 1024,
-      "maxDuration": 30,
-      "includeFiles": "prisma/**,node_modules/.prisma/**,node_modules/@prisma/client/**"
-    }
-  },
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api" },
-    { "source": "/pos/(.*)", "destination": "/pos/index.html" },
-    { "source": "/menu/(.*)", "destination": "/menu/index.html" },
-    { "source": "/((?!api|pos|menu).*)", "destination": "/index.html" }
-  ]
+  "framework": null
 }
