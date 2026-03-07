@@ -1,5 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../../stores/auth.store';
+import { useEffect } from 'react';
+import { io } from 'socket.io-client';
 import api from '../../api/client';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
@@ -16,6 +18,41 @@ export function KdsPage() {
   const [selectedStation, setSelectedStation] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
+  // WebSocket Integration for KDS
+  useEffect(() => {
+    if (!branchId) return;
+
+    const apiUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
+    const socket = io(`${apiUrl}/kds`);
+
+    socket.on('connect', () => {
+      socket.emit('kds:join-station', {
+        branchId,
+        stationId: selectedStation || undefined
+      });
+    });
+
+    socket.on('kds:ticket-new', () => {
+      queryClient.invalidateQueries({ queryKey: ['kds-tickets'] });
+      // Play a sound if possible
+      const audio = new Audio('/notification.mp3');
+      audio.play().catch(() => { });
+      toast('¡Nuevo Pedido en Cocina!', { icon: '🧑‍🍳' });
+    });
+
+    socket.on('kds:ticket-updated', () => {
+      queryClient.invalidateQueries({ queryKey: ['kds-tickets'] });
+    });
+
+    socket.on('kds:ticket-bumped', () => {
+      queryClient.invalidateQueries({ queryKey: ['kds-tickets'] });
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [branchId, selectedStation, queryClient]);
+
   const { data: stations } = useQuery({
     queryKey: ['kds-stations', branchId],
     queryFn: () => api.get(`/kds/stations?branchId=${branchId}`).then((r) => r.data),
@@ -30,7 +67,6 @@ export function KdsPage() {
       return api.get(`/kds/tickets?${params}`).then((r) => r.data);
     },
     enabled: !!branchId,
-    refetchInterval: 3000,
   });
 
   const updateStatus = useMutation({
@@ -64,9 +100,8 @@ export function KdsPage() {
       <div className="flex gap-2 mb-4">
         <button
           onClick={() => setSelectedStation(null)}
-          className={`px-4 py-2 rounded-lg text-sm font-medium ${
-            !selectedStation ? 'bg-white text-gray-900' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-          }`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium ${!selectedStation ? 'bg-white text-gray-900' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+            }`}
         >
           Todas
         </button>
@@ -74,11 +109,10 @@ export function KdsPage() {
           <button
             key={station.id}
             onClick={() => setSelectedStation(station.id)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 ${
-              selectedStation === station.id
-                ? 'bg-white text-gray-900'
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-            }`}
+            className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 ${selectedStation === station.id
+              ? 'bg-white text-gray-900'
+              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+              }`}
           >
             {station.color && (
               <div className="w-3 h-3 rounded-full" style={{ backgroundColor: station.color }} />

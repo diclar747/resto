@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Decimal } from '@prisma/client/runtime/library';
+import { KdsGateway } from '../kds/kds.gateway';
 
 export interface QrOrderItem {
   productVariantId: string;
@@ -15,7 +16,10 @@ export interface QrOrderItem {
 
 @Injectable()
 export class QrOrderingService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private kdsGateway: KdsGateway,
+  ) { }
 
   /**
    * Validate a table by its QR code and return active menu grouped by category.
@@ -228,11 +232,11 @@ export class QrOrderingService {
             modifiers:
               item.modifierIds && item.modifierIds.length > 0
                 ? {
-                    create: item.modifierIds.map((modifierId) => ({
-                      modifierId,
-                      priceAdjustment: 0,
-                    })),
-                  }
+                  create: item.modifierIds.map((modifierId) => ({
+                    modifierId,
+                    priceAdjustment: 0,
+                  })),
+                }
                 : undefined,
           })),
         },
@@ -276,6 +280,14 @@ export class QrOrderingService {
       where: { id: table.id },
       data: { status: 'occupied' },
     });
+
+    // Notify KDS stations
+    const stations = new Set(order.items.map(i => i.productVariant.product.kitchenStationId).filter(Boolean));
+    for (const stationId of stations) {
+      if (stationId) {
+        this.kdsGateway.emitNewTicket(order.branchId, stationId, order);
+      }
+    }
 
     return order;
   }

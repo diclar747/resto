@@ -151,13 +151,67 @@ async function main() {
       id: 'branch-main',
       name: 'Restaurante Principal',
       address: 'Av. Corrientes 1234, CABA',
-      phone: '+54 11 4567-8900',
+      phone: '+5491145678900',
       timezone: 'America/Argentina/Buenos_Aires',
       currency: 'ARS',
       settings: {
         taxRate: 21,
         receiptHeader: 'Restaurante Demo',
         receiptFooter: 'Gracias por su visita!',
+      },
+    },
+  });
+
+  const branchPizza = await prisma.branch.upsert({
+    where: { id: 'branch-pizza' },
+    update: {},
+    create: {
+      id: 'branch-pizza',
+      name: 'Pizzería La Toscana',
+      address: 'Calle Falsa 123, CABA',
+      phone: '+5491100001111',
+      timezone: 'America/Argentina/Buenos_Aires',
+      currency: 'ARS',
+      settings: {
+        taxRate: 21,
+        receiptHeader: 'La Toscana Pizza',
+        receiptFooter: '¡La mejor pizza de la ciudad!',
+      },
+    },
+  });
+
+  const branchBurger = await prisma.branch.upsert({
+    where: { id: 'branch-burger' },
+    update: {},
+    create: {
+      id: 'branch-burger',
+      name: 'Burger Boom',
+      address: 'Av. Libertador 4500, CABA',
+      phone: '+5491122223333',
+      timezone: 'America/Argentina/Buenos_Aires',
+      currency: 'ARS',
+      settings: {
+        taxRate: 21,
+        receiptHeader: 'Burger Boom',
+        receiptFooter: 'Explosión de sabor.',
+      },
+    },
+  });
+
+  const branchCafe = await prisma.branch.upsert({
+    where: { id: 'branch-cafe' },
+    update: {},
+    create: {
+      id: 'branch-cafe',
+      name: 'Café de la Plaza',
+      address: 'Plaza de Mayo 1, CABA',
+      phone: '+5491144445555',
+      timezone: 'America/Argentina/Buenos_Aires',
+      currency: 'ARS',
+      settings: {
+        taxRate: 21,
+        receiptHeader: 'Café de la Plaza',
+        receiptFooter: 'El mejor café de Buenos Aires.',
       },
     },
   });

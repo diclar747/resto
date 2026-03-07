@@ -1,5 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo } from 'react';
+import { io } from 'socket.io-client';
 import api from '../api';
 import { ArrowLeft, Clock, ChefHat, CheckCircle, Package, Utensils, Receipt } from 'lucide-react';
 
@@ -14,13 +16,44 @@ const statusConfig: Record<string, { icon: any; label: string; color: string; bg
 export function OrderStatusPage() {
   const { tableCode } = useParams<{ tableCode: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  const { data: orders, isLoading } = useQuery({
+  const { data: ordersResult, isLoading } = useQuery({
     queryKey: ['qr-order-status', tableCode],
     queryFn: () => api.get(`/qr/${tableCode}/status`).then((r) => r.data),
     enabled: !!tableCode,
-    refetchInterval: 5000,
   });
+
+  const orders = ordersResult?.orders || [];
+  const table = ordersResult?.table;
+
+  useEffect(() => {
+    if (!table?.id) return;
+
+    const apiUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
+    const socket = io(`${apiUrl}/orders`);
+
+    socket.on('connect', () => {
+      socket.emit('order:join-table', { tableId: table.id });
+    });
+
+    socket.on('order:updated', () => {
+      queryClient.invalidateQueries({ queryKey: ['qr-order-status', tableCode] });
+    });
+
+    socket.on('order:item-status-changed', () => {
+      queryClient.invalidateQueries({ queryKey: ['qr-order-status', tableCode] });
+    });
+
+    socket.on('order:ready', () => {
+      queryClient.invalidateQueries({ queryKey: ['qr-order-status', tableCode] });
+      // Could trigger a browser notification here if permitted
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [table?.id, tableCode, queryClient]);
 
   return (
     <div className="min-h-screen bg-background pb-20">

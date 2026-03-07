@@ -19,6 +19,7 @@ import { QrOrderingModule } from './modules/qr-ordering/qr-ordering.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { TicketsModule } from './modules/tickets/tickets.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { MarketplaceModule } from './modules/marketplace/marketplace.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     ReportsModule,
     TicketsModule,
     NotificationsModule,
+    MarketplaceModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }
