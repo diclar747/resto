@@ -1,0 +1,28 @@
+{
+  "name": "restaurante",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "dev:api": "npm run dev -w apps/api",
+    "dev:pos": "npm run dev -w apps/pos",
+    "dev:qr": "npm run dev -w apps/qr-menu",
+    "db:migrate": "npx prisma migrate dev",
+    "db:seed": "npx prisma db seed",
+    "db:studio": "npx prisma studio"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.0",
+    "typescript": "^5.7.0",
+    "prettier": "^3.4.0"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma",
+    "seed": "npx ts-node prisma/seed.ts"
+  }
+}
