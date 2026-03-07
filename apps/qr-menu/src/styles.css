@@ -1,20 +1,72 @@
 @import "tailwindcss";
 
-html, body, #root {
-  height: 100%;
-  margin: 0;
+@layer base {
+  :root {
+    --primary: #004AAD;
+    --primary-light: #E1F0FF;
+    --secondary: #001F3D;
+    --accent: #00D1FF;
+    --background: #F4F7FE;
+    --surface: #FFFFFF;
+    --text-main: #1B254B;
+    --text-secondary: #A3AED0;
+    --success: #05CD99;
+    --error: #EE5D50;
+    --card-shadow: 0px 20px 40px rgba(112, 144, 176, 0.12);
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    @apply bg-[var(--background)] text-[var(--text-main)] antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  background-color: #f9fafb;
+@layer components {
+
+  /* Premium Mobile UI */
+  .mobile-card {
+    @apply bg-white rounded-[28px] p-5 shadow-[var(--card-shadow)] border-none;
+  }
+
+  .mobile-glass {
+    @apply bg-white/70 backdrop-blur-xl rounded-[28px] p-5 border border-white/40 shadow-xl;
+  }
+
+  .btn-mobile-primary {
+    @apply w-full py-4 rounded-2xl font-black bg-[var(--primary)] text-white shadow-[0px_8px_20px_rgba(0, 74, 173, 0.3)] active:scale-95 transition-all uppercase tracking-widest text-sm flex items-center justify-center gap-3;
+  }
+
+  .btn-mobile-secondary {
+    @apply px-4 py-2 rounded-xl font-bold bg-white text-[var(--primary)] border border-[var(--primary)]/10 shadow-sm active:scale-95;
+  }
+
+  .category-pill {
+    @apply px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-300;
+  }
+
+  .category-pill-active {
+    @apply bg-[var(--primary)] text-white shadow-lg scale-105;
+  }
+
+  .category-pill-inactive {
+    @apply bg-white text-[var(--text-secondary)] border border-transparent shadow-sm;
+  }
 }
 
-.btn-primary {
-  @apply bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50;
+/* Hide scrollbar for category list */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
-.btn-secondary {
-  @apply bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors;
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
-import { ShoppingCart, Plus, Minus, Send, Bell, Receipt, X } from 'lucide-react';
+import { ShoppingBag, Plus, Minus, Send, Bell, Receipt, X, ChevronRight } from 'lucide-react';
 
 interface CartItem {
   productVariantId: string;
@@ -39,7 +39,10 @@ export function MenuPage() {
     onSuccess: () => {
       setCart([]);
       setShowCart(false);
-      toast.success('Pedido enviado a cocina');
+      toast.success('¡Pedido enviado!', {
+        icon: '🚀',
+        style: { borderRadius: '16px', background: 'var(--secondary)', color: '#fff' }
+      });
       navigate(`/mesa/${tableCode}/status`);
     },
     onError: () => toast.error('Error al enviar pedido'),
@@ -47,12 +50,12 @@ export function MenuPage() {
 
   const callWaiter = useMutation({
     mutationFn: () => api.post(`/qr/${tableCode}/call-waiter`),
-    onSuccess: () => toast.success('Camarero notificado'),
+    onSuccess: () => toast.success('Camarero notificado', { icon: '🔔' }),
   });
 
   const requestBill = useMutation({
     mutationFn: () => api.post(`/qr/${tableCode}/request-bill`),
-    onSuccess: () => toast.success('Cuenta solicitada'),
+    onSuccess: () => toast.success('Cuenta solicitada', { icon: '💰' }),
   });
 
   const addToCart = (product: any, variant: any) => {
@@ -77,7 +80,7 @@ export function MenuPage() {
         },
       ];
     });
-    toast.success(`${product.name} agregado`, { duration: 1000 });
+    toast.success(`${product.name} añadido`, { duration: 1000, position: 'bottom-center' });
   };
 
   const updateCartQuantity = (variantId: string, delta: number) => {
@@ -102,47 +105,57 @@ export function MenuPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-pulse text-gray-400">Cargando menú...</div>
+      <div className="flex flex-col items-center justify-center h-screen bg-[var(--background)]">
+        <div className="w-16 h-16 border-4 border-[var(--primary)]/20 border-t-[var(--primary)] rounded-full animate-spin mb-4" />
+        <p className="font-black text-[var(--secondary)] uppercase tracking-widest text-xs">Cargando Experiencia...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pb-24">
-      {/* Header */}
-      <div className="bg-blue-700 text-white px-4 py-5 sticky top-0 z-10">
-        <h1 className="text-xl font-bold">{menu?.branchName || 'Menú Digital'}</h1>
-        <p className="text-blue-200 text-sm mt-1">Mesa {menu?.tableNumber}</p>
-        <div className="flex gap-2 mt-3">
-          <button
-            onClick={() => callWaiter.mutate()}
-            className="flex items-center gap-1.5 bg-blue-600 px-3 py-1.5 rounded-lg text-sm"
-          >
-            <Bell size={14} /> Llamar camarero
-          </button>
-          <button
-            onClick={() => requestBill.mutate()}
-            className="flex items-center gap-1.5 bg-blue-600 px-3 py-1.5 rounded-lg text-sm"
-          >
-            <Receipt size={14} /> Pedir cuenta
-          </button>
-          <button
-            onClick={() => navigate(`/mesa/${tableCode}/status`)}
-            className="flex items-center gap-1.5 bg-blue-600 px-3 py-1.5 rounded-lg text-sm"
-          >
-            Ver pedido
-          </button>
+    <div className="min-h-screen bg-[var(--background)] pb-32">
+      {/* Premium Mobile Header */}
+      <div className="sticky top-0 z-30 p-4">
+        <div className="mobile-glass flex flex-col gap-4 !p-6 shadow-2xl overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--primary)]/5 rounded-full -mr-16 -mt-16 blur-2xl" />
+
+          <div className="flex justify-between items-start relative z-10">
+            <div>
+              <h1 className="text-2xl font-black text-[var(--secondary)] tracking-tight">{menu?.branchName || 'Menú Digital'}</h1>
+              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-[var(--primary-light)] text-[var(--primary)] rounded-lg text-[10px] font-black uppercase tracking-wider mt-1">
+                Mesa {menu?.tableNumber}
+              </div>
+            </div>
+            <button
+              onClick={() => navigate(`/mesa/${tableCode}/status`)}
+              className="w-10 h-10 bg-white shadow-sm border border-gray-100 rounded-xl flex items-center justify-center text-[var(--primary)]"
+            >
+              <Receipt size={18} />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 relative z-10">
+            <button
+              onClick={() => callWaiter.mutate()}
+              className="flex items-center justify-center gap-2 py-3 bg-white/50 border border-white rounded-2xl text-[var(--secondary)] text-xs font-black uppercase tracking-widest hover:bg-white transition-all active:scale-95"
+            >
+              <Bell size={14} className="text-[var(--primary)]" /> Camarero
+            </button>
+            <button
+              onClick={() => requestBill.mutate()}
+              className="flex items-center justify-center gap-2 py-3 bg-[var(--secondary)] text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:opacity-90 transition-all active:scale-95"
+            >
+              <Receipt size={14} className="text-[var(--accent)]" /> La Cuenta
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Category filter */}
-      <div className="sticky top-[120px] z-10 bg-gray-50 px-4 py-2 flex gap-2 overflow-x-auto">
+      {/* Modern Category Tabs */}
+      <div className="sticky top-[164px] z-20 px-4 py-2 flex gap-3 overflow-x-auto scrollbar-hide">
         <button
           onClick={() => setActiveCategory(null)}
-          className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap ${
-            !activeCategory ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border'
-          }`}
+          className={`category-pill ${!activeCategory ? 'category-pill-active' : 'category-pill-inactive'}`}
         >
           Todos
         </button>
@@ -150,45 +163,49 @@ export function MenuPage() {
           <button
             key={cat.id}
             onClick={() => setActiveCategory(cat.id)}
-            className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap ${
-              activeCategory === cat.id ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border'
-            }`}
+            className={`category-pill whitespace-nowrap ${activeCategory === cat.id ? 'category-pill-active' : 'category-pill-inactive'}`}
           >
             {cat.name}
           </button>
         ))}
       </div>
 
-      {/* Menu items */}
-      <div className="px-4 py-4 space-y-6">
+      {/* Redesigned Menu Items */}
+      <div className="px-5 py-6 space-y-10">
         {filteredCategories.map((category: any) => (
-          <div key={category.id}>
-            <h2 className="text-lg font-bold text-gray-800 mb-3">{category.name}</h2>
-            <div className="space-y-3">
+          <div key={category.id} className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="h-1 w-8 bg-[var(--primary)] rounded-full" />
+              <h2 className="text-sm font-black text-[var(--secondary)] uppercase tracking-[0.2em]">{category.name}</h2>
+            </div>
+
+            <div className="grid gap-4">
               {category.products?.map((product: any) => (
-                <div key={product.id} className="bg-white rounded-xl p-4 shadow-sm border">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">{product.name}</h3>
+                <div key={product.id} className="mobile-card flex gap-4 transition-all active:bg-gray-50">
+                  {product.imageUrl && (
+                    <div className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-50">
+                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <div className="flex-1 flex flex-col justify-between py-0.5">
+                    <div>
+                      <h3 className="font-black text-[var(--secondary)] text-sm leading-tight">{product.name}</h3>
                       {product.description && (
-                        <p className="text-sm text-gray-500 mt-1">{product.description}</p>
+                        <p className="text-[10px] text-[var(--text-secondary)] font-medium mt-1 line-clamp-2">{product.description}</p>
                       )}
                     </div>
-                  </div>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {product.variants?.map((variant: any) => (
+
+                    <div className="flex items-end justify-between mt-2">
+                      <p className="text-base font-black text-[var(--primary)]">
+                        ${Number(product.variants?.[0]?.price || 0).toLocaleString('es-AR')}
+                      </p>
                       <button
-                        key={variant.id}
-                        onClick={() => addToCart(product, variant)}
-                        className="flex items-center gap-2 bg-gray-50 border rounded-lg px-3 py-2 hover:bg-blue-50 hover:border-blue-300 transition-colors"
+                        onClick={() => addToCart(product, product.variants?.[0])}
+                        className="w-9 h-9 bg-[var(--primary)] text-white rounded-xl flex items-center justify-center shadow-lg active:scale-90 transition-transform"
                       >
-                        <span className="text-sm font-medium">
-                          {variant.name !== 'Estándar' ? variant.name : ''}
-                          ${Number(variant.price).toLocaleString('es-AR')}
-                        </span>
-                        <Plus size={16} className="text-blue-600" />
+                        <Plus size={18} />
                       </button>
-                    ))}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -197,74 +214,104 @@ export function MenuPage() {
         ))}
       </div>
 
-      {/* Floating cart button */}
+      {/* Fixed Sticky Cart Summary */}
       {cartCount > 0 && !showCart && (
-        <button
-          onClick={() => setShowCart(true)}
-          className="fixed bottom-6 right-6 bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-2 z-20"
-        >
-          <ShoppingCart size={20} />
-          <span className="font-bold">{cartCount}</span>
-          <span className="text-blue-200">|</span>
-          <span className="font-bold">${cartTotal.toLocaleString('es-AR')}</span>
-        </button>
+        <div className="fixed bottom-0 left-0 right-0 p-6 z-40 bg-gradient-to-t from-[var(--background)] to-transparent">
+          <button
+            onClick={() => setShowCart(true)}
+            className="w-full bg-[var(--secondary)] text-white p-5 rounded-[24px] shadow-2xl flex items-center justify-between group active:scale-[0.98] transition-all"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-[var(--primary)] rounded-xl flex items-center justify-center shadow-lg">
+                <ShoppingBag size={18} />
+              </div>
+              <div className="text-left">
+                <p className="text-[10px] uppercase font-black tracking-widest opacity-60">Tu Bandeja</p>
+                <p className="text-sm font-black">{cartCount} Productos</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-lg font-black tracking-tight">${cartTotal.toLocaleString('es-AR')}</span>
+              <ChevronRight size={18} className="opacity-40 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </button>
+        </div>
       )}
 
-      {/* Cart drawer */}
+      {/* Premium Cart Overlay Drawer */}
       {showCart && (
-        <div className="fixed inset-0 bg-black/50 z-30" onClick={() => setShowCart(false)}>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex flex-col justify-end" onClick={() => setShowCart(false)}>
           <div
-            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[70vh] flex flex-col"
+            className="bg-[var(--background)] rounded-t-[40px] max-h-[85vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom-2 duration-500"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-4 border-b flex items-center justify-between">
-              <h3 className="font-bold text-lg">Tu pedido</h3>
-              <button onClick={() => setShowCart(false)}>
+            <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mt-4 mb-2 opacity-50" />
+
+            <div className="px-8 py-6 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-[var(--secondary)] text-white rounded-2xl flex items-center justify-center">
+                  <ShoppingBag size={20} />
+                </div>
+                <h3 className="font-black text-xl text-[var(--secondary)] tracking-tight">Tu Pedido</h3>
+              </div>
+              <button onClick={() => setShowCart(false)} className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center border border-gray-100 shadow-sm">
                 <X size={20} />
               </button>
             </div>
-            <div className="flex-1 overflow-auto p-4 space-y-3">
+
+            <div className="flex-1 overflow-auto px-8 space-y-4 pb-10">
               {cart.map((item) => (
-                <div key={item.productVariantId} className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p className="font-medium">{item.productName}</p>
-                    {item.variantName !== 'Estándar' && (
-                      <p className="text-xs text-gray-500">{item.variantName}</p>
-                    )}
-                    <p className="text-sm text-gray-600">
-                      ${(item.unitPrice * item.quantity).toLocaleString('es-AR')}
-                    </p>
+                <div key={item.productVariantId} className="mobile-card flex flex-col gap-4">
+                  <div className="flex justify-between items-start">
+                    <div className="min-w-0">
+                      <p className="font-black text-[var(--secondary)] text-sm">{item.productName}</p>
+                      <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider mt-0.5">{item.variantName}</p>
+                    </div>
+                    <p className="font-black text-[var(--primary)] text-sm">${(item.unitPrice * item.quantity).toLocaleString('es-AR')}</p>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => updateCartQuantity(item.productVariantId, -1)}
-                      className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
-                    >
-                      <Minus size={16} />
+
+                  <div className="flex items-center justify-between">
+                    <button onClick={() => updateCartQuantity(item.productVariantId, -1)} className="text-[var(--error)] text-[10px] font-black uppercase tracking-widest flex items-center gap-1 opacity-60 hover:opacity-100">
+                      <Trash2 size={12} /> Eliminar
                     </button>
-                    <span className="font-bold w-6 text-center">{item.quantity}</span>
-                    <button
-                      onClick={() => updateCartQuantity(item.productVariantId, 1)}
-                      className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center"
-                    >
-                      <Plus size={16} />
-                    </button>
+                    <div className="flex items-center gap-4 bg-gray-50 p-1.5 rounded-2xl">
+                      <button
+                        onClick={() => updateCartQuantity(item.productVariantId, -1)}
+                        className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-[var(--secondary)] active:scale-90"
+                      >
+                        <Minus size={14} />
+                      </button>
+                      <span className="font-black text-sm w-4 text-center">{item.quantity}</span>
+                      <button
+                        onClick={() => updateCartQuantity(item.productVariantId, 1)}
+                        className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-[var(--secondary)] active:scale-90"
+                      >
+                        <Plus size={14} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="p-4 border-t">
-              <div className="flex items-center justify-between mb-3">
-                <span className="font-bold text-lg">Total</span>
-                <span className="font-bold text-lg">${cartTotal.toLocaleString('es-AR')}</span>
+
+            <div className="p-8 bg-white rounded-t-[40px] shadow-[0px_-20px_40px_rgba(0,0,0,0.05)]">
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-[10px] font-black text-[var(--text-secondary)] uppercase tracking-[0.2em]">Total Estimado</p>
+                <span className="font-black text-3xl text-[var(--secondary)] tracking-tight">${cartTotal.toLocaleString('es-AR')}</span>
               </div>
               <button
                 onClick={() => placeOrder.mutate()}
                 disabled={placeOrder.isPending}
-                className="w-full btn-primary py-3 flex items-center justify-center gap-2"
+                className="btn-mobile-primary h-16 shadow-[0px_12px_24px_rgba(0,74,173,0.3)]"
               >
-                <Send size={18} />
-                {placeOrder.isPending ? 'Enviando...' : 'Enviar pedido'}
+                {placeOrder.isPending ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <Send size={18} />
+                    <span>ENVIAR PEDIDO</span>
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -272,4 +319,8 @@ export function MenuPage() {
       )}
     </div>
   );
+}
+
+function Trash2({ size, className }: { size: number, className?: string }) {
+  return <X size={size} className={className} /> // Reused X for breadcrumb/trash look
 }

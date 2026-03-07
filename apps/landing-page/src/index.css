@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --primary: #004AAD;
+    --secondary: #001F3D;
+    --accent: #00D1FF;
+    --background: #F4F7FE;
+    --text-main: #1B254B;
+    --text-secondary: #A3AED0;
+  }
+
+  body {
+    @apply bg-[var(--background)] text-[var(--text-main)] antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .btn-premium {
+    @apply px-8 py-4 rounded-2xl font-black transition-all duration-300 bg-[var(--primary)] text-white shadow-[0px_8px_16px_rgba(0, 74, 173, 0.2)] hover:scale-[1.05] hover:shadow-[0px_12px_24px_rgba(0, 74, 173, 0.3)] active:scale-95 uppercase tracking-wider text-sm;
+  }
+
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-[32px];
+  }
+}
