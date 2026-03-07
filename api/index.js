@@ -4,17 +4,17 @@ const fs = require('fs');
 let handler;
 try {
   require('reflect-metadata');
-  // Use eval to completely hide the require from ncc's static analysis
-  // ncc cannot trace through eval, so the file must be available via includeFiles
-  const serverlessPath = path.join(__dirname, 'dist', 'serverless.js');
+  // Load compiled NestJS from _api_dist (outside api/ dir so ncc can't consume it)
+  const serverlessPath = path.join(__dirname, '..', '_api_dist', 'serverless.js');
   handler = eval('require')(serverlessPath).default;
 } catch (e) {
   handler = (req, res) => {
-    let distFiles = [];
-    try { distFiles = fs.readdirSync(path.join(__dirname, 'dist')); } catch (_) {}
+    let rootFiles = [], distFiles = [];
+    try { rootFiles = fs.readdirSync(path.join(__dirname, '..')).slice(0, 20); } catch (_) {}
+    try { distFiles = fs.readdirSync(path.join(__dirname, '..', '_api_dist')).slice(0, 20); } catch (_) {}
     res.statusCode = 500;
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ loadError: e.message, dirname: __dirname, distFiles }));
+    res.end(JSON.stringify({ loadError: e.message, dirname: __dirname, rootFiles, distFiles }));
   };
 }
 
