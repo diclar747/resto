@@ -13,10 +13,11 @@ console.log('--- Compile NestJS API ---');
 run('cd apps/api && npx tsc -p tsconfig.json');
 
 console.log('--- Bundle API with esbuild ---');
+// Bundle to .txt so Vercel ncc doesn't try to parse it as JS
 run([
   'npx esbuild apps/api/dist/vercel-entry.js',
   '--bundle --platform=node --target=node20 --format=cjs',
-  '--outfile=api/index.js',
+  '--outfile=api/nestjs-bundle.txt',
   '--external:@prisma/client --external:.prisma/client',
   '--external:@nestjs/microservices --external:@nestjs/websockets/socket-module',
   '--external:cache-manager --external:class-transformer/storage',
