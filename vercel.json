@@ -1,8 +1,16 @@
 {
-  "buildCommand": "npx prisma generate && cd apps/api && npx tsc -p tsconfig.json && npx webpack --config webpack.serverless.js && cd ../.. && cp apps/api/bundle/serverless.js api/serverless-bundle.js && node deploy-vercel.js",
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npx prisma generate && cd apps/api && npx tsc -p tsconfig.json && cd ../.. && node deploy-vercel.js",
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "framework": null,
+  "functions": {
+    "api/index.js": {
+      "memory": 1024,
+      "maxDuration": 30,
+      "includeFiles": "prisma/**,apps/api/dist/**,node_modules/.prisma/**,node_modules/@prisma/client/**"
+    }
+  },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api" },
     { "source": "/pos/(.*)", "destination": "/pos/index.html" },
