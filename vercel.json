@@ -17,7 +17,15 @@
       "destination": "/api"
     },
     {
-      "source": "/((?!api).*)",
+      "source": "/pos/(.*)",
+      "destination": "/pos/index.html"
+    },
+    {
+      "source": "/menu/(.*)",
+      "destination": "/menu/index.html"
+    },
+    {
+      "source": "/((?!api|pos|menu).*)",
       "destination": "/index.html"
     }
   ]
