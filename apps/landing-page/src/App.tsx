@@ -2,7 +2,7 @@ import React from 'react';
 import {
   ShoppingBag, Utensils, LayoutDashboard, CheckCircle2, Menu, X,
   TrendingUp, Users, ShieldCheck, Zap, Globe, Clock, ChevronRight,
-  Star, DollarSign, Download, Play, Smartphone
+  Star, DollarSign, Download, Play, Smartphone, Package, BarChart3
 } from 'lucide-react';
 
 export default function App() {
