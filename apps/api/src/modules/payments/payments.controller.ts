@@ -1,12 +1,84 @@
-import { Controller, Get } from '@nestjs/common';
-import { PaymentsService } from './payments.service';
+import {
+  Controller,
+  Post,
+  Get,
+  Param,
+  Body,
+  UseGuards,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
+import { PaymentsService, PaymentInput } from './payments.service';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { RequirePermissions } from '../../common/decorators/permissions.decorator';
 
+class ProcessPaymentDto {
+  orderId: string;
+  method: string;
+  amount: number;
+  receivedAmount?: number;
+}
+
+class SplitPaymentDto {
+  orderId: string;
+  payments: PaymentInput[];
+}
+
+class RefundPaymentDto {
+  amount?: number;
+}
+
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('payments')
 export class PaymentsController {
-  constructor(private paymentsService: PaymentsService) {}
+  constructor(private readonly paymentsService: PaymentsService) {}
 
-  @Get()
-  async findAll() {
-    return this.paymentsService.findAll();
+  /**
+   * POST /payments
+   * Process a single payment for an order.
+   */
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions('payments:create')
+  processPayment(@Body() dto: ProcessPaymentDto) {
+    return this.paymentsService.processPayment(
+      dto.orderId,
+      dto.method,
+      dto.amount,
+      dto.receivedAmount,
+    );
+  }
+
+  /**
+   * POST /payments/split
+   * Process a split payment (multiple methods) for a single order.
+   */
+  @Post('split')
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions('payments:create')
+  splitPayment(@Body() dto: SplitPaymentDto) {
+    return this.paymentsService.splitPayment(dto.orderId, dto.payments);
+  }
+
+  /**
+   * POST /payments/:id/refund
+   * Refund a payment fully or partially.
+   */
+  @Post(':id/refund')
+  @HttpCode(HttpStatus.OK)
+  @RequirePermissions('payments:refund')
+  refundPayment(@Param('id') id: string, @Body() dto: RefundPaymentDto) {
+    return this.paymentsService.refundPayment(id, dto.amount);
+  }
+
+  /**
+   * GET /payments/order/:orderId
+   * Retrieve all payments for a given order.
+   */
+  @Get('order/:orderId')
+  @RequirePermissions('payments:read')
+  findByOrder(@Param('orderId') orderId: string) {
+    return this.paymentsService.findByOrder(orderId);
   }
 }

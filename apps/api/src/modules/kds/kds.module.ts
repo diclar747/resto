@@ -8,6 +8,6 @@ import { PrismaModule } from '../../prisma/prisma.module';
   imports: [PrismaModule],
   controllers: [KdsController],
   providers: [KdsService, KdsGateway],
-  exports: [KdsService],
+  exports: [KdsService, KdsGateway],
 })
 export class KdsModule {}
