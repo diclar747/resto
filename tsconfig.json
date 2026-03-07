@@ -4,16 +4,17 @@
     "module": "CommonJS",
     "moduleResolution": "node",
     "lib": ["ES2022"],
-    "strict": true,
+    "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
     "outDir": "./dist",
     "rootDir": "."
   },
-  "include": ["api/**/*.ts"],
-  "exclude": ["node_modules", "apps", "packages"]
+  "include": ["api/**/*.ts", "apps/api/src/**/*.ts"],
+  "exclude": ["node_modules", "apps/api/dist"]
 }

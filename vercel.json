@@ -8,7 +8,7 @@
     "api/index.ts": {
       "memory": 1024,
       "maxDuration": 30,
-      "includeFiles": "prisma/**"
+      "includeFiles": "prisma/**,apps/api/src/**"
     }
   },
   "rewrites": [
