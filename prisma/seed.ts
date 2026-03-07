@@ -4,6 +4,52 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
+  console.log('Cleaning up database...');
+  // 1. Dependent transaction tables
+  await prisma.auditLog.deleteMany();
+  await prisma.delivery.deleteMany();
+  await prisma.loyaltyHistory.deleteMany();
+  await prisma.kdsTicketItem.deleteMany();
+  await prisma.kdsTicket.deleteMany();
+  await prisma.orderItemModifier.deleteMany();
+  await prisma.orderItem.deleteMany();
+  await prisma.ticket.deleteMany();
+  await prisma.payment.deleteMany();
+  await prisma.cashRegisterMovement.deleteMany();
+  await prisma.order.deleteMany();
+
+  // 2. Product and Menu dependencies
+  await prisma.productModifierGroup.deleteMany();
+  await prisma.modifier.deleteMany();
+  await prisma.modifierGroup.deleteMany();
+  await prisma.productBranch.deleteMany();
+  await prisma.productVariant.deleteMany();
+  await prisma.recipeItem.deleteMany();
+  await prisma.comboItem.deleteMany();
+  await prisma.combo.deleteMany();
+  await prisma.product.deleteMany();
+  await prisma.category.deleteMany();
+
+  // 3. Infrastructure and Inventory
+  await prisma.wasteRecord.deleteMany();
+  await prisma.stockItem.deleteMany();
+  await prisma.ingredient.deleteMany();
+  await prisma.supplierBranch.deleteMany();
+  await prisma.accountPayable.deleteMany();
+  await prisma.purchaseOrderItem.deleteMany();
+  await prisma.purchaseOrder.deleteMany();
+  await prisma.supplier.deleteMany();
+  await prisma.kitchenStation.deleteMany();
+  await prisma.table.deleteMany();
+  await prisma.cashRegister.deleteMany();
+
+  // 4. Identity and Core
+  await prisma.client.deleteMany();
+  await prisma.userBranch.deleteMany();
+  await prisma.user.deleteMany();
+  await prisma.branch.deleteMany();
+  await prisma.role.deleteMany();
+
   console.log('Seeding database...');
 
   // 1. Create roles
@@ -303,18 +349,53 @@ async function main() {
   const pizzas = await prisma.category.create({
     data: { branchId: branch.id, name: 'Pizzas', sortOrder: 4 },
   });
+  const pastas = await prisma.category.create({
+    data: { branchId: branch.id, name: 'Pastas', sortOrder: 5 },
+  });
+  const sopas = await prisma.category.create({
+    data: { branchId: branch.id, name: 'Sopas y Cremas', sortOrder: 6 },
+  });
   const hamburguesas = await prisma.category.create({
-    data: { branchId: branch.id, name: 'Hamburguesas', sortOrder: 5 },
+    data: { branchId: branch.id, name: 'Hamburguesas', sortOrder: 7 },
   });
   const postres = await prisma.category.create({
-    data: { branchId: branch.id, name: 'Postres', sortOrder: 6 },
+    data: { branchId: branch.id, name: 'Postres', sortOrder: 8 },
   });
 
-  // Bebidas
+  // --- Bebidas ---
   await prisma.product.create({
     data: {
       categoryId: bebidas.id,
-      name: 'Coca Cola',
+      name: 'Vino Malbec Premium',
+      kitchenStationId: barStation.id,
+      description: 'Vino tinto reserva de Mendoza, notas de ciruela y vainilla.',
+      variants: {
+        create: [
+          { name: 'Copa', price: 2500, isDefault: true },
+          { name: 'Botella', price: 9500 },
+        ],
+      },
+      branches: { create: { branchId: branch.id } },
+    },
+  });
+
+  await prisma.product.create({
+    data: {
+      categoryId: bebidas.id,
+      name: 'Limonada con Menta y Jengibre',
+      kitchenStationId: barStation.id,
+      description: 'Refrescante limonada natural con menta fresca y jengibre.',
+      variants: {
+        create: [{ name: 'Jarra 1L', price: 2800, isDefault: true }],
+      },
+      branches: { create: { branchId: branch.id } },
+    },
+  });
+
+  await prisma.product.create({
+    data: {
+      categoryId: bebidas.id,
+      name: 'Coca Cola Original',
       kitchenStationId: barStation.id,
       variants: {
         create: [
@@ -326,48 +407,18 @@ async function main() {
     },
   });
 
-  await prisma.product.create({
-    data: {
-      categoryId: bebidas.id,
-      name: 'Cerveza Quilmes',
-      kitchenStationId: barStation.id,
-      variants: {
-        create: [
-          { name: 'Pinta', price: 2000, isDefault: true },
-          { name: 'Litro', price: 3500 },
-        ],
-      },
-      branches: { create: { branchId: branch.id } },
-    },
-  });
-
-  await prisma.product.create({
-    data: {
-      categoryId: bebidas.id,
-      name: 'Agua Mineral',
-      kitchenStationId: barStation.id,
-      variants: {
-        create: [
-          { name: 'Sin Gas', price: 1000, isDefault: true },
-          { name: 'Con Gas', price: 1000 },
-        ],
-      },
-      branches: { create: { branchId: branch.id } },
-    },
-  });
-
-  // Entradas
+  // --- Entradas ---
   await prisma.product.create({
     data: {
       categoryId: entradas.id,
-      name: 'Empanadas',
+      name: 'Empanadas Salteñas',
       kitchenStationId: grillStation.id,
       prepTime: 10,
       variants: {
         create: [
-          { name: 'Carne', price: 800, isDefault: true },
-          { name: 'Jamón y Queso', price: 800 },
-          { name: 'Humita', price: 800 },
+          { name: 'Carne Cortada a Cuchillo', price: 950, isDefault: true },
+          { name: 'Jamón y Queso Premium', price: 950 },
+          { name: 'Humita de la Casa', price: 950 },
         ],
       },
       branches: { create: { branchId: branch.id } },
@@ -377,28 +428,30 @@ async function main() {
   await prisma.product.create({
     data: {
       categoryId: entradas.id,
-      name: 'Provoleta',
+      name: 'Provoleta a la Parrilla',
       kitchenStationId: grillStation.id,
+      description: 'Queso provolone fundido con orégano y un toque de oliva.',
       prepTime: 8,
       variants: {
-        create: [{ name: 'Estándar', price: 3500, isDefault: true }],
+        create: [{ name: 'Porción', price: 3800, isDefault: true }],
       },
       branches: { create: { branchId: branch.id } },
     },
   });
 
-  // Platos Principales
+  // --- Platos Principales ---
   await prisma.product.create({
     data: {
       categoryId: principales.id,
-      name: 'Milanesa Napolitana',
+      name: 'Milanesa Napolitana RestoPOS',
       kitchenStationId: grillStation.id,
+      description: 'Milanesa de ternera con salsa pomodoro, jamón y mozzarella.',
       prepTime: 15,
       variants: {
         create: [
-          { name: 'Con Papas Fritas', price: 7500, isDefault: true },
-          { name: 'Con Ensalada', price: 7500 },
-          { name: 'Con Puré', price: 7500 },
+          { name: 'Con Papas Fritas', price: 7800, isDefault: true },
+          { name: 'Con Ensalada Mixta', price: 7800 },
+          { name: 'Con Puré Duquesa', price: 8200 },
         ],
       },
       branches: { create: { branchId: branch.id } },
@@ -408,13 +461,32 @@ async function main() {
   await prisma.product.create({
     data: {
       categoryId: principales.id,
-      name: 'Bife de Chorizo',
+      name: 'Ojo de Bife 400g',
       kitchenStationId: grillStation.id,
+      description: 'Corte premium a la parrilla en su punto justo.',
       prepTime: 20,
       variants: {
         create: [
-          { name: 'Con Papas Fritas', price: 9500, isDefault: true },
-          { name: 'Con Ensalada', price: 9500 },
+          { name: 'Al Punto', price: 11500, isDefault: true },
+          { name: 'Cocido', price: 11500 },
+        ],
+      },
+      branches: { create: { branchId: branch.id } },
+    },
+  });
+
+  // --- Pizzas ---
+  await prisma.product.create({
+    data: {
+      categoryId: pizzas.id,
+      name: 'Pizza Cuatro Quesos',
+      kitchenStationId: grillStation.id,
+      description: 'Mozzarella, Roquefort, Parmesano y Provolone sobre masa artesanal.',
+      prepTime: 15,
+      variants: {
+        create: [
+          { name: 'Grande (8 porciones)', price: 8500, isDefault: true },
+          { name: 'Mediana (6 porciones)', price: 6500 },
         ],
       },
       branches: { create: { branchId: branch.id } },
@@ -423,32 +495,28 @@ async function main() {
 
   await prisma.product.create({
     data: {
-      categoryId: principales.id,
-      name: 'Ensalada César',
+      categoryId: pizzas.id,
+      name: 'Pizza Especial de la Casa',
+      kitchenStationId: grillStation.id,
+      description: 'Mozzarella, jamón cocido, morrones asados y aceitunas negras.',
+      prepTime: 12,
+      variants: {
+        create: [{ name: 'Grande', price: 9200, isDefault: true }],
+      },
+      branches: { create: { branchId: branch.id } },
+    },
+  });
+
+  // --- Sopas y Cremas ---
+  await prisma.product.create({
+    data: {
+      categoryId: sopas.id,
+      name: 'Crema de Zapallo y Jengibre',
       kitchenStationId: coldStation.id,
-      prepTime: 8,
+      description: 'Sopa cremosa servida con croutons aromatizados y crema.',
+      prepTime: 10,
       variants: {
-        create: [
-          { name: 'Estándar', price: 5000, isDefault: true },
-          { name: 'Con Pollo', price: 6500 },
-        ],
-      },
-      branches: { create: { branchId: branch.id } },
-    },
-  });
-
-  // Pizzas
-  await prisma.product.create({
-    data: {
-      categoryId: pizzas.id,
-      name: 'Pizza Muzzarella',
-      kitchenStationId: grillStation.id,
-      prepTime: 12,
-      variants: {
-        create: [
-          { name: 'Grande', price: 6000, isDefault: true },
-          { name: 'Individual', price: 3500 },
-        ],
+        create: [{ name: 'Tazón', price: 3400, isDefault: true }],
       },
       branches: { create: { branchId: branch.id } },
     },
@@ -456,95 +524,64 @@ async function main() {
 
   await prisma.product.create({
     data: {
-      categoryId: pizzas.id,
-      name: 'Pizza Napolitana',
+      categoryId: sopas.id,
+      name: 'Sopa de Cebolla Tradicional',
+      kitchenStationId: coldStation.id,
+      description: 'Sopa de cebolla caramelizada gratinada con queso parmesano.',
+      prepTime: 12,
+      variants: {
+        create: [{ name: 'Tazón', price: 3600, isDefault: true }],
+      },
+      branches: { create: { branchId: branch.id } },
+    },
+  });
+
+  // --- Pastas ---
+  await prisma.product.create({
+    data: {
+      categoryId: pastas.id,
+      name: 'Sorrentinos de Calabaza',
       kitchenStationId: grillStation.id,
+      description: 'Pasta artesanal de calabaza y mozzarella con nueces.',
       prepTime: 12,
       variants: {
         create: [
-          { name: 'Grande', price: 7000, isDefault: true },
-          { name: 'Individual', price: 4000 },
+          { name: 'Con Salsa Rose', price: 6200, isDefault: true },
+          { name: 'Con Crema de Ciboulette', price: 6500 },
         ],
       },
       branches: { create: { branchId: branch.id } },
     },
   });
 
-  // Hamburguesas
+  // --- Hamburguesas ---
   const hamburguesa = await prisma.product.create({
     data: {
       categoryId: hamburguesas.id,
-      name: 'Hamburguesa Clásica',
+      name: 'Hamburguesa Premium Resto',
       kitchenStationId: grillStation.id,
+      description: 'Blend de carne seleccionada, queso cheddar, bacon crocante y cebolla al malbec.',
       prepTime: 12,
       variants: {
         create: [
-          { name: 'Simple', price: 5000, isDefault: true },
-          { name: 'Doble', price: 7000 },
-          { name: 'Triple', price: 9000 },
+          { name: 'Simple', price: 5500, isDefault: true },
+          { name: 'Doble Burguer', price: 7800 },
         ],
       },
       branches: { create: { branchId: branch.id } },
     },
   });
 
-  // Create modifier groups for hamburguesas
-  const extrasGroup = await prisma.modifierGroup.create({
-    data: {
-      name: 'Extras',
-      minSelect: 0,
-      maxSelect: 5,
-      modifiers: {
-        create: [
-          { name: 'Queso Cheddar', priceAdjustment: 500, sortOrder: 1 },
-          { name: 'Bacon', priceAdjustment: 700, sortOrder: 2 },
-          { name: 'Huevo Frito', priceAdjustment: 400, sortOrder: 3 },
-          { name: 'Extra Carne', priceAdjustment: 1500, sortOrder: 4 },
-        ],
-      },
-      products: { create: { productId: hamburguesa.id } },
-    },
-  });
-
-  const removeGroup = await prisma.modifierGroup.create({
-    data: {
-      name: 'Sin...',
-      minSelect: 0,
-      maxSelect: 5,
-      modifiers: {
-        create: [
-          { name: 'Sin Cebolla', priceAdjustment: 0, sortOrder: 1 },
-          { name: 'Sin Tomate', priceAdjustment: 0, sortOrder: 2 },
-          { name: 'Sin Lechuga', priceAdjustment: 0, sortOrder: 3 },
-          { name: 'Sin Salsa', priceAdjustment: 0, sortOrder: 4 },
-        ],
-      },
-      products: { create: { productId: hamburguesa.id } },
-    },
-  });
-
-  // Postres
+  // --- Postres ---
   await prisma.product.create({
     data: {
       categoryId: postres.id,
-      name: 'Flan con Dulce de Leche',
+      name: 'Volcán de Chocolate',
       kitchenStationId: dessertStation.id,
-      prepTime: 3,
+      description: 'Bizcocho tibio de chocolate con corazón fundido y helado de crema.',
+      prepTime: 15,
       variants: {
-        create: [{ name: 'Estándar', price: 3000, isDefault: true }],
-      },
-      branches: { create: { branchId: branch.id } },
-    },
-  });
-
-  await prisma.product.create({
-    data: {
-      categoryId: postres.id,
-      name: 'Tiramisú',
-      kitchenStationId: dessertStation.id,
-      prepTime: 3,
-      variants: {
-        create: [{ name: 'Estándar', price: 3500, isDefault: true }],
+        create: [{ name: 'Individual', price: 4200, isDefault: true }],
       },
       branches: { create: { branchId: branch.id } },
     },
@@ -552,10 +589,10 @@ async function main() {
 
   // 6. Create tables
   const tables = [];
-  for (let i = 1; i <= 12; i++) {
-    const zone = i <= 6 ? 'Salón Principal' : i <= 9 ? 'Terraza' : 'Bar';
-    const row = Math.floor((i - 1) / 3);
-    const col = (i - 1) % 3;
+  for (let i = 1; i <= 15; i++) {
+    const zone = i <= 8 ? 'Salón Principal' : i <= 12 ? 'Terraza VIP' : 'Barra';
+    const row = Math.floor((i - 1) / 4);
+    const col = (i - 1) % 4;
 
     tables.push(
       prisma.table.create({
@@ -564,10 +601,10 @@ async function main() {
           number: i,
           name: `Mesa ${i}`,
           zone,
-          capacity: i <= 6 ? 4 : i <= 9 ? 6 : 2,
-          posX: col * 150 + 50,
-          posY: row * 150 + 50,
-          shape: i <= 9 ? 'square' : 'round',
+          capacity: i <= 8 ? 4 : i <= 12 ? 6 : 1,
+          posX: col * 160 + 40,
+          posY: row * 160 + 40,
+          shape: i <= 12 ? 'square' : 'round',
           qrCode: `table-${branch.id}-${i}`,
         },
       }),
@@ -575,48 +612,22 @@ async function main() {
   }
   await Promise.all(tables);
 
-  // 7. Create sample ingredients
-  const queso = await prisma.ingredient.create({
-    data: { name: 'Queso Mozzarella', unit: 'kg', costPerUnit: 3000 },
-  });
-  const harina = await prisma.ingredient.create({
-    data: { name: 'Harina', unit: 'kg', costPerUnit: 500 },
-  });
-  const tomate = await prisma.ingredient.create({
-    data: { name: 'Salsa de Tomate', unit: 'kg', costPerUnit: 800 },
-  });
-  const carne = await prisma.ingredient.create({
-    data: { name: 'Carne Molida', unit: 'kg', costPerUnit: 5000 },
-  });
-  const lechuga = await prisma.ingredient.create({
-    data: { name: 'Lechuga', unit: 'kg', costPerUnit: 600 },
-  });
+  // 7. Create sample ingredients & stock
+  const queso = await prisma.ingredient.create({ data: { name: 'Queso Mozzarella', unit: 'kg', costPerUnit: 3500 } });
+  const carne = await prisma.ingredient.create({ data: { name: 'Carne Seleccionada', unit: 'kg', costPerUnit: 5500 } });
+  const harina = await prisma.ingredient.create({ data: { name: 'Harina Orgánica', unit: 'kg', costPerUnit: 800 } });
 
-  // Stock items
   await prisma.stockItem.createMany({
     data: [
-      { branchId: branch.id, ingredientId: queso.id, currentStock: 20, minStock: 5 },
-      { branchId: branch.id, ingredientId: harina.id, currentStock: 50, minStock: 10 },
-      { branchId: branch.id, ingredientId: tomate.id, currentStock: 15, minStock: 3 },
-      { branchId: branch.id, ingredientId: carne.id, currentStock: 30, minStock: 8 },
-      { branchId: branch.id, ingredientId: lechuga.id, currentStock: 10, minStock: 2 },
+      { branchId: branch.id, ingredientId: queso.id, currentStock: 50, minStock: 10 },
+      { branchId: branch.id, ingredientId: carne.id, currentStock: 100, minStock: 20 },
+      { branchId: branch.id, ingredientId: harina.id, currentStock: 200, minStock: 50 },
     ],
   });
 
-  // 8. Create a sample supplier
-  await prisma.supplier.create({
-    data: {
-      name: 'Distribuidora Central',
-      contactName: 'Juan Proveedor',
-      email: 'contacto@distribuidoracentral.com',
-      phone: '+54 11 5555-1234',
-      branches: { create: { branchId: branch.id } },
-    },
-  });
-
-  console.log('=== SEED COMPLETADO ===');
+  console.log('=== SEED COMPLETADO CONÉXITO ===');
   console.log('');
-  console.log('USUARIOS DEMO:');
+  console.log('USUARIOS DEMO ACTUALIZADOS:');
   console.log('┌─────────────────────────────────┬──────────────┬──────┬────────────┐');
   console.log('│ Email                           │ Password     │ PIN  │ Rol        │');
   console.log('├─────────────────────────────────┼──────────────┼──────┼────────────┤');
@@ -625,18 +636,9 @@ async function main() {
   console.log('│ gerente@restaurante.com          │ manager123   │ 4444 │ manager    │');
   console.log('│ cajero@restaurante.com           │ cajero123    │ 2222 │ cashier    │');
   console.log('│ camarero@restaurante.com         │ waiter123    │ 1111 │ waiter     │');
-  console.log('│ camarero2@restaurante.com        │ waiter123    │ 6666 │ waiter     │');
   console.log('│ cocina@restaurante.com           │ cocina123    │ 3333 │ kitchen    │');
   console.log('│ delivery@restaurante.com         │ driver123    │ 5555 │ driver     │');
   console.log('└─────────────────────────────────┴──────────────┴──────┴────────────┘');
-  console.log('');
-  console.log('DATOS DEMO:');
-  console.log('  Sucursal: Restaurante Principal');
-  console.log('  Mesas: 12 (6 salón, 3 terraza, 3 bar)');
-  console.log('  Productos: 13 en 6 categorías');
-  console.log('  Estaciones de cocina: Parrilla, Cocina Fría, Bar, Postres');
-  console.log('  Ingredientes: 5 con stock');
-  console.log('  Proveedor: Distribuidora Central');
 }
 
 main()

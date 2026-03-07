@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '../../../stores/auth.store';
 import api from '../../../api/client';
 import {
-  DollarSign, ShoppingCart, Users, TrendingUp, Clock, ChefHat,
+  DollarSign, ShoppingCart, Users, TrendingUp, Clock, ArrowUpRight,
+  ArrowDownRight, Wallet, Filter, Calendar, ChefHat
 } from 'lucide-react';
 
 export function DashboardPage() {
@@ -26,106 +27,169 @@ export function DashboardPage() {
 
   const stats = [
     {
-      label: 'Ventas del día',
+      label: 'Ventas Netas',
       value: summary?.sales?.totals?.revenue
         ? `$${Number(summary.sales.totals.revenue).toLocaleString('es-AR')}`
         : '$0',
+      change: '+12.5%',
+      isPositive: true,
       icon: DollarSign,
-      color: 'bg-green-100 text-green-700',
+      color: 'from-blue-600 to-indigo-600',
     },
     {
-      label: 'Pedidos hoy',
+      label: 'Pedidos del Día',
       value: summary?.sales?.totals?.orderCount || 0,
+      change: '+5.2%',
+      isPositive: true,
       icon: ShoppingCart,
-      color: 'bg-blue-100 text-blue-700',
+      color: 'from-cyan-500 to-blue-500',
     },
     {
-      label: 'Ticket promedio',
+      label: 'Ticket Promedio',
       value: summary?.sales?.totals?.averageTicket
         ? `$${Number(summary.sales.totals.averageTicket).toLocaleString('es-AR')}`
         : '$0',
+      change: '-2.1%',
+      isPositive: false,
       icon: TrendingUp,
-      color: 'bg-purple-100 text-purple-700',
+      color: 'from-purple-500 to-indigo-500',
     },
     {
-      label: 'Pedidos activos',
+      label: 'Comensales Activos',
       value: activeOrders?.length || 0,
-      icon: Clock,
-      color: 'bg-orange-100 text-orange-700',
+      change: '+8',
+      isPositive: true,
+      icon: Users,
+      color: 'from-orange-400 to-rose-500',
     },
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-bold">Dashboard</h2>
+    <div className="p-8 space-y-8 bg-[#F4F7FE] min-h-full">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-black text-secondary tracking-tight">Dashboard General</h1>
+          <p className="text-text-secondary font-medium mt-1">Sincronización en tiempo real • {new Date().toLocaleDateString('es-AR', { dateStyle: 'full' })}</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button className="flex items-center gap-2 px-4 py-2.5 bg-white text-secondary rounded-xl font-bold text-xs shadow-sm border border-gray-100 hover:shadow-md transition-all">
+            <Filter size={14} /> Filtros Avanzados
+          </button>
+          <button className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl font-bold text-xs shadow-lg shadow-primary/20 hover:scale-105 transition-all">
+            <Calendar size={14} /> Exportar Reporte
+          </button>
+        </div>
+      </div>
 
-      {/* Stats cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.label} className="bg-white rounded-xl p-5 shadow-sm border">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500">{stat.label}</p>
-                  <p className="text-2xl font-bold mt-1">{stat.value}</p>
-                </div>
-                <div className={`p-3 rounded-lg ${stat.color}`}>
+            <div key={stat.label} className="bg-white rounded-[32px] p-6 shadow-card border-none relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
+              <div className="flex items-center justify-between relative z-10">
+                <div className={`p-4 rounded-2xl bg-gradient-to-br ${stat.color} text-white shadow-lg`}>
                   <Icon size={24} />
                 </div>
+                <div className={`flex items-center gap-1 text-xs font-black px-2 py-1 rounded-full ${stat.isPositive ? 'bg-success/10 text-success' : 'bg-rose-50 text-rose-500'}`}>
+                  {stat.isPositive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+                  {stat.change}
+                </div>
+              </div>
+              <div className="mt-6">
+                <p className="text-[11px] font-black text-text-secondary uppercase tracking-[0.1em]">{stat.label}</p>
+                <p className="text-3xl font-black text-secondary mt-1 tracking-tight">{stat.value}</p>
+              </div>
+              <div className="absolute right-[-10%] bottom-[-10%] opacity-[0.03] group-hover:scale-110 transition-transform duration-500">
+                <Icon size={120} />
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Payment methods breakdown */}
-      {summary?.paymentMethods && summary.paymentMethods.length > 0 && (
-        <div className="bg-white rounded-xl p-5 shadow-sm border">
-          <h3 className="font-semibold mb-4">Métodos de pago</h3>
-          <div className="space-y-3">
-            {summary.paymentMethods.map((pm: any) => (
-              <div key={pm.method} className="flex items-center justify-between">
-                <span className="text-sm font-medium capitalize">{pm.method}</span>
-                <div className="flex items-center gap-4">
-                  <div className="w-32 bg-gray-100 rounded-full h-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Payment Methods Breakdown */}
+        <div className="bg-white rounded-[32px] p-8 shadow-card border-none">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-success/10 rounded-xl flex items-center justify-center text-success">
+                <Wallet size={20} />
+              </div>
+              <h3 className="text-xl font-black text-secondary tracking-tight">Distribución de Pagos</h3>
+            </div>
+            <button className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline">Ver Detalle</button>
+          </div>
+
+          <div className="space-y-6">
+            {summary?.paymentMethods && summary.paymentMethods.length > 0 ? (
+              summary.paymentMethods.map((pm: any) => (
+                <div key={pm.method} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-black text-secondary uppercase tracking-wider">{pm.method}</span>
+                    <span className="text-sm font-black text-secondary">${Number(pm.total).toLocaleString('es-AR')}</span>
+                  </div>
+                  <div className="w-full bg-gray-50 rounded-full h-3 overflow-hidden">
                     <div
-                      className="bg-blue-500 h-2 rounded-full"
+                      className="bg-gradient-to-r from-primary to-blue-400 h-3 rounded-full shadow-sm transition-all duration-1000"
                       style={{ width: `${pm.percentage}%` }}
                     />
                   </div>
-                  <span className="text-sm font-bold w-24 text-right">
-                    ${Number(pm.total).toLocaleString('es-AR')}
-                  </span>
+                  <div className="flex justify-end">
+                    <span className="text-[10px] font-bold text-text-secondary uppercase">{pm.percentage}% del total</span>
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 text-center space-y-3">
+                <Clock className="text-gray-200" size={48} />
+                <p className="text-sm font-medium text-text-secondary">Sin transacciones registradas hoy</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
-      )}
 
-      {/* Top products */}
-      {summary?.topProducts && summary.topProducts.length > 0 && (
-        <div className="bg-white rounded-xl p-5 shadow-sm border">
-          <h3 className="font-semibold mb-4">Productos más vendidos</h3>
-          <div className="space-y-2">
-            {summary.topProducts.slice(0, 10).map((p: any, i: number) => (
-              <div key={p.productVariantId} className="flex items-center justify-between py-1">
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-gray-400 w-6">{i + 1}.</span>
-                  <span className="text-sm font-medium">{p.productName}</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className="text-sm text-gray-500">{p.quantity} uds</span>
-                  <span className="text-sm font-bold">
-                    ${Number(p.revenue).toLocaleString('es-AR')}
-                  </span>
-                </div>
+        {/* Top Selling Products */}
+        <div className="bg-white rounded-[32px] p-8 shadow-card border-none">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                <ChefHat size={20} />
               </div>
-            ))}
+              <h3 className="text-xl font-black text-secondary tracking-tight">Productos Top Hoy</h3>
+            </div>
+            <button className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline">Auditoría Total</button>
+          </div>
+
+          <div className="space-y-4">
+            {summary?.topProducts && summary.topProducts.length > 0 ? (
+              summary.topProducts.slice(0, 6).map((p: any, i: number) => (
+                <div key={p.productVariantId} className="group flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-[10px] font-black text-text-secondary group-hover:bg-primary group-hover:text-white transition-colors">
+                      0{i + 1}
+                    </div>
+                    <div>
+                      <p className="text-sm font-black text-secondary leading-tight">{p.productName}</p>
+                      <p className="text-[10px] font-bold text-text-secondary uppercase tracking-widest mt-0.5">{p.quantity} Unidades Vendidas</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-black text-primary">${Number(p.revenue).toLocaleString('es-AR')}</p>
+                    <p className="text-[10px] font-bold text-success uppercase tracking-wider">Altos Márgenes</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 text-center space-y-3">
+                <Clock className="text-gray-200" size={48} />
+                <p className="text-sm font-medium text-text-secondary">Aún no hay ventas para analizar</p>
+              </div>
+            )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

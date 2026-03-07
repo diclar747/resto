@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/auth.store';
 import api from '../../api/client';
 import toast from 'react-hot-toast';
-import { Delete, ArrowLeft } from 'lucide-react';
+import { Delete, ArrowLeft, Key, X } from 'lucide-react';
 
 export function PinLoginPage() {
   const [pin, setPin] = useState('');
@@ -30,7 +30,7 @@ export function PinLoginPage() {
     try {
       const { data } = await api.post('/auth/pin-login', { pin: pinCode, branchId });
       setAuth(data.user, data.accessToken, data.refreshToken);
-      toast.success('Bienvenido!');
+      toast.success('¡Acceso concedido!');
       navigate('/pos');
     } catch {
       toast.error('PIN inválido');
@@ -41,42 +41,50 @@ export function PinLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-8">
-        <div className="flex items-center gap-3 mb-8">
-          <button onClick={() => navigate('/login')} className="text-gray-400 hover:text-gray-600">
-            <ArrowLeft size={20} />
+    <div className="min-h-screen bg-[#F4F7FE] flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Decorative Blobs */}
+      <div className="absolute top-[-10%] left-[-5%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px]" />
+      <div className="absolute bottom-[-10%] right-[-5%] w-[300px] h-[300px] bg-accent/10 rounded-full blur-[80px]" />
+
+      <div className="bg-white/70 backdrop-blur-xl border border-white/40 rounded-[48px] shadow-2xl w-full max-w-sm p-10 relative z-10">
+        <div className="flex items-center gap-4 mb-10">
+          <button
+            onClick={() => navigate('/login')}
+            className="w-10 h-10 bg-gray-50 flex items-center justify-center rounded-xl text-gray-400 hover:text-primary hover:bg-white transition-all shadow-sm border border-transparent hover:border-primary/20"
+          >
+            <ArrowLeft size={18} />
           </button>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Acceso rápido</h2>
-            <p className="text-gray-500 text-sm">Ingresá tu PIN de 4 dígitos</p>
+            <h2 className="text-xl font-black text-secondary tracking-tight">Acceso Rápido</h2>
+            <p className="text-[10px] font-black text-text-secondary uppercase tracking-widest mt-0.5">Ingresa tu código PIN</p>
           </div>
         </div>
 
         {/* PIN dots */}
-        <div className="flex justify-center gap-4 mb-8">
+        <div className="flex justify-center gap-6 mb-12">
           {[0, 1, 2, 3].map((i) => (
             <div
               key={i}
-              className={`w-4 h-4 rounded-full transition-colors ${
-                i < pin.length ? 'bg-blue-600' : 'bg-gray-200'
-              }`}
+              className={`w-4 h-4 rounded-full transition-all duration-300 ${i < pin.length
+                  ? 'bg-primary scale-125 shadow-lg shadow-primary/40'
+                  : 'bg-gray-200'
+                }`}
             />
           ))}
         </div>
 
         {/* Number pad */}
-        <div className="grid grid-cols-3 gap-3">
-          {['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'del'].map((key) => {
-            if (key === '') return <div key="empty" />;
+        <div className="grid grid-cols-3 gap-6">
+          {['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'del'].map((key, i) => {
+            if (key === '') return <div key="empty" className="h-16" />;
             if (key === 'del') {
               return (
                 <button
                   key="del"
                   onClick={handleDelete}
-                  className="h-16 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                  className="h-20 rounded-[28px] bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-rose-500 hover:bg-rose-50 hover:border-rose-100 transition-all shadow-sm group active:scale-95"
                 >
-                  <Delete size={24} className="text-gray-600" />
+                  <Delete size={24} className="group-hover:scale-110 transition-transform" />
                 </button>
               );
             }
@@ -85,12 +93,16 @@ export function PinLoginPage() {
                 key={key}
                 onClick={() => handleDigit(key)}
                 disabled={loading}
-                className="h-16 rounded-xl bg-gray-100 hover:bg-gray-200 text-2xl font-semibold text-gray-900 transition-colors"
+                className="h-20 rounded-[28px] bg-white border border-gray-100 flex items-center justify-center text-2xl font-black text-secondary hover:text-primary hover:bg-primary/5 hover:border-primary/20 transition-all shadow-sm active:scale-95 disabled:opacity-50"
               >
                 {key}
               </button>
             );
           })}
+        </div>
+
+        <div className="mt-12 text-center">
+          <p className="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em]">Seguridad por Hardware Encriptada</p>
         </div>
       </div>
     </div>
