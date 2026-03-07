@@ -2,6 +2,18 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
+// Bundle NestJS API with esbuild into a .txt file (ncc won't process .txt as JS)
+console.log('--- Bundle API with esbuild ---');
+execSync([
+    'npx esbuild apps/api/dist/vercel-entry.js',
+    '--bundle --platform=node --target=node20 --format=cjs',
+    '--outfile=api/nestjs-bundle.txt',
+    '--external:@prisma/client --external:.prisma/client',
+    '--external:@nestjs/microservices --external:@nestjs/websockets/socket-module',
+    '--external:cache-manager --external:class-transformer/storage',
+    '--external:bufferutil --external:utf-8-validate',
+].join(' '), { stdio: 'inherit' });
+
 // Ensure root dist exists
 const rootDist = path.join(__dirname, 'dist');
 if (fs.existsSync(rootDist)) {

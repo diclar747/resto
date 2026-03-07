@@ -34,8 +34,22 @@ model Branch {
   suppliers         SupplierBranch[]
   promotions        PromotionBranch[]
   kitchenStations   KitchenStation[]
+  reviews           BranchReview[]
 
   @@map("branches")
+}
+
+model BranchReview {
+  id        String   @id @default(cuid())
+  branchId  String
+  userName  String
+  rating    Int      @default(5)
+  comment   String?
+  createdAt DateTime @default(now())
+
+  branch Branch @relation(fields: [branchId], references: [id])
+
+  @@map("branch_reviews")
 }
 
 // ============================================================
