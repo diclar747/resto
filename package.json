@@ -1,6 +1,7 @@
 {
   "name": "restaurante",
   "private": true,
+  "packageManager": "npm@11.8.0",
   "workspaces": [
     "packages/*",
     "apps/*"
