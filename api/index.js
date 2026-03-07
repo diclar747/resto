@@ -1,3 +1,7 @@
+const path = require('path');
 require('reflect-metadata');
-const handler = require('../apps/api/dist/serverless').default;
-module.exports = handler;
+
+// Dynamic path prevents Vercel's ncc from tracing into the bundle
+const bundlePath = path.join(__dirname, '..', 'apps', 'api', 'bundle', 'serverless');
+const mod = require(bundlePath);
+module.exports = mod.default;
