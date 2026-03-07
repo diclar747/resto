@@ -67,7 +67,7 @@ export class CashRegisterService {
     }
 
     // Expected balance = opening + all movements
-    const movementsTotal = register.movements.reduce((sum, m) => {
+    const movementsTotal = register.movements.reduce((sum: number, m: any) => {
       const amt = Number(m.amount);
       // cash_in / payment increase balance; cash_out decreases it
       const signed =
@@ -228,7 +228,7 @@ export class CashRegisterService {
       },
       select: { id: true },
     });
-    const registerIds = registers.map((r) => r.id);
+    const registerIds = registers.map((r: any) => r.id);
 
     const movements = await this.prisma.cashRegisterMovement.findMany({
       where: {
@@ -262,7 +262,7 @@ export class CashRegisterService {
     });
 
     const totalRefunds = refunds.reduce(
-      (sum, p) => sum + Number(p.amount),
+      (sum: number, p: any) => sum + Number(p.amount),
       0,
     );
 
