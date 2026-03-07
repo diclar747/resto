@@ -1,7 +1,5 @@
-const path = require('path');
 require('reflect-metadata');
-
-// Load pre-bundled NestJS handler (copied here during build)
-const serverlessPath = path.join(__dirname, 'bundle', 'serverless');
-const mod = require(serverlessPath);
-module.exports = mod.default;
+// Static require so ncc can trace and bundle this file
+// The webpack bundle is self-contained (NestJS + all deps pre-bundled)
+// Only @prisma/client remains external, handled by includeFiles
+module.exports = require('./serverless-bundle').default;
