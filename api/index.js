@@ -4,9 +4,9 @@ const fs = require('fs');
 let handler;
 try {
   require('reflect-metadata');
-  // Load webpack bundle saved as .cjs (ncc won't consume .cjs files from includeFiles)
-  const bundlePath = path.join(__dirname, 'dist', 'handler.cjs');
-  handler = eval('require')(bundlePath).default;
+  // Load compiled NestJS (.cjs extension prevents ncc from consuming the files)
+  const serverlessPath = path.join(__dirname, 'dist', 'serverless.cjs');
+  handler = eval('require')(serverlessPath).default;
 } catch (e) {
   handler = (req, res) => {
     let distFiles = [];

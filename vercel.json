@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npx prisma generate && cd apps/api && npx tsc -p tsconfig.json && npx webpack --config webpack.serverless.js && cd ../.. && mkdir -p api/dist && cp apps/api/bundle/serverless.js api/dist/handler.cjs && node deploy-vercel.js",
+  "buildCommand": "npx prisma generate && cd apps/api && npx tsc -p tsconfig.json && cd ../.. && cp -r apps/api/dist api/dist && node rename-js-to-cjs.js api/dist && node deploy-vercel.js",
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "framework": null,
