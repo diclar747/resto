@@ -12,7 +12,6 @@ module.exports = {
   externals: {
     '@prisma/client': 'commonjs @prisma/client',
     '.prisma/client': 'commonjs .prisma/client',
-    'bcrypt': 'commonjs bcrypt',
     // Optional NestJS peer deps
     '@nestjs/microservices': 'commonjs @nestjs/microservices',
     '@nestjs/microservices/microservices-module': 'commonjs @nestjs/microservices/microservices-module',
