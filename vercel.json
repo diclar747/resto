@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npx prisma generate && cd apps/api && npx tsc -p tsconfig.json && cd ../.. && cp -r apps/api/dist api/dist && node rename-js-to-cjs.js api/dist && node deploy-vercel.js",
+  "buildCommand": "node build-vercel.js",
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "framework": null,
@@ -8,7 +8,7 @@
     "api/index.js": {
       "memory": 1024,
       "maxDuration": 30,
-      "includeFiles": "api/dist/**,prisma/**,node_modules/.prisma/**,node_modules/@prisma/client/**"
+      "includeFiles": "prisma/**,node_modules/.prisma/**,node_modules/@prisma/client/**"
     }
   },
   "rewrites": [
