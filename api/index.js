@@ -1,7 +1,7 @@
 let handler;
 try {
   require('reflect-metadata');
-  handler = require('../apps/api/dist/serverless').default;
+  handler = require('./dist/serverless').default;
 } catch (e) {
   handler = (req, res) => {
     res.statusCode = 500;
