@@ -1,23 +1,30 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    --primary: #004AAD;
-    --primary-light: #E1F0FF;
-    --secondary: #001F3D;
-    --accent: #00D1FF;
-    --background: #F4F7FE;
-    --surface: #FFFFFF;
-    --text-main: #1B254B;
-    --text-secondary: #A3AED0;
-    --success: #05CD99;
-    --error: #EE5D50;
-    --warning: #FFB547;
-    --card-shadow: 14px 17px 40px 4px rgba(112, 144, 176, 0.08);
-  }
+/* ============================================
+   RestoPOS Theme - Tailwind v4
+   Register custom colors so utilities like
+   bg-primary, text-secondary, shadow-primary/20
+   all work natively.
+   ============================================ */
+@theme {
+  --color-primary: #004AAD;
+  --color-primary-light: #E1F0FF;
+  --color-secondary: #001F3D;
+  --color-accent: #00D1FF;
+  --color-background: #F4F7FE;
+  --color-surface: #FFFFFF;
+  --color-text-main: #1B254B;
+  --color-text-secondary: #A3AED0;
+  --color-success: #05CD99;
+  --color-error: #EE5D50;
+  --color-warning: #FFB547;
 
+  --shadow-card: 14px 17px 40px 4px rgba(112, 144, 176, 0.08);
+}
+
+@layer base {
   body {
-    @apply bg-[var(--background)] text-[var(--text-main)] antialiased;
+    @apply bg-background text-text-main antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 }
@@ -25,56 +32,61 @@
 @layer components {
   /* Premium Buttons */
   .btn-primary {
-    @apply px-6 py-2.5 rounded-2xl font-bold transition-all duration-200 
-           bg-[var(--primary)] text-white hover:opacity-90 
+    @apply px-6 py-2.5 rounded-2xl font-bold transition-all duration-200
+           bg-primary text-white hover:opacity-90
            shadow-[0px_4px_12px_rgba(0,74,173,0.2)] active:scale-95;
   }
-  
+
   .btn-secondary {
-    @apply px-6 py-2.5 rounded-2xl font-bold transition-all duration-200 
-           bg-[var(--primary-light)] text-[var(--primary)] hover:opacity-80 active:scale-95;
+    @apply px-6 py-2.5 rounded-2xl font-bold transition-all duration-200
+           bg-primary-light text-primary hover:opacity-80 active:scale-95;
+  }
+
+  .btn-success {
+    @apply px-6 py-2.5 rounded-2xl font-bold transition-all duration-200
+           bg-success text-white hover:opacity-90 active:scale-95;
   }
 
   .btn-ghost {
-    @apply px-4 py-2 rounded-xl font-medium transition-all duration-200 
-           text-[var(--text-secondary)] hover:bg-gray-100;
+    @apply px-4 py-2 rounded-xl font-medium transition-all duration-200
+           text-text-secondary hover:bg-gray-100;
   }
 
   /* Premium Cards */
   .card {
-    @apply bg-white rounded-[30px] p-6 shadow-[var(--card-shadow)] border-none;
+    @apply bg-white rounded-[30px] p-6 shadow-card border-none;
   }
 
   .card-glass {
-    @apply bg-white/70 backdrop-blur-xl rounded-[30px] p-6 shadow-[var(--card-shadow)] border border-white/20;
+    @apply bg-white/70 backdrop-blur-xl rounded-[30px] p-6 shadow-card border border-white/20;
   }
 
   /* Modern Inputs */
   .input {
-    @apply w-full px-5 py-4 bg-white border border-gray-100 rounded-2xl 
-           focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)]
-           transition-all duration-200 text-[var(--text-main)] placeholder:text-[var(--text-secondary)];
+    @apply w-full px-5 py-4 bg-white border border-gray-100 rounded-2xl
+           focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary
+           transition-all duration-200 text-text-main placeholder:text-text-secondary;
   }
 
   /* Status Badges */
   .badge {
     @apply inline-flex items-center px-3 py-1 rounded-xl text-xs font-bold uppercase tracking-wider;
   }
-  
+
   .badge-success {
-    @apply bg-[var(--success)]/10 text-[var(--success)];
+    @apply bg-success/10 text-success;
   }
 
   .badge-error {
-    @apply bg-[var(--error)]/10 text-[var(--error)];
+    @apply bg-error/10 text-error;
   }
 
   /* Product Cards */
   .product-card {
-    @apply relative overflow-hidden bg-white rounded-[30px] shadow-[var(--card-shadow)] 
+    @apply relative overflow-hidden bg-white rounded-[30px] shadow-card
            transition-all duration-300 hover:-translate-y-1 hover:shadow-[14px_17px_40px_4px_rgba(112,144,176,0.15)];
   }
-  
+
   .product-image-container {
     @apply relative w-full pt-[75%] overflow-hidden bg-gray-50;
   }
@@ -88,5 +100,15 @@
   @apply bg-transparent;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-[var(--text-secondary)]/20 rounded-full hover:bg-[var(--text-secondary)]/40;
+  @apply bg-text-secondary/20 rounded-full hover:bg-text-secondary/40;
+}
+
+/* Animation utilities */
+@keyframes slideInFromTop {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  animation: slideInFromTop 0.3s ease-out;
 }
