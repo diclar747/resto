@@ -34,100 +34,123 @@ export function PaymentModal({ total, onClose, onComplete }: PaymentModalProps) 
     };
 
     const methods = [
-        { id: 'CASH', icon: Banknote, label: 'Efectivo', color: 'bg-emerald-50 text-emerald-600' },
-        { id: 'CARD', icon: CreditCard, label: 'Tarjeta', color: 'bg-blue-50 text-blue-600' },
-        { id: 'CREDIT', icon: UserCheck, label: 'Crédito Cli.', color: 'bg-purple-50 text-purple-600' },
+        { id: 'CASH', icon: Banknote, label: 'Efectivo', color: 'bg-emerald-50 text-emerald-600', activeIcon: 'bg-emerald-500' },
+        { id: 'CARD', icon: CreditCard, label: 'Tarjeta', color: 'bg-blue-50 text-blue-600', activeIcon: 'bg-blue-500' },
+        { id: 'CREDIT', icon: UserCheck, label: 'Crédito', color: 'bg-purple-50 text-purple-600', activeIcon: 'bg-purple-500' },
     ];
 
     return (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-secondary/80 backdrop-blur-md" onClick={onClose} />
 
-            <div className="relative w-full max-w-2xl bg-white rounded-[40px] shadow-2xl border border-white overflow-hidden flex flex-col md:flex-row shadow-black/40">
+            <div className="relative w-full max-w-3xl bg-white rounded-[40px] shadow-2xl border border-white overflow-hidden flex flex-col md:flex-row">
                 {/* Left: Summary */}
-                <div className="w-full md:w-5/12 bg-[#F4F7FE] p-10 flex flex-col justify-between">
-                    <div>
-                        <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-6">
-                            <Receipt className="text-primary" size={24} />
-                        </div>
-                        <h3 className="text-2xl font-black text-secondary tracking-tighter italic">Checkout <span className="text-primary underline">Secure</span></h3>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2">Transacción Protegida v2.4</p>
-                    </div>
-
+                <div className="w-full md:w-[40%] bg-[#F8FAFC] p-8 md:p-10 flex flex-col justify-between border-r border-gray-100">
                     <div className="space-y-6">
-                        <div className="space-y-1">
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Importe Total</p>
-                            <p className="text-5xl font-black text-secondary tracking-tighter">$ {total.toLocaleString()}</p>
+                        <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-gray-50">
+                            <Receipt className="text-secondary" size={28} />
                         </div>
-
-                        <div className="p-6 bg-white rounded-3xl shadow-sm border border-gray-100 flex items-center gap-4">
-                            <div className="w-10 h-10 bg-indigo-50 text-indigo-500 rounded-xl flex items-center justify-center"><Percent size={20} /></div>
-                            <div>
-                                <p className="text-[9px] font-black text-gray-400 uppercase">Loyalty Points</p>
-                                <p className="text-xs font-black text-indigo-600">+145 Puntos</p>
+                        <div>
+                            <h3 className="text-2xl font-black text-secondary tracking-tighter leading-tight italic">Finalizar <span className="text-primary block">Transacción</span></h3>
+                            <div className="flex items-center gap-2 mt-3">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Conexión Segura SSL</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2 text-emerald-500 bg-emerald-50/50 p-4 rounded-2xl">
-                        <ShieldCheck size={16} />
-                        <span className="text-[9px] font-black uppercase tracking-widest">Pago Encriptado SSL</span>
+                    <div className="space-y-8 py-8 md:py-0">
+                        <div className="space-y-1">
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Importe a Cobrar</p>
+                            <p className="text-5xl font-black text-secondary tracking-tighter">$ {total.toLocaleString()}</p>
+                        </div>
+
+                        <div className="p-6 bg-white rounded-[32px] shadow-sm border border-gray-50 flex items-center gap-4 group transition-all hover:border-primary/20">
+                            <div className="w-12 h-12 bg-indigo-50 text-indigo-500 rounded-2xl flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-all"><Percent size={22} /></div>
+                            <div>
+                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Puntos Resto</p>
+                                <p className="text-sm font-black text-indigo-600">+145 Créditos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 text-secondary/40">
+                        <ShieldCheck size={18} />
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em]">Verified Payment Gateway</span>
                     </div>
                 </div>
 
                 {/* Right: Actions */}
-                <div className="flex-1 p-10 space-y-8">
+                <div className="flex-1 p-8 md:p-10 space-y-8 bg-white">
                     <div className="flex items-center justify-between">
-                        <h4 className="text-lg font-black text-secondary uppercase tracking-tight">Método de Pago</h4>
-                        <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-xl transition-colors"><X size={20} className="text-gray-300" /></button>
+                        <h4 className="text-xs font-black text-secondary uppercase tracking-[0.2em] opacity-50">Seleccionar Método</h4>
+                        <button onClick={onClose} className="p-2 hover:bg-gray-50 rounded-xl transition-colors"><X size={20} className="text-gray-300" /></button>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-3 gap-4">
                         {methods.map((m) => (
                             <button
                                 key={m.id}
                                 onClick={() => setMethod(m.id as any)}
-                                className={`flex flex-col items-center justify-center gap-3 p-5 rounded-[28px] border-2 transition-all ${method === m.id ? 'border-primary bg-primary/5 scale-105 shadow-lg' : 'border-gray-50 bg-gray-50/30 hover:bg-gray-50'
+                                className={`flex flex-col items-center justify-center gap-4 p-6 rounded-[32px] border-2 transition-all duration-300 relative group ${method === m.id
+                                        ? 'border-secondary bg-secondary text-white shadow-xl translate-y-[-4px]'
+                                        : 'border-gray-50 bg-[#F8FAFC] text-secondary hover:border-gray-200 hover:bg-gray-100'
                                     }`}
                             >
-                                <div className={`p-3 rounded-2xl ${method === m.id ? 'bg-primary text-white' : m.color}`}>
-                                    <m.icon size={22} />
+                                <div className={`p-4 rounded-2xl transition-all duration-300 ${method === m.id ? 'bg-white text-secondary' : m.color
+                                    }`}>
+                                    <m.icon size={24} />
                                 </div>
-                                <span className={`text-[10px] font-black uppercase tracking-widest ${method === m.id ? 'text-primary' : 'text-gray-400'}`}>{m.label}</span>
+                                <span className={`text-[11px] font-black uppercase tracking-wider ${method === m.id ? 'text-white' : 'text-secondary/60'
+                                    }`}>{m.label}</span>
+
+                                {method === m.id && (
+                                    <div className="absolute -top-2 -right-2 bg-primary text-white p-1 rounded-full shadow-lg">
+                                        <CheckCircle2 size={16} />
+                                    </div>
+                                )}
                             </button>
                         ))}
                     </div>
 
                     <div className="space-y-6">
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest ml-2">Monto Recibido</label>
-                            <div className="relative">
-                                <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-gray-300">$</span>
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black text-secondary/40 uppercase tracking-widest ml-3">Importe Recibido</label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-8 flex items-center pointer-events-none">
+                                    <span className="text-3xl font-black text-gray-300 transition-colors group-focus-within:text-primary">$</span>
+                                </div>
                                 <input
                                     type="number"
-                                    className="w-full pl-12 pr-8 py-5 bg-[#F4F7FE] border-none rounded-[24px] text-2xl font-black text-secondary outline-none focus:ring-4 focus:ring-primary/5 transition-all"
+                                    className="w-full pl-16 pr-8 py-7 bg-[#F4F7FE] border-2 border-transparent rounded-[32px] text-3xl font-black text-secondary outline-none focus:bg-white focus:border-primary/10 transition-all font-outfit"
                                     value={receivedAmount}
                                     onChange={(e) => setReceivedAmount(e.target.value)}
+                                    autoFocus
                                 />
                             </div>
                         </div>
 
                         {method === 'CASH' && (
-                            <div className="p-6 bg-emerald-50/50 rounded-[28px] border border-emerald-100 flex items-center justify-between animate-in zoom-in duration-300">
-                                <div className="flex items-center gap-3 text-emerald-600">
-                                    <CheckCircle2 size={24} />
-                                    <span className="text-xs font-black uppercase tracking-widest">Cambio para entregar</span>
+                            <div className="p-8 bg-emerald-50 rounded-[32px] border border-emerald-100 flex items-center justify-between animate-in slide-in-from-bottom-4 duration-500 shadow-sm shadow-emerald-100">
+                                <div className="flex items-center gap-4 text-emerald-600">
+                                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
+                                        <Banknote size={24} />
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Cambio a entregar</p>
+                                        <p className="text-xs font-bold">Operación en Efectivo</p>
+                                    </div>
                                 </div>
-                                <p className="text-2xl font-black text-emerald-600">$ {change.toLocaleString()}</p>
+                                <p className="text-4xl font-black text-emerald-600 tracking-tighter">$ {change.toLocaleString()}</p>
                             </div>
                         )}
 
                         {method === 'CREDIT' && (
-                            <div className="p-6 bg-purple-50/50 rounded-[28px] border border-purple-100 flex items-center gap-3 animate-in fade-in duration-300">
-                                <AlertCircle size={24} className="text-purple-600" />
+                            <div className="p-8 bg-indigo-50 rounded-[32px] border border-indigo-100 flex items-center gap-5 animate-in slide-in-from-bottom-4 duration-500 shadow-sm shadow-indigo-100">
+                                <AlertCircle size={32} className="text-indigo-600 flex-shrink-0" />
                                 <div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-purple-600 block">Crédito de Cliente</span>
-                                    <p className="text-[11px] font-medium text-purple-900/60 leading-tight">Esta orden se cargará a la cuenta corriente del cliente seleccionado.</p>
+                                    <span className="text-xs font-black uppercase tracking-[0.2em] text-indigo-600 block mb-1">Crédito Interno</span>
+                                    <p className="text-sm font-medium text-indigo-900/60 leading-tight italic">La transacción se registrará como pendiente de cobro en la cuenta del cliente.</p>
                                 </div>
                             </div>
                         )}
@@ -135,18 +158,23 @@ export function PaymentModal({ total, onClose, onComplete }: PaymentModalProps) 
 
                     <button
                         onClick={handlePayment}
-                        disabled={isProcessing || (method === 'CASH' && parseFloat(receivedAmount) < total)}
-                        className="w-full py-6 bg-secondary text-white rounded-[28px] text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-secondary/40 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                        disabled={isProcessing || (method === 'CASH' && (parseFloat(receivedAmount) || 0) < total)}
+                        className={`w-full py-6 rounded-[32px] text-xs font-black uppercase tracking-[0.4em] transition-all duration-500 flex items-center justify-center gap-4 shadow-2xl relative overflow-hidden group ${isProcessing || (method === 'CASH' && (parseFloat(receivedAmount) || 0) < total)
+                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none'
+                                : 'bg-secondary text-white shadow-secondary/30 hover:shadow-secondary/50 hover:scale-[1.02] active:scale-[0.98]'
+                            }`}
                     >
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+
                         {isProcessing ? (
                             <>
-                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                <span>Autenticando...</span>
+                                <div className="w-6 h-6 border-3 border-secondary/20 border-t-secondary rounded-full animate-spin" />
+                                <span className="animate-pulse">Procesando...</span>
                             </>
                         ) : (
                             <>
-                                Finalizar Cobro
-                                <ArrowRight size={18} />
+                                <span className="relative z-10">Confirmar y Facturar</span>
+                                <ArrowRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
                             </>
                         )}
                     </button>
