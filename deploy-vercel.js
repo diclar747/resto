@@ -76,6 +76,7 @@ console.log('--- Deployment Structure Ready ---');
 
 function copyDir(src, dest) {
     if (!fs.existsSync(src)) return;
+    fs.mkdirSync(dest, { recursive: true });
     const entries = fs.readdirSync(src, { withFileTypes: true });
     for (let entry of entries) {
         const srcPath = path.join(src, entry.name);
