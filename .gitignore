@@ -1,6 +1,7 @@
 node_modules/
 dist/
 bundle/
+*.tsbuildinfo
 .turbo/
 *.env
 .env.local

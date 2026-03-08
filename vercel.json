@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npx prisma generate && echo TSC_START && cd apps/api && npx tsc -p tsconfig.json && echo TSC_OK && cd ../.. && echo DEPLOY_START && node deploy-vercel.js && echo DEPLOY_OK",
+  "buildCommand": "npx prisma generate && cd apps/api && rm -rf dist tsconfig.tsbuildinfo && npx tsc -p tsconfig.json && cd ../.. && node deploy-vercel.js",
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "framework": null,
