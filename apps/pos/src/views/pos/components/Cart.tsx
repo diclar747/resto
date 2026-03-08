@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { useCartStore } from '../../../stores/cart.store';
-import { useAuthStore } from '../../../stores/auth.store';
 import api from '../../../api/client';
 import toast from 'react-hot-toast';
 import { Minus, Plus, Trash2, Send, ShoppingBag, CreditCard } from 'lucide-react';
 import { PaymentModal } from './PaymentModal';
 
 export function Cart() {
-  const { items, removeItem, updateQuantity, clear, getSubtotal, getItemCount, tableId, orderType, notes, setOrderNotes } = useCartStore();
+  const { items, removeItem, updateQuantity, clear, getSubtotal, getItemCount, tableId, activeOrderId, orderType, notes, setOrderNotes } = useCartStore();
   const [loading, setLoading] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
 
@@ -21,14 +20,22 @@ export function Cart() {
 
     setLoading(true);
     try {
-      const { data: order } = await api.post('/orders', {
-        type: orderType,
-        tableId,
-        notes,
-        status: isPaid ? 'closed' : 'open'
-      });
+      let orderId = activeOrderId;
+      let orderNumber: number | undefined;
 
-      await api.post(`/orders/${order.id}/items`, {
+      if (!orderId) {
+        // Create new order
+        const { data: order } = await api.post('/orders', {
+          type: orderType,
+          tableId,
+          notes,
+        });
+        orderId = order.id;
+        orderNumber = order.orderNumber;
+      }
+
+      // Add items to order (new or existing)
+      await api.post(`/orders/${orderId}/items`, {
         items: items.map((item) => ({
           productVariantId: item.productVariantId,
           quantity: item.quantity,
@@ -40,18 +47,21 @@ export function Cart() {
 
       if (isPaid && paymentData) {
         await api.post('/payments', {
-          orderId: order.id,
+          orderId,
           method: paymentData.method,
           amount: paymentData.amount,
           receivedAmount: paymentData.receivedAmount,
         });
+        // Close the order so the table gets freed
+        await api.post(`/orders/${orderId}/close`);
       } else {
-        await api.post(`/orders/${order.id}/send-to-kitchen`);
+        await api.post(`/orders/${orderId}/send-to-kitchen`);
       }
 
-      toast.success(isPaid ? `Factura #${order.orderNumber} cobrada` : `Orden #${order.orderNumber} enviada`, {
+      const label = orderNumber ? `#${orderNumber}` : '';
+      toast.success(isPaid ? `Factura ${label} cobrada` : `Orden ${label} enviada a cocina`, {
         icon: isPaid ? '💰' : '🔥',
-        style: { borderRadius: '16px', background: 'var(--secondary)', color: '#fff' }
+        style: { borderRadius: '16px', background: '#001F3D', color: '#fff' }
       });
 
       clear();
@@ -78,6 +88,12 @@ export function Cart() {
             {getItemCount()}
           </span>
         </div>
+        {activeOrderId && (
+          <div className="mt-3 flex items-center gap-2 px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-2xl">
+            <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+            <span className="text-[10px] font-black text-amber-700 uppercase tracking-widest">Añadiendo a orden existente</span>
+          </div>
+        )}
       </div>
 
       {/* Items */}

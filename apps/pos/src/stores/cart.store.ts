@@ -15,6 +15,7 @@ interface CartItem {
 interface CartState {
   items: CartItem[];
   tableId: string | null;
+  activeOrderId: string | null;
   orderType: 'dine_in' | 'takeaway' | 'delivery';
   notes: string;
 
@@ -23,6 +24,7 @@ interface CartState {
   updateQuantity: (id: string, quantity: number) => void;
   updateNotes: (id: string, notes: string) => void;
   setTable: (tableId: string | null) => void;
+  setActiveOrder: (orderId: string | null) => void;
   setOrderType: (type: 'dine_in' | 'takeaway' | 'delivery') => void;
   setOrderNotes: (notes: string) => void;
   clear: () => void;
@@ -36,6 +38,7 @@ let nextId = 1;
 export const useCartStore = create<CartState>()((set, get) => ({
   items: [],
   tableId: null,
+  activeOrderId: null,
   orderType: 'dine_in',
   notes: '',
 
@@ -65,9 +68,10 @@ export const useCartStore = create<CartState>()((set, get) => ({
   },
 
   setTable: (tableId) => set({ tableId }),
+  setActiveOrder: (orderId) => set({ activeOrderId: orderId }),
   setOrderType: (type) => set({ orderType: type }),
   setOrderNotes: (notes) => set({ notes }),
-  clear: () => set({ items: [], tableId: null, notes: '', orderType: 'dine_in' }),
+  clear: () => set({ items: [], tableId: null, activeOrderId: null, notes: '', orderType: 'dine_in' }),
 
   getSubtotal: () => {
     return get().items.reduce((total, item) => {
