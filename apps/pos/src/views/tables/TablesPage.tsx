@@ -82,7 +82,7 @@ export function TablesPage() {
           </div>
 
           <div className="flex p-1.5 bg-white rounded-2xl shadow-sm border border-gray-100">
-            {zones.map((zone: string) => (
+            {(zones as string[]).map((zone: string) => (
               <button
                 key={zone}
                 onClick={() => setSelectedZone(zone)}
