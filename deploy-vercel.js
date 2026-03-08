@@ -14,6 +14,33 @@ execSync([
     '--external:bufferutil --external:utf-8-validate',
 ].join(' '), { stdio: 'inherit' });
 
+// Copy Prisma client into api/ dir so it's available at runtime
+console.log('--- Copy Prisma Client into api/ ---');
+const apiDir = path.join(__dirname, 'api');
+copyDir(
+    path.join(__dirname, 'node_modules', '.prisma'),
+    path.join(apiDir, 'node_modules', '.prisma')
+);
+copyDir(
+    path.join(__dirname, 'node_modules', '@prisma', 'client'),
+    path.join(apiDir, 'node_modules', '@prisma', 'client')
+);
+// Copy prisma schema (needed by Prisma client at runtime)
+copyDir(
+    path.join(__dirname, 'prisma'),
+    path.join(apiDir, 'prisma')
+);
+// Remove non-Linux engines to reduce size
+const pcDir = path.join(apiDir, 'node_modules', '.prisma', 'client');
+if (fs.existsSync(pcDir)) {
+    for (const f of fs.readdirSync(pcDir)) {
+        if (f.endsWith('.dll.node') || f.endsWith('.dylib.node') || f.includes('wasm') || f.includes('edge')) {
+            fs.unlinkSync(path.join(pcDir, f));
+            console.log(`  Removed ${f}`);
+        }
+    }
+}
+
 // Ensure root dist exists
 const rootDist = path.join(__dirname, 'dist');
 if (fs.existsSync(rootDist)) {
