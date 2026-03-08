@@ -1,6 +1,7 @@
 import { useCartStore } from '../../../stores/cart.store';
 import toast from 'react-hot-toast';
 import { Plus } from 'lucide-react';
+import { formatCurrency } from '../../../utils/currency';
 
 interface Product {
   id: string;
@@ -96,7 +97,7 @@ export function ProductGrid({ products }: { products: Product[] }) {
             <div className="mt-4 pt-4 border-t border-gray-50 flex items-end justify-between">
               {product.variants.length === 1 ? (
                 <p className="text-[var(--primary)] font-black text-xl mb-[-4px]">
-                  ${Number(product.variants[0].price).toLocaleString('es-AR')}
+                  {formatCurrency(product.variants[0].price)}
                 </p>
               ) : (
                 <div className="flex flex-col w-full gap-2">
@@ -111,7 +112,7 @@ export function ProductGrid({ products }: { products: Product[] }) {
                         }}
                         className="text-[10px] px-2.5 py-1.5 rounded-xl bg-[var(--primary-light)] text-[var(--primary)] font-black hover:bg-[var(--primary)] hover:text-white transition-all shadow-sm"
                       >
-                        ${Number(v.price).toLocaleString('es-AR')}
+                        {formatCurrency(v.price)}
                       </button>
                     ))}
                   </div>

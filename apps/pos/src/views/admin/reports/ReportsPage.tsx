@@ -11,6 +11,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area, PieChart, Pie, Cell, LineChart, Line
 } from 'recharts';
+import { formatCurrency, formatCurrencyShort } from '../../../utils/currency';
 
 const COLORS = ['#004AAD', '#00C2FF', '#FFB800', '#FF4D4D', '#2ECC71'];
 
@@ -102,7 +103,7 @@ export function ReportsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <KpiCard
           title="Ingresos Totales"
-          value={`$${Number(salesData?.totalRevenue || 0).toLocaleString('es-AR')}`}
+          value={formatCurrency(salesData?.totalRevenue || 0)}
           trend="+12.5%"
           positive={true}
           icon={DollarSign}
@@ -118,7 +119,7 @@ export function ReportsPage() {
         />
         <KpiCard
           title="Ticket Promedio"
-          value={`$${Number(salesData?.totalOrders > 0 ? (salesData.totalRevenue / salesData.totalOrders) : 0).toLocaleString('es-AR')}`}
+          value={formatCurrency(salesData?.totalOrders > 0 ? (salesData.totalRevenue / salesData.totalOrders) : 0)}
           trend="-2.1%"
           positive={false}
           icon={TrendingUp}
@@ -169,7 +170,7 @@ export function ReportsPage() {
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 10, fontWeight: 700, fill: '#A3AED0' }}
-                  tickFormatter={(val) => `$${val}`}
+                  tickFormatter={(val) => formatCurrencyShort(val)}
                 />
                 <Tooltip
                   contentStyle={{
@@ -261,7 +262,7 @@ export function ReportsPage() {
                   <p className="text-[10px] font-bold text-text-secondary uppercase">{p.variantName}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-black text-primary">${Number(p.revenue).toLocaleString('es-AR')}</p>
+                  <p className="text-sm font-black text-primary">{formatCurrency(p.revenue)}</p>
                   <p className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">{p.quantity} Unidades</p>
                 </div>
               </div>

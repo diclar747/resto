@@ -6,6 +6,7 @@ import {
   ArrowLeft, MapPin, Phone, User, Package,
   CheckCircle, Bike, Clock, Navigation, Receipt
 } from 'lucide-react';
+import { formatCurrency } from '../../utils/currency';
 
 const steps = [
   { key: 'assigned', label: 'Asignado', icon: Package },
@@ -214,7 +215,7 @@ export function DeliveryDetailPage() {
                   <p className="text-xs text-orange-600 mt-0.5">Nota: {item.notes}</p>
                 )}
               </div>
-              <p className="text-sm font-black text-secondary">${Number(item.subtotal || 0).toLocaleString('es-AR')}</p>
+              <p className="text-sm font-black text-secondary">{formatCurrency(item.subtotal || 0)}</p>
             </div>
           )) || (
             <p className="text-sm text-text-secondary text-center py-4">Sin items disponibles</p>
@@ -224,7 +225,7 @@ export function DeliveryDetailPage() {
         {delivery.order?.total && (
           <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
             <span className="text-sm font-black text-secondary uppercase tracking-widest">Total</span>
-            <span className="text-xl font-black text-primary">${Number(delivery.order.total).toLocaleString('es-AR')}</span>
+            <span className="text-xl font-black text-primary">{formatCurrency(delivery.order.total)}</span>
           </div>
         )}
       </div>

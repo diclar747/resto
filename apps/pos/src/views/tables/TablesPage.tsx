@@ -11,6 +11,7 @@ import {
   CreditCard, Ban, Bell, Unlock, CalendarCheck
 } from 'lucide-react';
 import { PaymentModal } from '../pos/components/PaymentModal';
+import { formatCurrency } from '../../utils/currency';
 
 const statusColors: Record<string, { bg: string; text: string; border: string; glow: string; chair: string }> = {
   free: { bg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-200', glow: '#10b981', chair: '#10b981' },
@@ -171,7 +172,7 @@ export function TablesPage() {
   const handleFreeTable = async () => {
     const orderTotal = activeOrder?.total ? Number(activeOrder.total) : 0;
     const msg = orderTotal > 0
-      ? `¿Anular pedido de $${orderTotal.toLocaleString('es-AR')} y liberar Mesa ${selectedTable.number}?`
+      ? `¿Anular pedido de ${formatCurrency(orderTotal)} y liberar Mesa ${selectedTable.number}?`
       : `¿Liberar Mesa ${selectedTable.number}?`;
 
     if (!confirm(msg)) return;
@@ -417,7 +418,7 @@ export function TablesPage() {
                       )}
                     </div>
                     <p className="text-4xl font-black tracking-tight">
-                      ${activeOrder?.total ? Number(activeOrder.total).toLocaleString('es-AR') : '0'}
+                      {activeOrder?.total ? formatCurrency(activeOrder.total) : '₲ 0'}
                     </p>
                     <div className="flex items-center gap-4 mt-2">
                       <span className="text-xs font-medium opacity-60">
@@ -450,7 +451,7 @@ export function TablesPage() {
                                 )}
                               </div>
                             </div>
-                            <p className="text-sm font-black text-secondary">${Number(item.subtotal || 0).toLocaleString('es-AR')}</p>
+                            <p className="text-sm font-black text-secondary">{formatCurrency(item.subtotal || 0)}</p>
                           </div>
                         ))}
                       </div>

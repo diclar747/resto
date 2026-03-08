@@ -5,6 +5,7 @@ import {
   DollarSign, ShoppingCart, Users, TrendingUp, Clock, ArrowUpRight,
   ArrowDownRight, Wallet, Filter, Calendar, ChefHat
 } from 'lucide-react';
+import { formatCurrency } from '../../../utils/currency';
 
 export function DashboardPage() {
   const branchId = useAuthStore((s) => s.user?.branchId);
@@ -29,8 +30,8 @@ export function DashboardPage() {
     {
       label: 'Ventas Netas',
       value: summary?.sales?.totals?.revenue
-        ? `$${Number(summary.sales.totals.revenue).toLocaleString('es-AR')}`
-        : '$0',
+        ? formatCurrency(summary.sales.totals.revenue)
+        : '₲ 0',
       change: '+12.5%',
       isPositive: true,
       icon: DollarSign,
@@ -47,8 +48,8 @@ export function DashboardPage() {
     {
       label: 'Ticket Promedio',
       value: summary?.sales?.totals?.averageTicket
-        ? `$${Number(summary.sales.totals.averageTicket).toLocaleString('es-AR')}`
-        : '$0',
+        ? formatCurrency(summary.sales.totals.averageTicket)
+        : '₲ 0',
       change: '-2.1%',
       isPositive: false,
       icon: TrendingUp,
@@ -128,7 +129,7 @@ export function DashboardPage() {
                 <div key={pm.method} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-black text-secondary uppercase tracking-wider">{pm.method}</span>
-                    <span className="text-sm font-black text-secondary">${Number(pm.total).toLocaleString('es-AR')}</span>
+                    <span className="text-sm font-black text-secondary">{formatCurrency(pm.total)}</span>
                   </div>
                   <div className="w-full bg-gray-50 rounded-full h-3 overflow-hidden">
                     <div
@@ -176,7 +177,7 @@ export function DashboardPage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-black text-primary">${Number(p.revenue).toLocaleString('es-AR')}</p>
+                    <p className="text-sm font-black text-primary">{formatCurrency(p.revenue)}</p>
                     <p className="text-[10px] font-bold text-success uppercase tracking-wider">Altos Márgenes</p>
                   </div>
                 </div>

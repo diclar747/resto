@@ -4,6 +4,7 @@ import api from '../../../api/client';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
 import { DollarSign, ArrowUpCircle, ArrowDownCircle, Lock, Unlock, History, Plus, X, Wallet, TrendingUp, TrendingDown, Clock, Calendar } from 'lucide-react';
+import { formatCurrency } from '../../../utils/currency';
 
 export function CashRegisterPage() {
   const branchId = useAuthStore((s) => s.user?.branchId);
@@ -131,8 +132,7 @@ export function CashRegisterPage() {
             <div className="p-8 space-y-2">
               <span className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest">Apertura</span>
               <div className="text-3xl font-black text-[var(--text-main)] ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
-                <span className="text-xl mr-1 opacity-50">$</span>
-                {Number(activeRegister.openingAmount).toLocaleString('es-AR')}
+                {formatCurrency(activeRegister.openingAmount)}
               </div>
               <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-muted)]">
                 <Calendar size={14} />
@@ -143,8 +143,7 @@ export function CashRegisterPage() {
             <div className="p-8 space-y-2">
               <span className="text-xs font-bold text-green-500 uppercase tracking-widest">Ventas Efectivo</span>
               <div className="text-3xl font-black text-green-600">
-                <span className="text-xl mr-1 opacity-50">$</span>
-                {Number(activeRegister.cashSales || 0).toLocaleString('es-AR')}
+                {formatCurrency(activeRegister.cashSales || 0)}
               </div>
               <div className="flex items-center gap-1.5 text-xs font-bold text-green-500/70">
                 <TrendingUp size={14} />
@@ -155,8 +154,7 @@ export function CashRegisterPage() {
             <div className="p-8 space-y-2 bg-gradient-to-br from-blue-50/50 to-transparent">
               <span className="text-xs font-bold text-[var(--primary)] uppercase tracking-widest">Saldo en Caja</span>
               <div className="text-4xl font-black text-[var(--primary)]">
-                <span className="text-xl mr-1 opacity-50">$</span>
-                {Number(activeRegister.currentAmount || activeRegister.openingAmount).toLocaleString('es-AR')}
+                {formatCurrency(activeRegister.currentAmount || activeRegister.openingAmount)}
               </div>
               <p className="text-xs font-bold text-[var(--text-muted)]">Actualizado en tiempo real</p>
             </div>
@@ -212,7 +210,7 @@ export function CashRegisterPage() {
                     </td>
                     <td className={`px-6 py-4 text-right font-black text-base ${m.type === 'cash_out' ? 'text-red-500' : 'text-green-600'
                       }`}>
-                      {m.type === 'cash_out' ? '-' : '+'}${Number(m.amount).toLocaleString('es-AR')}
+                      {m.type === 'cash_out' ? '-' : '+'}{formatCurrency(m.amount)}
                     </td>
                   </tr>
                 ))}
@@ -259,8 +257,7 @@ export function CashRegisterPage() {
                   <div className="space-y-1">
                     <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">Saldo de Cierre</p>
                     <p className="text-xl font-black text-[var(--text-main)]">
-                      <span className="text-sm mr-0.5 opacity-50">$</span>
-                      {Number(r.closingAmount || r.openingAmount).toLocaleString('es-AR')}
+                      {formatCurrency(r.closingAmount || r.openingAmount)}
                     </p>
                   </div>
                   <button className="p-2 text-[var(--primary)] hover:bg-blue-50 rounded-xl transition-colors">
@@ -317,11 +314,11 @@ export function CashRegisterPage() {
                 <div className="space-y-1.5">
                   <label className="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest px-1">Monto del Movimiento</label>
                   <div className="relative">
-                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-xl font-bold text-[var(--text-muted)]">$</div>
+                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-xl font-bold text-[var(--text-muted)]">₲</div>
                     <input
                       className="w-full pl-12 pr-6 py-4 bg-gray-50 border-2 border-transparent focus:border-[var(--primary)] focus:bg-white rounded-2xl text-2xl font-black outline-none transition-all placeholder:text-gray-300"
-                      placeholder="0.00"
-                      type="number"
+                      placeholder="0"
+                      inputMode="numeric"
                       value={movementForm.amount}
                       onChange={(e) => setMovementForm({ ...movementForm, amount: e.target.value })}
                     />

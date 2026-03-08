@@ -6,6 +6,7 @@ import {
   ShoppingCart, DollarSign, Receipt, CreditCard,
   Clock, ArrowUpRight, Wallet, TrendingUp
 } from 'lucide-react';
+import { formatCurrency } from '../../utils/currency';
 
 export function CashierDashboard() {
   const navigate = useNavigate();
@@ -30,9 +31,9 @@ export function CashierDashboard() {
   const avgTicket = summary?.sales?.totals?.averageTicket || 0;
 
   const stats = [
-    { label: 'Ventas del Turno', value: `$${Number(revenue).toLocaleString('es-AR')}`, icon: DollarSign, color: 'from-blue-600 to-indigo-600' },
+    { label: 'Ventas del Turno', value: formatCurrency(revenue), icon: DollarSign, color: 'from-blue-600 to-indigo-600' },
     { label: 'Pedidos Procesados', value: orderCount, icon: Receipt, color: 'from-cyan-500 to-blue-500' },
-    { label: 'Ticket Promedio', value: `$${Number(avgTicket).toLocaleString('es-AR')}`, icon: TrendingUp, color: 'from-purple-500 to-indigo-500' },
+    { label: 'Ticket Promedio', value: formatCurrency(avgTicket), icon: TrendingUp, color: 'from-purple-500 to-indigo-500' },
   ];
 
   return (
@@ -105,7 +106,7 @@ export function CashierDashboard() {
                 <div key={pm.method} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-black text-secondary uppercase tracking-wider">{pm.method}</span>
-                    <span className="text-sm font-black text-secondary">${Number(pm.total).toLocaleString('es-AR')}</span>
+                    <span className="text-sm font-black text-secondary">{formatCurrency(pm.total)}</span>
                   </div>
                   <div className="w-full bg-gray-50 rounded-full h-3 overflow-hidden">
                     <div className="bg-gradient-to-r from-primary to-blue-400 h-3 rounded-full" style={{ width: `${pm.percentage}%` }} />
@@ -146,7 +147,7 @@ export function CashierDashboard() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-black text-primary">${Number(order.total).toLocaleString('es-AR')}</p>
+                    <p className="text-sm font-black text-primary">{formatCurrency(order.total)}</p>
                     <p className="text-[10px] font-bold text-text-secondary flex items-center gap-1 justify-end">
                       <Clock size={10} />
                       {new Date(order.createdAt).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}

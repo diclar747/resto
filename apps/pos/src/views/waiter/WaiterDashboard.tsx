@@ -6,6 +6,7 @@ import {
   Clock, AlertCircle, CheckCircle, ChefHat,
   ShoppingCart, Grid3X3, Receipt, Plus, Bell
 } from 'lucide-react';
+import { formatCurrency } from '../../utils/currency';
 
 const statusConfig: Record<string, { color: string; bg: string; icon: any; label: string }> = {
   open: { color: 'text-blue-700', bg: 'bg-blue-100', icon: Clock, label: 'Abierta' },
@@ -227,7 +228,7 @@ export function WaiterDashboard() {
                       <Clock size={12} />
                       {new Date(order.createdAt).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
                     </span>
-                    <span className="text-sm font-black text-primary">${Number(order.total).toLocaleString('es-AR')}</span>
+                    <span className="text-sm font-black text-primary">{formatCurrency(order.total)}</span>
                   </div>
                 </div>
               );

@@ -7,6 +7,7 @@ import {
   ArrowUpRight, ArrowDownRight, ChefHat, Clock,
   ShoppingBag, UtensilsCrossed, Package, BarChart3
 } from 'lucide-react';
+import { formatCurrency } from '../../utils/currency';
 
 export function ManagerDashboard() {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ export function ManagerDashboard() {
   const stats = [
     {
       label: 'Ventas del Día',
-      value: summary?.sales?.totals?.revenue ? `$${Number(summary.sales.totals.revenue).toLocaleString('es-AR')}` : '$0',
+      value: summary?.sales?.totals?.revenue ? formatCurrency(summary.sales.totals.revenue) : '₲ 0',
       change: '+12.5%', isPositive: true,
       icon: DollarSign, color: 'from-blue-600 to-indigo-600',
     },
@@ -47,7 +48,7 @@ export function ManagerDashboard() {
     },
     {
       label: 'Ticket Promedio',
-      value: summary?.sales?.totals?.averageTicket ? `$${Number(summary.sales.totals.averageTicket).toLocaleString('es-AR')}` : '$0',
+      value: summary?.sales?.totals?.averageTicket ? formatCurrency(summary.sales.totals.averageTicket) : '₲ 0',
       change: '-2.1%', isPositive: false,
       icon: TrendingUp, color: 'from-purple-500 to-indigo-500',
     },
@@ -144,7 +145,7 @@ export function ManagerDashboard() {
                       <p className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">{p.quantity} vendidos</p>
                     </div>
                   </div>
-                  <p className="text-sm font-black text-primary">${Number(p.revenue).toLocaleString('es-AR')}</p>
+                  <p className="text-sm font-black text-primary">{formatCurrency(p.revenue)}</p>
                 </div>
               ))
             ) : (
@@ -192,7 +193,7 @@ export function ManagerDashboard() {
                       <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${statusColors[order.status] || 'bg-gray-100 text-gray-600'}`}>
                         {statusLabels[order.status] || order.status}
                       </span>
-                      <p className="text-sm font-black text-secondary">${Number(order.total).toLocaleString('es-AR')}</p>
+                      <p className="text-sm font-black text-secondary">{formatCurrency(order.total)}</p>
                     </div>
                   </div>
                 );

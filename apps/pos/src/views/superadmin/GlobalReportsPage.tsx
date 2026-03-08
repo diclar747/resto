@@ -8,6 +8,7 @@ import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip,
   ResponsiveContainer, CartesianGrid, Legend
 } from 'recharts';
+import { formatCurrency, formatCurrencyShort } from '../../utils/currency';
 
 const COLORS = ['#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
@@ -77,9 +78,9 @@ export function GlobalReportsPage() {
       {/* Aggregate Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
-          { label: 'Ingresos Totales', value: `$${totalRevenue.toLocaleString('es-AR')}`, icon: DollarSign, color: 'from-indigo-600 to-purple-600' },
-          { label: 'Pedidos Totales', value: totalOrders.toLocaleString('es-AR'), icon: ShoppingCart, color: 'from-cyan-500 to-blue-500' },
-          { label: 'Ticket Promedio', value: `$${avgTicket.toLocaleString('es-AR')}`, icon: TrendingUp, color: 'from-emerald-500 to-teal-500' },
+          { label: 'Ingresos Totales', value: formatCurrency(totalRevenue), icon: DollarSign, color: 'from-indigo-600 to-purple-600' },
+          { label: 'Pedidos Totales', value: totalOrders.toLocaleString('es-PY'), icon: ShoppingCart, color: 'from-cyan-500 to-blue-500' },
+          { label: 'Ticket Promedio', value: formatCurrency(avgTicket), icon: TrendingUp, color: 'from-emerald-500 to-teal-500' },
         ].map((stat) => {
           const Icon = stat.icon;
           return (
@@ -112,10 +113,10 @@ export function GlobalReportsPage() {
             <LineChart data={comparisonData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="day" tick={{ fontSize: 11, fontWeight: 700 }} />
-              <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
+              <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => formatCurrencyShort(v)} />
               <Tooltip
                 contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}
-                formatter={(value: number) => [`$${value.toLocaleString('es-AR')}`, '']}
+                formatter={(value: number) => [formatCurrency(value), '']}
               />
               <Legend />
               {activeBranches.map((b: any, i: number) => (
@@ -168,9 +169,9 @@ export function GlobalReportsPage() {
                     </div>
                   </td>
                   <td className="py-4 px-4 text-sm font-black text-secondary">{branch.name}</td>
-                  <td className="py-4 px-4 text-sm font-black text-secondary text-right">${branch.ingresos.toLocaleString('es-AR')}</td>
+                  <td className="py-4 px-4 text-sm font-black text-secondary text-right">{formatCurrency(branch.ingresos)}</td>
                   <td className="py-4 px-4 text-sm font-bold text-text-secondary text-right">{branch.pedidos}</td>
-                  <td className="py-4 px-4 text-sm font-bold text-text-secondary text-right">${branch.ticketPromedio.toLocaleString('es-AR')}</td>
+                  <td className="py-4 px-4 text-sm font-bold text-text-secondary text-right">{formatCurrency(branch.ticketPromedio)}</td>
                   <td className="py-4 px-4 text-right">
                     <span className="text-xs font-black text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">
                       {totalRevenue > 0 ? ((branch.ingresos / totalRevenue) * 100).toFixed(1) : 0}%

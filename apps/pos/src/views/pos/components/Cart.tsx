@@ -4,11 +4,14 @@ import api from '../../../api/client';
 import toast from 'react-hot-toast';
 import { Minus, Plus, Trash2, Send, ShoppingBag, CreditCard } from 'lucide-react';
 import { PaymentModal } from './PaymentModal';
+import { ReceiptModal } from './ReceiptModal';
+import { formatCurrency } from '../../../utils/currency';
 
 export function Cart() {
   const { items, removeItem, updateQuantity, clear, getSubtotal, getItemCount, tableId, activeOrderId, orderType, notes, setOrderNotes } = useCartStore();
   const [loading, setLoading] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
+  const [receiptData, setReceiptData] = useState<any>(null);
 
   const subtotal = getSubtotal();
 
@@ -24,7 +27,6 @@ export function Cart() {
       let orderNumber: number | undefined;
 
       if (!orderId) {
-        // Create new order
         const { data: order } = await api.post('/orders', {
           type: orderType,
           tableId,
@@ -34,7 +36,6 @@ export function Cart() {
         orderNumber = order.orderNumber;
       }
 
-      // Add items to order (new or existing)
       await api.post(`/orders/${orderId}/items`, {
         items: items.map((item) => ({
           productVariantId: item.productVariantId,
@@ -52,14 +53,32 @@ export function Cart() {
           amount: paymentData.amount,
           receivedAmount: paymentData.receivedAmount,
         });
-        // Close the order so the table gets freed
         await api.post(`/orders/${orderId}/close`);
+
+        // Show receipt
+        setReceiptData({
+          orderNumber,
+          type: orderType,
+          items: items.map((item) => ({
+            name: item.productName,
+            variant: item.variantName,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            subtotal: (item.unitPrice + item.modifiers.reduce((s, m) => s + m.priceAdjustment, 0)) * item.quantity,
+          })),
+          subtotal,
+          total: subtotal,
+          paymentMethod: paymentData.method,
+          receivedAmount: paymentData.receivedAmount,
+          changeAmount: paymentData.changeAmount,
+          date: new Date(),
+        });
       } else {
         await api.post(`/orders/${orderId}/send-to-kitchen`);
       }
 
       const label = orderNumber ? `#${orderNumber}` : '';
-      toast.success(isPaid ? `Factura ${label} cobrada` : `Orden ${label} enviada a cocina`, {
+      toast.success(isPaid ? `Venta ${label} cobrada` : `Orden ${label} enviada a cocina`, {
         icon: isPaid ? '💰' : '🔥',
         style: { borderRadius: '16px', background: '#001F3D', color: '#fff' }
       });
@@ -103,7 +122,7 @@ export function Cart() {
             <div className="w-20 h-20 bg-white rounded-[30px] flex items-center justify-center border-4 border-dashed border-gray-100">
               <ShoppingBag size={30} />
             </div>
-            <p className="font-black uppercase tracking-widest text-[10px]">No Items Selected</p>
+            <p className="font-black uppercase tracking-widest text-[10px]">Sin productos</p>
           </div>
         ) : (
           items.map((item) => (
@@ -138,7 +157,7 @@ export function Cart() {
                   </button>
                 </div>
                 <p className="text-sm font-black text-primary italic">
-                  ${(item.unitPrice * item.quantity).toLocaleString('es-AR')}
+                  {formatCurrency(item.unitPrice * item.quantity)}
                 </p>
               </div>
             </div>
@@ -149,7 +168,7 @@ export function Cart() {
       {/* Footer */}
       <div className="p-6 space-y-4 bg-white/80 backdrop-blur-xl border-t border-gray-50">
         <div className="space-y-2">
-          <p className="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em] ml-2">Quick Note</p>
+          <p className="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em] ml-2">Nota Rápida</p>
           <input
             type="text"
             placeholder="Alergias, preferencias..."
@@ -163,8 +182,8 @@ export function Cart() {
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:scale-150 transition-transform duration-700" />
 
           <div className="flex items-center justify-between text-white mb-6">
-            <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Grand Total</span>
-            <span className="text-3xl font-black tracking-tighter italic">${subtotal.toLocaleString('es-AR')}</span>
+            <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Total</span>
+            <span className="text-3xl font-black tracking-tighter italic">{formatCurrency(subtotal)}</span>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -187,7 +206,7 @@ export function Cart() {
 
         {items.length > 0 && (
           <button onClick={clear} className="w-full text-[9px] font-black text-rose-300 uppercase tracking-[0.3em] hover:text-rose-500 transition-all">
-            Clear Order Data
+            Limpiar Pedido
           </button>
         )}
       </div>
@@ -197,6 +216,13 @@ export function Cart() {
           total={subtotal}
           onClose={() => setShowPayment(false)}
           onComplete={(data) => handleCreateOrder(true, data)}
+        />
+      )}
+
+      {receiptData && (
+        <ReceiptModal
+          data={receiptData}
+          onClose={() => setReceiptData(null)}
         />
       )}
     </div>

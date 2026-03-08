@@ -5,6 +5,7 @@ import {
   ArrowUpRight, Activity, Clock
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { formatCurrency, formatCurrencyShort } from '../../utils/currency';
 
 export function SuperAdminDashboard() {
   const { data: branches } = useQuery({
@@ -26,7 +27,7 @@ export function SuperAdminDashboard() {
   const stats = [
     {
       label: 'Ingresos Totales',
-      value: `$${totalRevenue.toLocaleString('es-AR')}`,
+      value: formatCurrency(totalRevenue),
       change: '+18.3%',
       icon: DollarSign,
       color: 'from-indigo-600 to-purple-600',
@@ -126,7 +127,7 @@ export function SuperAdminDashboard() {
                 <YAxis tick={{ fontSize: 11 }} />
                 <Tooltip
                   contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}
-                  formatter={(value: number) => [`$${value.toLocaleString('es-AR')}`, 'Ingresos']}
+                  formatter={(value: number) => [formatCurrency(value), 'Ingresos']}
                 />
                 <Bar dataKey="ingresos" fill="#4f46e5" radius={[8, 8, 0, 0]} />
               </BarChart>
