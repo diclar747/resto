@@ -1,9 +1,11 @@
+import { useState, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/auth.store';
 import {
   LayoutDashboard, UtensilsCrossed, Package, BarChart3, Users, DollarSign,
-  ArrowLeft, LogOut, Settings, Bell, Search, User
+  ArrowLeft, LogOut, Settings, Bell, Search, User, Store, ChevronDown
 } from 'lucide-react';
+import api from '../api/client'; // Import the axios instance
 
 const navItems = [
   { to: '/admin', icon: LayoutDashboard, label: 'Resumen', end: true },
@@ -15,12 +17,31 @@ const navItems = [
 ];
 
 export function AdminLayout() {
-  const { user, logout } = useAuthStore();
+  const { user, logout, setBranch } = useAuthStore();
   const navigate = useNavigate();
+  const [branches, setBranches] = useState<any[]>([]);
+  const [showBranchSelector, setShowBranchSelector] = useState(false);
+
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      fetchBranches();
+    }
+  }, [user]);
+
+  const fetchBranches = async () => {
+    try {
+      const { data } = await api.get('/marketplace/branches');
+      setBranches(data);
+    } catch (error) {
+      console.error('Error fetching branches:', error);
+    }
+  };
+
+  const currentBranchName = branches.find((b: any) => b.id === user?.branchId)?.name || 'Sucursal';
 
   return (
     <div className="h-screen flex bg-[#F4F7FE] overflow-hidden">
-      {/* Sidebar */}
+      {/* Sidebar ... omitted for brevity ... */}
       <aside className="w-[280px] bg-white border-r border-gray-100 flex flex-col z-20 shadow-[20px_0_40px_rgba(0,0,0,0.02)]">
         <div className="p-8">
           <div className="flex items-center gap-3">
@@ -28,7 +49,7 @@ export function AdminLayout() {
               <span className="text-white font-black text-xl italic">R</span>
             </div>
             <div>
-              <h1 className="text-xl font-black text-secondary tracking-tightleading-none">Resto<span className="text-primary italic">POS</span></h1>
+              <h1 className="text-xl font-black text-secondary tracking-tight leading-none">Resto<span className="text-primary italic">POS</span></h1>
               <p className="text-[10px] font-black text-text-secondary uppercase tracking-widest mt-0.5">Control Panel</p>
             </div>
           </div>
@@ -86,13 +107,51 @@ export function AdminLayout() {
       <div className="flex-1 flex flex-col relative overflow-hidden">
         {/* Top Navbar */}
         <header className="h-20 bg-white/70 backdrop-blur-md border-b border-gray-100 flex items-center justify-between px-8 z-10 sticky top-0">
-          <div className="relative group max-w-md w-full hidden md:block">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-primary transition-colors" size={18} />
-            <input
-              type="text"
-              placeholder="Buscar mesas, pedidos, clientes..."
-              className="w-full pl-12 pr-4 py-2.5 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-primary/5 focus:border-primary/20 transition-all text-xs font-medium"
-            />
+          <div className="flex items-center gap-6">
+            <div className="relative group max-w-sm w-64 hidden md:block">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-primary transition-colors" size={18} />
+              <input
+                type="text"
+                placeholder="Buscar..."
+                className="w-full pl-12 pr-4 py-2 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-primary/5 focus:border-primary/20 transition-all text-xs font-medium"
+              />
+            </div>
+
+            {/* Branch Switcher */}
+            {user?.role === 'admin' && branches.length > 0 && (
+              <div className="relative">
+                <button
+                  onClick={() => setShowBranchSelector(!showBranchSelector)}
+                  className="flex items-center gap-2 px-4 py-2 bg-primary/5 text-primary border border-primary/10 rounded-xl hover:bg-primary/10 transition-all"
+                >
+                  <Store size={16} />
+                  <span className="text-xs font-black uppercase tracking-widest">{currentBranchName}</span>
+                  <ChevronDown size={14} className={`transition-transform duration-300 ${showBranchSelector ? 'rotate-180' : ''}`} />
+                </button>
+
+                {showBranchSelector && (
+                  <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-100 rounded-2xl shadow-xl z-50 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2">
+                    <p className="px-4 py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">Cambiar Sucursal</p>
+                    {branches.map((b: any) => (
+                      <button
+                        key={b.id}
+                        onClick={() => {
+                          setBranch(b.id);
+                          setShowBranchSelector(false);
+                          window.location.reload();
+                        }}
+                        className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-all hover:bg-gray-50 ${user.branchId === b.id ? 'bg-primary/5 border-l-4 border-primary' : ''}`}
+                      >
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${user.branchId === b.id ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400'}`}>
+                          <Store size={14} />
+                        </div>
+                        <span className={`text-xs font-bold ${user.branchId === b.id ? 'text-primary' : 'text-secondary'}`}>{b.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-4 ml-auto">

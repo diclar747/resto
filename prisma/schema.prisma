@@ -17,6 +17,8 @@ model Branch {
   name      String
   address   String?
   phone     String?
+  whatsapp  String?
+  bannerUrl String?
   timezone  String   @default("America/Argentina/Buenos_Aires")
   currency  String   @default("ARS")
   isActive  Boolean  @default(true)
@@ -35,8 +37,26 @@ model Branch {
   promotions        PromotionBranch[]
   kitchenStations   KitchenStation[]
   reviews           BranchReview[]
+  dailySpecials     DailySpecial[]
 
   @@map("branches")
+}
+
+model DailySpecial {
+  id        String   @id @default(cuid())
+  branchId  String
+  dayOfWeek Int      // 0 = Sunday, 1 = Monday, etc.
+  productId String
+  price     Decimal? @db.Decimal(10, 2)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  branch  Branch  @relation(fields: [branchId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([branchId, dayOfWeek])
+  @@map("daily_specials")
 }
 
 model BranchReview {
@@ -147,6 +167,7 @@ model Product {
   branches       ProductBranch[]
   recipeItems    RecipeItem[]
   comboItems     ComboItem[]
+  dailySpecials  DailySpecial[]
 
   @@map("products")
 }

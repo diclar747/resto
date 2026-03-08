@@ -17,6 +17,7 @@ async function main() {
   await prisma.payment.deleteMany();
   await prisma.cashRegisterMovement.deleteMany();
   await prisma.order.deleteMany();
+  await prisma.branchReview.deleteMany();
 
   // 2. Product and Menu dependencies
   await prisma.productModifierGroup.deleteMany();
@@ -53,6 +54,20 @@ async function main() {
   console.log('Seeding database...');
 
   // 1. Create roles
+  const superAdminRole = await prisma.role.upsert({
+    where: { name: 'superadmin' },
+    update: {},
+    create: {
+      name: 'superadmin',
+      permissions: [
+        'branches.manage', 'branches.view',
+        'users.manage', 'users.view',
+        'reports.view',
+        'audit.view',
+      ],
+    },
+  });
+
   const adminRole = await prisma.role.upsert({
     where: { name: 'admin' },
     update: {},
@@ -71,29 +86,7 @@ async function main() {
         'promotions.view', 'promotions.manage',
         'delivery.view', 'delivery.manage',
         'suppliers.view', 'suppliers.manage',
-        'branches.manage', 'settings.manage',
-      ],
-    },
-  });
-
-  const managerRole = await prisma.role.upsert({
-    where: { name: 'manager' },
-    update: {},
-    create: {
-      name: 'manager',
-      permissions: [
-        'orders.create', 'orders.view', 'orders.edit', 'orders.void', 'orders.discount',
-        'tables.view', 'tables.manage',
-        'kds.view', 'kds.update',
-        'menu.view', 'menu.manage',
-        'inventory.view', 'inventory.manage',
-        'cash.view', 'cash.manage',
-        'users.view',
-        'reports.view',
-        'crm.view', 'crm.manage',
-        'promotions.view', 'promotions.manage',
-        'delivery.view', 'delivery.manage',
-        'suppliers.view', 'suppliers.manage',
+        'settings.manage',
       ],
     },
   });
@@ -143,21 +136,22 @@ async function main() {
     },
   });
 
-  // 2. Create branch
+  // 2. Create branches
   const branch = await prisma.branch.upsert({
     where: { id: 'branch-main' },
     update: {},
     create: {
       id: 'branch-main',
       name: 'Restaurante Principal',
-      address: 'Av. Corrientes 1234, CABA',
+      address: 'Av. Corrientes 1234, Buenos Aires',
       phone: '+5491145678900',
       timezone: 'America/Argentina/Buenos_Aires',
       currency: 'ARS',
       settings: {
         taxRate: 21,
-        receiptHeader: 'Restaurante Demo',
-        receiptFooter: 'Gracias por su visita!',
+        logoUrl: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=200&h=200&fit=crop',
+        headerUrl: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=1200&h=400&fit=crop',
+        description: 'La mejor experiencia gastronómica en el corazón de la ciudad.',
       },
     },
   });
@@ -167,15 +161,16 @@ async function main() {
     update: {},
     create: {
       id: 'branch-pizza',
-      name: 'Pizzería La Toscana',
-      address: 'Calle Falsa 123, CABA',
+      name: 'Bella Napoli - Gourmet Pizza',
+      address: 'Calle Falsa 123, Buenos Aires',
       phone: '+5491100001111',
       timezone: 'America/Argentina/Buenos_Aires',
       currency: 'ARS',
       settings: {
         taxRate: 21,
-        receiptHeader: 'La Toscana Pizza',
-        receiptFooter: '¡La mejor pizza de la ciudad!',
+        logoUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=200&h=200&fit=crop',
+        headerUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1200&h=400&fit=crop',
+        description: 'Auténtica pizza napolitana al horno de leña.',
       },
     },
   });
@@ -185,15 +180,16 @@ async function main() {
     update: {},
     create: {
       id: 'branch-burger',
-      name: 'Burger Boom',
-      address: 'Av. Libertador 4500, CABA',
+      name: 'Burger Craft - Artisan',
+      address: 'Av. Libertador 4500, Buenos Aires',
       phone: '+5491122223333',
       timezone: 'America/Argentina/Buenos_Aires',
       currency: 'ARS',
       settings: {
         taxRate: 21,
-        receiptHeader: 'Burger Boom',
-        receiptFooter: 'Explosión de sabor.',
+        logoUrl: 'https://images.unsplash.com/photo-1571091718767-18b5c1457add?w=200&h=200&fit=crop',
+        headerUrl: 'https://images.unsplash.com/photo-1571091718767-18b5c1457add?w=1200&h=400&fit=crop',
+        description: 'Hamburguesas de autor con los mejores ingredientes locales.',
       },
     },
   });
@@ -203,38 +199,33 @@ async function main() {
     update: {},
     create: {
       id: 'branch-cafe',
-      name: 'Café de la Plaza',
-      address: 'Plaza de Mayo 1, CABA',
+      name: 'The Coffee Lab',
+      address: 'Plaza de Mayo 1, Buenos Aires',
       phone: '+5491144445555',
       timezone: 'America/Argentina/Buenos_Aires',
       currency: 'ARS',
       settings: {
         taxRate: 21,
-        receiptHeader: 'Café de la Plaza',
-        receiptFooter: 'El mejor café de Buenos Aires.',
+        logoUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=200&h=200&fit=crop',
+        headerUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=1200&h=400&fit=crop',
+        description: 'Café de especialidad y pastelería artesanal.',
       },
     },
   });
 
-  // 3. Create admin user
-  const passwordHash = await bcrypt.hash('admin123', 10);
-  const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@restaurante.com' },
-    update: {},
-    create: {
-      email: 'admin@restaurante.com',
-      passwordHash,
-      firstName: 'Admin',
-      lastName: 'Sistema',
-      pin: '0000',
-      branches: {
-        create: {
-          branchId: branch.id,
-          roleId: adminRole.id,
-        },
-      },
-    },
-  });
+  // 2.1 Create Reviews for Marketplace
+  const demoReviews = [
+    { branchId: branchPizza.id, userName: 'Juan Pérez', rating: 5, comment: 'La mejor pizza que he probado!' },
+    { branchId: branchPizza.id, userName: 'Maria G.', rating: 4, comment: 'Muy rica, pero tardó un poquito.' },
+    { branchId: branchBurger.id, userName: 'Carlos M.', rating: 5, comment: 'La hamburguesa Craft es increíble.' },
+    { branchId: branchCafe.id, userName: 'Lucía S.', rating: 5, comment: 'El ambiente es perfecto para trabajar.' },
+  ];
+
+  for (const review of demoReviews) {
+    await prisma.branchReview.create({ data: review });
+  }
+
+  // 3. Create users
 
   // Create waiter user
   const waiterHash = await bcrypt.hash('waiter123', 10);
@@ -296,6 +287,23 @@ async function main() {
     },
   });
 
+  // 3. Create admin user
+  const passwordHash = await bcrypt.hash('admin123', 10);
+  const adminUser = await prisma.user.upsert({
+    where: { email: 'admin@restaurante.com' },
+    update: {},
+    create: {
+      email: 'admin@restaurante.com',
+      passwordHash,
+      firstName: 'Admin',
+      lastName: 'Sistema',
+      pin: '0000',
+      branches: {
+        create: { branchId: branch.id, roleId: adminRole.id },
+      },
+    },
+  });
+
   // Create superadmin user
   const superHash = await bcrypt.hash('super123', 10);
   await prisma.user.upsert({
@@ -310,27 +318,7 @@ async function main() {
       branches: {
         create: {
           branchId: branch.id,
-          roleId: adminRole.id,
-        },
-      },
-    },
-  });
-
-  // Create manager user
-  const managerHash = await bcrypt.hash('manager123', 10);
-  await prisma.user.upsert({
-    where: { email: 'gerente@restaurante.com' },
-    update: {},
-    create: {
-      email: 'gerente@restaurante.com',
-      passwordHash: managerHash,
-      firstName: 'Laura',
-      lastName: 'Gerente',
-      pin: '4444',
-      branches: {
-        create: {
-          branchId: branch.id,
-          roleId: managerRole.id,
+          roleId: superAdminRole.id,
         },
       },
     },

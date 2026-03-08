@@ -92,62 +92,90 @@ export function MarketplacePage({ isDarkMode }: { isDarkMode: boolean }) {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {filteredBranches.map((branch) => (
-                            <div key={branch.id} className={`group relative p-8 rounded-[48px] border transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl ${isDarkMode ? 'bg-white/5 border-white/10 hover:border-primary/30' : 'bg-white border-gray-100 hover:border-primary/10 shadow-sm'
-                                }`}>
-                                <div className="flex justify-between items-start mb-6">
-                                    <div className="w-16 h-16 bg-primary/10 rounded-3xl flex items-center justify-center text-primary">
-                                        <Store size={32} />
+                        {filteredBranches.map((branch) => {
+                            const settings = branch.settings || {};
+                            return (
+                                <div key={branch.id} className={`group relative rounded-[48px] border transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl overflow-hidden ${isDarkMode ? 'bg-white/5 border-white/10 hover:border-primary/30' : 'bg-white border-gray-100 hover:border-primary/10 shadow-sm'
+                                    }`}>
+                                    {/* Header Image */}
+                                    <div className="h-40 w-full relative overflow-hidden">
+                                        <img
+                                            src={settings.headerUrl || 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&q=80'}
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                            alt={branch.name}
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                        <div className="absolute bottom-4 left-6 flex items-center gap-3">
+                                            <div className="w-12 h-12 rounded-2xl border-2 border-white shadow-lg overflow-hidden bg-white">
+                                                <img
+                                                    src={settings.logoUrl || 'https://via.placeholder.com/100'}
+                                                    className="w-full h-full object-cover"
+                                                    alt="logo"
+                                                />
+                                            </div>
+                                            <div className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest bg-emerald-500 text-white`}>
+                                                Abierto
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${isDarkMode ? 'bg-emerald-500/10 text-emerald-400' : 'bg-success/10 text-success'}`}>
-                                        Abierto ahora
-                                    </div>
-                                </div>
 
-                                <div className="space-y-4">
-                                    <h3 className={`text-2xl font-black italic tracking-tight ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
-                                        {branch.name}
-                                    </h3>
-                                    <div className="flex items-center gap-2 text-sm font-bold text-text-secondary">
-                                        <MapPin size={16} className="text-primary" />
-                                        <span className="truncate">{branch.address || 'Ubicación no disponible'}</span>
+                                    <div className="p-8 space-y-4">
+                                        <div className="flex justify-between items-start">
+                                            <h3 className={`text-2xl font-black italic tracking-tight ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
+                                                {branch.name}
+                                            </h3>
+                                            <div className="flex items-center gap-1 bg-amber-400/10 px-3 py-1 rounded-full">
+                                                <Star size={14} className="text-amber-400 fill-amber-400" />
+                                                <span className={`text-xs font-black ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
+                                                    {branch.avgRating?.toFixed(1) || '5.0'}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <p className={`text-xs font-medium leading-relaxed line-clamp-2 ${isDarkMode ? 'text-white/60' : 'text-text-secondary'}`}>
+                                            {settings.description || 'Una experiencia gastronómica única te espera en este local.'}
+                                        </p>
+
+                                        <div className="flex items-center gap-2 text-sm font-bold text-text-secondary">
+                                            <MapPin size={16} className="text-primary" />
+                                            <span className="truncate">{branch.address || 'Ubicación no disponible'}</span>
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-2 pt-2">
+                                            {branch.categories?.map((cat: any) => (
+                                                <span key={cat.id} className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider ${isDarkMode ? 'bg-white/5 text-white/40' : 'bg-gray-100 text-gray-400'}`}>
+                                                    {cat.name}
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
 
-                                    <div className="flex flex-wrap gap-2 pt-2">
-                                        {branch.categories?.map((cat: any) => (
-                                            <span key={cat.id} className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider ${isDarkMode ? 'bg-white/5 text-white/40' : 'bg-gray-100 text-gray-400'}`}>
-                                                {cat.name}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="mt-8 pt-8 border-t border-white/5 flex items-center justify-between gap-4">
-                                    <div className="flex items-center gap-1">
-                                        <Star size={16} className="text-amber-400 fill-amber-400" />
-                                        <span className={`text-sm font-black ${isDarkMode ? 'text-white' : 'text-secondary'}`}>4.8</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        {branch.phone && (
-                                            <a
-                                                href={`https://wa.me/${branch.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${branch.name}, vengo del Marketplace de RestoPOS y me gustaría hacer un pedido.`)}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className={`p-3 rounded-2xl transition-all ${isDarkMode ? 'bg-white/5 text-emerald-400 hover:bg-white/10' : 'bg-success/10 text-success hover:bg-success/20'}`}
+                                    <div className="px-8 pb-8 pt-4 border-t border-white/5 flex items-center justify-between gap-4">
+                                        <div className="text-[10px] font-black uppercase tracking-widest opacity-40">
+                                            {branch.reviewCount || 0} Calificaciones
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            {branch.phone && (
+                                                <a
+                                                    href={`https://wa.me/${branch.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${branch.name}, vengo del Marketplace de RestoPOS y me gustaría hacer un pedido.`)}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className={`p-3 rounded-2xl transition-all ${isDarkMode ? 'bg-white/5 text-emerald-400 hover:bg-white/10' : 'bg-success/10 text-success hover:bg-success/20'}`}
+                                                >
+                                                    <Phone size={18} />
+                                                </a>
+                                            )}
+                                            <button
+                                                onClick={() => window.open(`http://localhost:5175/mesa/MP-${branch.id}`, '_blank')}
+                                                className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all font-outfit"
                                             >
-                                                <Phone size={18} />
-                                            </a>
-                                        )}
-                                        <button
-                                            onClick={() => window.open(`https://resto-qr-menu.vercel.app/mesa/MP-${branch.id}`, '_blank')}
-                                            className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all"
-                                        >
-                                            Ver Menú <ArrowRight size={14} />
-                                        </button>
+                                                Ver Menú <ArrowRight size={14} />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
 

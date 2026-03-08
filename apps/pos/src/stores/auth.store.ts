@@ -19,6 +19,7 @@ interface AuthState {
 
   setAuth: (user: User, accessToken: string, refreshToken: string) => void;
   setTokens: (accessToken: string, refreshToken: string) => void;
+  setBranch: (branchId: string) => void;
   logout: () => void;
   hasPermission: (permission: string) => boolean;
 }
@@ -36,6 +37,11 @@ export const useAuthStore = create<AuthState>()(
 
       setTokens: (accessToken, refreshToken) =>
         set({ accessToken, refreshToken }),
+
+      setBranch: (branchId) =>
+        set((state) => ({
+          user: state.user ? { ...state.user, branchId } : null
+        })),
 
       logout: () =>
         set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false }),

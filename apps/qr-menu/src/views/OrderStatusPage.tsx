@@ -47,13 +47,24 @@ export function OrderStatusPage() {
 
     socket.on('order:ready', () => {
       queryClient.invalidateQueries({ queryKey: ['qr-order-status', tableCode] });
-      // Could trigger a browser notification here if permitted
+
+      if (Notification.permission === 'granted') {
+        new Notification('¡Tu pedido está listo!', {
+          body: 'Ya puedes pasar a retirar tu pedido o un camarero te lo servirá en breve.',
+          icon: '/logo.png'
+        });
+      }
     });
+
+    // Request notification permission on first order
+    if (orders.length > 0 && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
 
     return () => {
       socket.disconnect();
     };
-  }, [table?.id, tableCode, queryClient]);
+  }, [table?.id, tableCode, queryClient, orders.length]);
 
   return (
     <div className="min-h-screen bg-background pb-20">
