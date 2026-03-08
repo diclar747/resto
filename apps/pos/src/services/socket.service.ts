@@ -12,7 +12,9 @@ class SocketService {
     const token = useAuthStore.getState().accessToken;
     const socket = io(`/${namespace}`, {
       auth: { token },
-      transports: ['websocket'],
+      transports: ['polling', 'websocket'],
+      reconnectionAttempts: 3,
+      timeout: 5000,
     });
 
     socket.on('connect', () => {
@@ -21,6 +23,10 @@ class SocketService {
 
     socket.on('disconnect', () => {
       console.log(`Disconnected from /${namespace}`);
+    });
+
+    socket.on('connect_error', (err) => {
+      console.warn(`Socket /${namespace} connection failed:`, err.message);
     });
 
     this.sockets.set(namespace, socket);

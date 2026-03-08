@@ -4,6 +4,7 @@ import { useAuthStore } from '../../stores/auth.store';
 import api from '../../api/client';
 import toast from 'react-hot-toast';
 import { Utensils, Mail, Lock, LogIn, Key, ArrowRight } from 'lucide-react';
+import { getRoleDefaultPath } from '../../utils/role-routing';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
@@ -22,7 +23,7 @@ export function LoginPage() {
         icon: '👋',
         style: { borderRadius: '16px', background: '#001F3D', color: '#fff' }
       });
-      navigate('/pos');
+      navigate(getRoleDefaultPath(data.user.role));
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Error al iniciar sesión');
     } finally {

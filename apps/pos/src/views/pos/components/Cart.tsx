@@ -39,7 +39,12 @@ export function Cart() {
       });
 
       if (isPaid && paymentData) {
-        await api.post(`/orders/${order.id}/payments`, paymentData);
+        await api.post('/payments', {
+          orderId: order.id,
+          method: paymentData.method,
+          amount: paymentData.amount,
+          receivedAmount: paymentData.receivedAmount,
+        });
       } else {
         await api.post(`/orders/${order.id}/send-to-kitchen`);
       }

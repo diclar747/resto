@@ -15,48 +15,52 @@ export function CashRegisterPage() {
     description: '',
   });
 
-  const { data: registers } = useQuery({
-    queryKey: ['cash-registers', branchId],
-    queryFn: () => api.get(`/cash-register?branchId=${branchId}`).then((r) => r.data),
+  const userId = useAuthStore((s) => s.user?.id);
+
+  const { data: currentRegister } = useQuery({
+    queryKey: ['cash-register-current', branchId],
+    queryFn: () => api.get(`/cash-register/current?branchId=${branchId}`).then((r) => r.data),
     enabled: !!branchId,
   });
 
   const { data: movements } = useQuery({
-    queryKey: ['cash-movements', branchId],
-    queryFn: () => api.get(`/cash-register/movements?branchId=${branchId}`).then((r) => r.data),
-    enabled: !!branchId,
+    queryKey: ['cash-movements', currentRegister?.id],
+    queryFn: () => api.get(`/cash-register/${currentRegister.id}/movements`).then((r) => r.data),
+    enabled: !!currentRegister?.id,
   });
+
+  const registers = currentRegister ? [currentRegister] : [];
 
   const openRegister = useMutation({
     mutationFn: (openingAmount: number) =>
-      api.post('/cash-register/open', { branchId, openingAmount }),
+      api.post('/cash-register/open', { branchId, cashierId: userId, openingBalance: openingAmount }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cash-registers'] });
+      queryClient.invalidateQueries({ queryKey: ['cash-register-current'] });
       toast.success('Caja abierta');
     },
     onError: (err: any) => toast.error(err.response?.data?.message || 'Error'),
   });
 
   const closeRegister = useMutation({
-    mutationFn: (id: string) => api.post(`/cash-register/${id}/close`, { branchId }),
+    mutationFn: (id: string) => api.post('/cash-register/close', { registerId: id, actualBalance: 0 }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cash-registers'] });
+      queryClient.invalidateQueries({ queryKey: ['cash-register-current'] });
       toast.success('Caja cerrada');
     },
   });
 
   const addMovement = useMutation({
-    mutationFn: (data: any) => api.post('/cash-register/movements', data),
+    mutationFn: (data: any) => api.post('/cash-register/movement', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cash-movements'] });
-      queryClient.invalidateQueries({ queryKey: ['cash-registers'] });
+      queryClient.invalidateQueries({ queryKey: ['cash-register-current'] });
       setShowMovementForm(false);
       setMovementForm({ type: 'cash_in', amount: '', description: '' });
       toast.success('Movimiento registrado');
     },
   });
 
-  const activeRegister = registers?.find((r: any) => r.status === 'open');
+  const activeRegister = currentRegister?.status === 'open' ? currentRegister : null;
 
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">
@@ -347,10 +351,10 @@ export function CashRegisterPage() {
                 className="flex-[2] py-4 bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] text-white rounded-2xl font-bold shadow-lg shadow-blue-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
                 onClick={() =>
                   addMovement.mutate({
-                    ...movementForm,
+                    registerId: activeRegister?.id,
+                    type: movementForm.type,
                     amount: parseFloat(movementForm.amount),
-                    cashRegisterId: activeRegister?.id,
-                    branchId,
+                    description: movementForm.description,
                   })
                 }
                 disabled={!movementForm.amount || addMovement.isPending}

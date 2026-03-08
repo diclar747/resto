@@ -4,6 +4,7 @@ import { useAuthStore } from '../../stores/auth.store';
 import api from '../../api/client';
 import toast from 'react-hot-toast';
 import { Delete, ArrowLeft, Key, X } from 'lucide-react';
+import { getRoleDefaultPath } from '../../utils/role-routing';
 
 export function PinLoginPage() {
   const [pin, setPin] = useState('');
@@ -31,7 +32,7 @@ export function PinLoginPage() {
       const { data } = await api.post('/auth/pin-login', { pin: pinCode, branchId });
       setAuth(data.user, data.accessToken, data.refreshToken);
       toast.success('¡Acceso concedido!');
-      navigate('/pos');
+      navigate(getRoleDefaultPath(data.user.role));
     } catch {
       toast.error('PIN inválido');
       setPin('');

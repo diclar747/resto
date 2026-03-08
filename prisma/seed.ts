@@ -79,7 +79,8 @@ async function main() {
         'kds.view', 'kds.update',
         'menu.view', 'menu.manage',
         'inventory.view', 'inventory.manage',
-        'cash.view', 'cash.manage',
+        'cash_register:open', 'cash_register:close', 'cash_register:read', 'cash_register:movement',
+        'payments:create', 'payments:read', 'payments:refund',
         'users.view', 'users.manage',
         'reports.view',
         'crm.view', 'crm.manage',
@@ -99,7 +100,8 @@ async function main() {
       permissions: [
         'orders.create', 'orders.view', 'orders.edit', 'orders.discount',
         'tables.view',
-        'cash.view', 'cash.manage',
+        'cash_register:open', 'cash_register:close', 'cash_register:read', 'cash_register:movement',
+        'payments:create', 'payments:read',
         'crm.view',
       ],
     },
@@ -124,6 +126,28 @@ async function main() {
     create: {
       name: 'kitchen',
       permissions: ['kds.view', 'kds.update', 'orders.view'],
+    },
+  });
+
+  const managerRole = await prisma.role.upsert({
+    where: { name: 'manager' },
+    update: {},
+    create: {
+      name: 'manager',
+      permissions: [
+        'orders.create', 'orders.view', 'orders.edit', 'orders.void', 'orders.discount',
+        'tables.view', 'tables.manage',
+        'kds.view', 'kds.update',
+        'menu.view', 'menu.manage',
+        'inventory.view', 'inventory.manage',
+        'cash_register:open', 'cash_register:close', 'cash_register:read', 'cash_register:movement',
+        'payments:create', 'payments:read', 'payments:refund',
+        'reports.view',
+        'crm.view', 'crm.manage',
+        'promotions.view', 'promotions.manage',
+        'delivery.view', 'delivery.manage',
+        'suppliers.view', 'suppliers.manage',
+      ],
     },
   });
 
@@ -339,6 +363,26 @@ async function main() {
         create: {
           branchId: branch.id,
           roleId: driverRole.id,
+        },
+      },
+    },
+  });
+
+  // Create manager user
+  const managerHash = await bcrypt.hash('manager123', 10);
+  await prisma.user.upsert({
+    where: { email: 'gerente@restaurante.com' },
+    update: {},
+    create: {
+      email: 'gerente@restaurante.com',
+      passwordHash: managerHash,
+      firstName: 'Laura',
+      lastName: 'Gerente',
+      pin: '4444',
+      branches: {
+        create: {
+          branchId: branch.id,
+          roleId: managerRole.id,
         },
       },
     },
