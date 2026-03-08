@@ -14,12 +14,14 @@ try {
   m._compile(code, bundlePath);
   handler = m.exports.default || m.exports;
 } catch (e) {
-  let files = [];
+  let files = [], parentFiles = [], taskFiles = [];
   try { files = fs.readdirSync(__dirname); } catch (_) {}
+  try { parentFiles = fs.readdirSync(path.join(__dirname, '..')); } catch (_) {}
+  try { taskFiles = fs.readdirSync('/var/task'); } catch (_) {}
   handler = (req, res) => {
     res.statusCode = 500;
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ loadError: e.message, dirname: __dirname, files }));
+    res.end(JSON.stringify({ loadError: e.message, dirname: __dirname, files, parentFiles, taskFiles }));
   };
 }
 
