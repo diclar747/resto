@@ -13,13 +13,13 @@ const statusConfig: Record<string, { color: string; bg: string; icon: any; label
   ready: { color: 'text-green-700', bg: 'bg-green-100', icon: CheckCircle, label: 'Lista' },
 };
 
-const tableStatusColors: Record<string, string> = {
-  free: 'bg-emerald-100 border-emerald-300 text-emerald-700',
-  occupied: 'bg-blue-100 border-blue-300 text-blue-700',
-  waiting_order: 'bg-yellow-100 border-yellow-300 text-yellow-700',
-  waiting_food: 'bg-orange-100 border-orange-300 text-orange-700',
-  bill_requested: 'bg-rose-100 border-rose-300 text-rose-700',
-  reserved: 'bg-purple-100 border-purple-300 text-purple-700',
+const tableStatusColors: Record<string, { bg: string; text: string; border: string; chair: string }> = {
+  free: { bg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-200', chair: '#10b981' },
+  occupied: { bg: 'bg-rose-50', text: 'text-rose-600', border: 'border-rose-200', chair: '#f43f5e' },
+  waiting_order: { bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-200', chair: '#f59e0b' },
+  waiting_food: { bg: 'bg-orange-50', text: 'text-orange-600', border: 'border-orange-200', chair: '#f97316' },
+  bill_requested: { bg: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-indigo-200', chair: '#6366f1' },
+  reserved: { bg: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-200', chair: '#a855f7' },
 };
 
 const tableStatusLabels: Record<string, string> = {
@@ -30,6 +30,32 @@ const tableStatusLabels: Record<string, string> = {
   bill_requested: 'Pide cuenta',
   reserved: 'Reservada',
 };
+
+function MiniTableSVG({ number, capacity, status }: { number: number; capacity: number; status: string }) {
+  const color = tableStatusColors[status]?.chair || '#9ca3af';
+  const chairCount = Math.min(capacity || 4, 8);
+  const isFree = status === 'free';
+  return (
+    <svg viewBox="0 0 100 100" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="26" fill={isFree ? '#f0fdf4' : '#fff5f5'} stroke={color} strokeWidth="2" />
+      <text x="50" y="54" textAnchor="middle" fontWeight="900" fontSize="16" fill={color} fontFamily="system-ui">{number}</text>
+      {Array.from({ length: chairCount }).map((_, i) => {
+        const angle = (i * (360 / chairCount) - 90) * (Math.PI / 180);
+        const cx = 50 + Math.cos(angle) * 40;
+        const cy = 50 + Math.sin(angle) * 40;
+        return (
+          <circle key={i} cx={cx} cy={cy} r="5" fill={color} opacity={isFree ? 0.2 : 0.4} stroke={color} strokeWidth="1" />
+        );
+      })}
+      {!isFree && (
+        <circle cx="72" cy="28" r="5" fill={color} opacity="0.8">
+          <animate attributeName="r" values="5;7;5" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite" />
+        </circle>
+      )}
+    </svg>
+  );
+}
 
 export function WaiterDashboard() {
   const navigate = useNavigate();
@@ -128,17 +154,24 @@ export function WaiterDashboard() {
             <h3 className="text-lg font-black text-secondary tracking-tight">Estado de Mesas</h3>
           </div>
 
-          <div className="grid grid-cols-4 gap-2">
-            {tables?.slice(0, 16).map((table: any) => (
-              <button
-                key={table.id}
-                onClick={() => navigate('/pos/tables')}
-                className={`aspect-square rounded-2xl border-2 flex flex-col items-center justify-center text-xs font-black transition-all hover:scale-105 ${tableStatusColors[table.status] || 'bg-gray-50 border-gray-200 text-gray-400'}`}
-              >
-                <span className="text-lg">{table.number}</span>
-                <span className="text-[8px] uppercase tracking-wider mt-0.5">{tableStatusLabels[table.status] || table.status}</span>
-              </button>
-            )) || (
+          <div className="grid grid-cols-4 gap-3">
+            {tables?.slice(0, 16).map((table: any) => {
+              const style = tableStatusColors[table.status] || tableStatusColors.free;
+              return (
+                <button
+                  key={table.id}
+                  onClick={() => navigate('/pos/tables')}
+                  className={`rounded-2xl border-2 ${style.border} ${style.bg} p-2 flex flex-col items-center transition-all hover:scale-105 hover:shadow-md`}
+                >
+                  <div className="w-full aspect-square">
+                    <MiniTableSVG number={table.number} capacity={table.capacity || 4} status={table.status} />
+                  </div>
+                  <span className={`text-[8px] font-black uppercase tracking-wider ${style.text}`}>
+                    {tableStatusLabels[table.status] || table.status}
+                  </span>
+                </button>
+              );
+            }) || (
               <p className="col-span-4 text-center text-sm text-text-secondary py-8">Cargando mesas...</p>
             )}
           </div>
