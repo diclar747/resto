@@ -12,8 +12,8 @@ export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
 
   if (!user) return <Navigate to="/login" replace />;
 
-  // Admin bypasses all role checks
-  if (user.role === 'admin') return <>{children}</>;
+  // Admin and SuperAdmin bypass all role checks
+  if (user.role === 'admin' || user.role === 'superadmin') return <>{children}</>;
 
   if (!allowedRoles.includes(user.role)) {
     return <Navigate to={getRoleDefaultPath(user.role)} replace />;

@@ -45,8 +45,8 @@ export function PosPage() {
                 key={type}
                 onClick={() => setOrderType(type)}
                 className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 ${orderType === type
-                    ? 'bg-[var(--secondary)] text-white shadow-lg scale-[1.05]'
-                    : 'text-[var(--text-secondary)] hover:bg-white hover:text-[var(--primary)]'
+                    ? 'bg-secondary text-white shadow-lg scale-[1.05]'
+                    : 'text-text-secondary hover:bg-white hover:text-primary'
                   }`}
               >
                 <Icon size={14} /> {label}
@@ -55,11 +55,11 @@ export function PosPage() {
           </div>
 
           <div className="flex-1 w-full sm:w-auto relative group">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] transition-colors group-focus-within:text-[var(--primary)]" size={18} />
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-text-secondary transition-colors group-focus-within:text-primary" size={18} />
             <input
               type="text"
               placeholder="¿Qué estás buscando?"
-              className="w-full pl-14 pr-6 py-4 bg-white/50 border border-white rounded-[24px] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[var(--primary)]/5 transition-all font-medium text-sm"
+              className="w-full pl-14 pr-6 py-4 bg-white/50 border border-white rounded-[24px] focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all font-medium text-sm"
             />
           </div>
         </div>
@@ -69,8 +69,8 @@ export function PosPage() {
           <button
             onClick={() => setSelectedCategory(null)}
             className={`px-8 py-3 rounded-[20px] text-xs font-black uppercase tracking-widest transition-all duration-300 ${!selectedCategory
-                ? 'bg-[var(--primary)] text-white shadow-[0px_8px_16px_rgba(0,74,173,0.2)]'
-                : 'bg-white text-[var(--text-secondary)] hover:text-[var(--primary)] border border-transparent hover:border-[var(--primary)]/20 shadow-sm'
+                ? 'bg-primary text-white shadow-[0px_8px_16px_rgba(0,74,173,0.2)]'
+                : 'bg-white text-text-secondary hover:text-primary border border-transparent hover:border-primary/20 shadow-sm'
               }`}
           >
             Todos
@@ -80,8 +80,8 @@ export function PosPage() {
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
               className={`px-8 py-3 rounded-[20px] text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300 ${selectedCategory === cat.id
-                  ? 'bg-[var(--primary)] text-white shadow-[0px_8px_16px_rgba(0,74,173,0.2)]'
-                  : 'bg-white text-[var(--text-secondary)] hover:text-[var(--primary)] border border-transparent hover:border-[var(--primary)]/20 shadow-sm'
+                  ? 'bg-primary text-white shadow-[0px_8px_16px_rgba(0,74,173,0.2)]'
+                  : 'bg-white text-text-secondary hover:text-primary border border-transparent hover:border-primary/20 shadow-sm'
                 }`}
             >
               {cat.name}

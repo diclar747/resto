@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Patch, Delete, Body, Param, UseGuards,
+  Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards,
 } from '@nestjs/common';
 import { BranchesService } from './branches.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -12,8 +12,8 @@ export class BranchesController {
   constructor(private branchesService: BranchesService) {}
 
   @Get()
-  findAll() {
-    return this.branchesService.findAll();
+  findAll(@Query('includeInactive') includeInactive?: string) {
+    return this.branchesService.findAll(includeInactive === 'true');
   }
 
   @Get(':id')
@@ -24,6 +24,10 @@ export class BranchesController {
   @Post()
   @RequirePermissions('branches.manage')
   create(@Body() body: any) {
+    if (body.admin) {
+      const { admin, ...branchData } = body;
+      return this.branchesService.createWithAdmin(branchData, admin);
+    }
     return this.branchesService.create(body);
   }
 
