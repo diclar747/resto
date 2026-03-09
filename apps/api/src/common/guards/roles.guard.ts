@@ -32,6 +32,10 @@ export class RolesGuard implements CanActivate {
     }
 
     if (requiredPermissions && requiredPermissions.length > 0) {
+      // SuperAdmin and Admin bypass all permission checks
+      if (user.role === 'superadmin' || user.role === 'admin') {
+        return true;
+      }
       const userPermissions: string[] = user.permissions || [];
       return requiredPermissions.every((perm) => userPermissions.includes(perm));
     }
