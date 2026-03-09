@@ -6,6 +6,12 @@ import { PrismaService } from '../../prisma/prisma.service';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
+  async findAllRoles() {
+    return this.prisma.role.findMany({
+      orderBy: { name: 'asc' },
+    });
+  }
+
   async findAll(branchId?: string) {
     const where = branchId
       ? { branches: { some: { branchId } } }

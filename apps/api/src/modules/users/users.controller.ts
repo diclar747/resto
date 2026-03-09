@@ -17,6 +17,12 @@ export class UsersController {
     return this.usersService.findAll(branchId);
   }
 
+  @Get('roles')
+  @RequirePermissions('users.view')
+  findAllRoles() {
+    return this.usersService.findAllRoles();
+  }
+
   @Get(':id')
   @RequirePermissions('users.view')
   findById(@Param('id') id: string) {
