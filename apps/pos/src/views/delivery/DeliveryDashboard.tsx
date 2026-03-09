@@ -83,7 +83,7 @@ export function DeliveryDashboard() {
   };
 
   return (
-    <div className="p-6 space-y-6 min-h-full">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6 min-h-full">
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3">
         {stats.map((stat) => {
@@ -94,7 +94,7 @@ export function DeliveryDashboard() {
                 <Icon size={20} />
               </div>
               <p className="text-2xl font-black text-secondary">{stat.value}</p>
-              <p className="text-[10px] font-black text-text-secondary uppercase tracking-widest">{stat.label}</p>
+              <p className="text-[10px] font-black text-text-secondary uppercase tracking-wide">{stat.label}</p>
             </div>
           );
         })}

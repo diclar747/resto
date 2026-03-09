@@ -48,14 +48,14 @@ export function GlobalReportsPage() {
   const avgTicket = totalOrders > 0 ? Math.floor(totalRevenue / totalOrders) : 0;
 
   return (
-    <div className="p-8 space-y-8 bg-[#F4F7FE] min-h-full">
+    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-[#F4F7FE] min-h-full">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-secondary tracking-tight">Métricas Globales</h1>
+          <h1 className="text-xl md:text-3xl font-black text-secondary tracking-tight">Métricas Globales</h1>
           <p className="text-text-secondary font-medium mt-1">Análisis comparativo entre sucursales</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <select
             value={selectedBranch}
             onChange={(e) => setSelectedBranch(e.target.value)}
@@ -100,7 +100,7 @@ export function GlobalReportsPage() {
       </div>
 
       {/* Revenue Comparison Chart */}
-      <div className="bg-white rounded-[32px] p-8 shadow-card">
+      <div className="bg-white rounded-[32px] p-4 md:p-8 shadow-card">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600">
             <BarChart3 size={20} />
@@ -140,7 +140,7 @@ export function GlobalReportsPage() {
       </div>
 
       {/* Branch Performance Table */}
-      <div className="bg-white rounded-[32px] p-8 shadow-card">
+      <div className="bg-white rounded-[32px] p-4 md:p-8 shadow-card">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600">
             <TrendingUp size={20} />

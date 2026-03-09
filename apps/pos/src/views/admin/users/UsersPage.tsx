@@ -275,11 +275,11 @@ export function UsersPage() {
   const activeUsers = users?.filter((u: any) => u.isActive !== false).length || 0;
 
   return (
-    <div className="p-8 space-y-8 bg-[#F4F7FE] min-h-screen">
+    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-[#F4F7FE] min-h-screen">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black text-secondary tracking-tight">
+          <h1 className="text-xl md:text-3xl font-black text-secondary tracking-tight">
             Gestión de <span className="text-primary">Equipo</span>
           </h1>
           <p className="text-sm font-medium text-text-secondary mt-1">
@@ -294,7 +294,7 @@ export function UsersPage() {
             <input
               type="text"
               placeholder="Buscar..."
-              className="pl-11 pr-4 py-2.5 bg-white border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all w-52 shadow-sm font-medium"
+              className="pl-11 pr-4 py-2.5 bg-white border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all w-full sm:w-52 shadow-sm font-medium"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -472,7 +472,7 @@ export function UsersPage() {
       {/* =================== CREATE / EDIT MODAL =================== */}
       {(modalMode === 'create' || modalMode === 'edit') && (
         <div className="fixed inset-0 bg-secondary/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4" onClick={closeModal}>
-          <div className="bg-white rounded-[32px] p-8 w-full max-w-lg shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white rounded-[32px] p-4 md:p-8 w-full max-w-lg shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             {/* Close */}
             <button onClick={closeModal} className="absolute top-6 right-6 w-8 h-8 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors">
               <X size={16} />
@@ -490,7 +490,7 @@ export function UsersPage() {
 
             <div className="space-y-4">
               {/* Name */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="relative group">
                   <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={16} />
                   <input
@@ -533,7 +533,7 @@ export function UsersPage() {
               </div>
 
               {/* Password + PIN */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="relative group">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={16} />
                   <input
@@ -637,7 +637,7 @@ export function UsersPage() {
       {/* =================== PERMISSIONS MODAL =================== */}
       {modalMode === 'permissions' && selectedUser && (
         <div className="fixed inset-0 bg-secondary/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4" onClick={closeModal}>
-          <div className="bg-white rounded-[32px] p-8 w-full max-w-2xl shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white rounded-[32px] p-4 md:p-8 w-full max-w-2xl shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             {/* Close */}
             <button onClick={closeModal} className="absolute top-6 right-6 w-8 h-8 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors">
               <X size={16} />

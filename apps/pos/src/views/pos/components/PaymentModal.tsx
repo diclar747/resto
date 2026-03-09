@@ -62,7 +62,7 @@ export function PaymentModal({ total, onClose, onComplete }: PaymentModalProps) 
           <div className="bg-gradient-to-br from-primary to-secondary rounded-2xl p-5 text-white relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mt-12 blur-2xl" />
             <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1">Importe a Cobrar</p>
-            <p className="text-4xl font-black tracking-tight">{formatCurrency(total)}</p>
+            <p className="text-2xl md:text-4xl font-black tracking-tight">{formatCurrency(total)}</p>
           </div>
         </div>
 
@@ -78,7 +78,7 @@ export function PaymentModal({ total, onClose, onComplete }: PaymentModalProps) 
                   <button
                     key={m.id}
                     onClick={() => setMethod(m.id)}
-                    className={`relative flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all duration-200 ${
+                    className={`relative flex flex-col items-center gap-2 p-3 md:p-4 rounded-2xl border-2 transition-all duration-200 ${
                       isActive
                         ? 'border-secondary bg-secondary text-white shadow-lg -translate-y-0.5'
                         : 'border-gray-100 bg-gray-50 text-secondary hover:border-gray-200'
@@ -110,7 +110,6 @@ export function PaymentModal({ total, onClose, onComplete }: PaymentModalProps) 
                 className="w-full pl-14 pr-5 py-5 bg-background border-2 border-transparent rounded-2xl text-2xl font-black text-secondary outline-none focus:bg-white focus:border-primary/20 transition-all"
                 value={receivedAmount}
                 onChange={(e) => setReceivedAmount(e.target.value.replace(/\D/g, ''))}
-                autoFocus
               />
             </div>
           </div>
@@ -136,7 +135,7 @@ export function PaymentModal({ total, onClose, onComplete }: PaymentModalProps) 
                   </p>
                 </div>
               </div>
-              <p className={`text-3xl font-black tracking-tight ${
+              <p className={`text-xl md:text-3xl font-black tracking-tight ${
                 canPay ? 'text-emerald-600' : 'text-rose-600'
               }`}>
                 {formatCurrency(change)}

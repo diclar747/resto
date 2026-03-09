@@ -56,7 +56,7 @@ export function ProductGrid({ products }: { products: Product[] }) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-12">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6 pb-12">
       {products.map((product) => (
         <div
           key={product.id}
@@ -75,7 +75,7 @@ export function ProductGrid({ products }: { products: Product[] }) {
                 Sin Imagen
               </div>
             )}
-            <div className="absolute top-4 right-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+            <div className="absolute top-4 right-4 opacity-100 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 translate-y-0 md:translate-y-2 transition-all duration-300">
               <div className="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-primary shadow-lg active:scale-90">
                 <Plus size={20} />
               </div>

@@ -57,7 +57,7 @@ export function ReceiptModal({ data, onClose }: ReceiptModalProps) {
         </div>
 
         {/* Receipt card */}
-        <div id="receipt-printable" className="bg-white rounded-[28px] shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
+        <div id="receipt-printable" className="bg-white rounded-[28px] shadow-2xl overflow-hidden flex flex-col max-h-[85dvh]">
           {/* Header */}
           <div className="p-6 pb-4 text-center border-b-2 border-dashed border-gray-200">
             <div className="flex items-center justify-center gap-2 mb-2">
@@ -72,7 +72,7 @@ export function ReceiptModal({ data, onClose }: ReceiptModalProps) {
           </div>
 
           {/* Order Info */}
-          <div className="px-6 py-4 border-b border-dashed border-gray-200">
+          <div className="px-4 md:px-6 py-4 border-b border-dashed border-gray-200">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] font-black text-text-secondary uppercase tracking-widest">
                 {data.orderNumber ? `Orden #${data.orderNumber}` : 'Orden'}
@@ -93,7 +93,7 @@ export function ReceiptModal({ data, onClose }: ReceiptModalProps) {
           </div>
 
           {/* Items */}
-          <div className="flex-1 overflow-y-auto px-6 py-4 space-y-2">
+          <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 space-y-2">
             {data.items.map((item, i) => (
               <div key={i} className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
@@ -112,7 +112,7 @@ export function ReceiptModal({ data, onClose }: ReceiptModalProps) {
           </div>
 
           {/* Totals */}
-          <div className="px-6 py-4 border-t-2 border-dashed border-gray-200 space-y-2">
+          <div className="px-4 md:px-6 py-4 border-t-2 border-dashed border-gray-200 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-text-secondary">Subtotal</span>
               <span className="text-sm font-bold text-secondary">{formatCurrency(data.subtotal)}</span>
@@ -124,7 +124,7 @@ export function ReceiptModal({ data, onClose }: ReceiptModalProps) {
           </div>
 
           {/* Payment Info */}
-          <div className="px-6 py-4 bg-background border-t border-dashed border-gray-200 space-y-2">
+          <div className="px-4 md:px-6 py-4 bg-background border-t border-dashed border-gray-200 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-black text-text-secondary uppercase tracking-widest">Método</span>
               <span className="text-xs font-black text-secondary">{methodLabels[data.paymentMethod] || data.paymentMethod}</span>

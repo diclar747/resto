@@ -69,10 +69,10 @@ export function ManagerDashboard() {
   ];
 
   return (
-    <div className="p-8 space-y-8 bg-[#F4F7FE] min-h-full">
+    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-[#F4F7FE] min-h-full">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-black text-secondary tracking-tight">Dashboard Gerente</h1>
+        <h1 className="text-xl md:text-3xl font-black text-secondary tracking-tight">Dashboard Gerente</h1>
         <p className="text-text-secondary font-medium mt-1">
           Resumen de la sucursal • {new Date().toLocaleDateString('es-AR', { dateStyle: 'full' })}
         </p>
@@ -95,7 +95,7 @@ export function ManagerDashboard() {
               </div>
               <div className="mt-6">
                 <p className="text-[11px] font-black text-text-secondary uppercase tracking-[0.1em]">{stat.label}</p>
-                <p className="text-3xl font-black text-secondary mt-1 tracking-tight">{stat.value}</p>
+                <p className="text-xl md:text-3xl font-black text-secondary mt-1 tracking-tight">{stat.value}</p>
               </div>
               <div className="absolute right-[-10%] bottom-[-10%] opacity-[0.03] group-hover:scale-110 transition-transform duration-500">
                 <Icon size={120} />
@@ -122,9 +122,9 @@ export function ManagerDashboard() {
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
         {/* Top Products */}
-        <div className="bg-white rounded-[32px] p-8 shadow-card">
+        <div className="bg-white rounded-[32px] p-4 md:p-8 shadow-card">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
               <ChefHat size={20} />
@@ -158,7 +158,7 @@ export function ManagerDashboard() {
         </div>
 
         {/* Recent Orders */}
-        <div className="bg-white rounded-[32px] p-8 shadow-card">
+        <div className="bg-white rounded-[32px] p-4 md:p-8 shadow-card">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
               <ShoppingCart size={20} />

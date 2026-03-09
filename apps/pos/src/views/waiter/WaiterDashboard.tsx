@@ -92,11 +92,11 @@ export function WaiterDashboard() {
   ];
 
   return (
-    <div className="p-8 space-y-8 bg-[#F4F7FE] min-h-full">
+    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-[#F4F7FE] min-h-full">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-secondary tracking-tight">Dashboard Camarero</h1>
+          <h1 className="text-xl md:text-3xl font-black text-secondary tracking-tight">Dashboard Camarero</h1>
           <p className="text-text-secondary font-medium mt-1">
             Gestión de mesas y pedidos en tiempo real
           </p>
@@ -110,11 +110,11 @@ export function WaiterDashboard() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.label} className="bg-white rounded-[32px] p-5 shadow-card relative overflow-hidden group hover:scale-[1.02] transition-transform">
+            <div key={stat.label} className="bg-white rounded-[32px] p-3 md:p-5 shadow-card relative overflow-hidden group hover:scale-[1.02] transition-transform">
               <div className="flex items-center gap-3">
                 <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} text-white shadow-lg`}>
                   <Icon size={20} />
@@ -131,7 +131,7 @@ export function WaiterDashboard() {
 
       {/* Bill Requested Alert */}
       {billRequested.length > 0 && (
-        <div className="bg-gradient-to-r from-rose-500 to-pink-500 rounded-[32px] p-6 shadow-lg text-white flex items-center gap-4">
+        <div className="bg-gradient-to-r from-rose-500 to-pink-500 rounded-[32px] p-3 md:p-6 shadow-lg text-white flex items-center gap-4">
           <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
             <Bell size={24} />
           </div>
@@ -145,9 +145,9 @@ export function WaiterDashboard() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
         {/* Tables Overview */}
-        <div className="bg-white rounded-[32px] p-8 shadow-card">
+        <div className="bg-white rounded-[32px] p-4 md:p-8 shadow-card">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-600">
               <Grid3X3 size={20} />
@@ -155,7 +155,7 @@ export function WaiterDashboard() {
             <h3 className="text-lg font-black text-secondary tracking-tight">Estado de Mesas</h3>
           </div>
 
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 md:gap-3">
             {tables?.slice(0, 16).map((table: any) => {
               const style = tableStatusColors[table.status] || tableStatusColors.free;
               return (
@@ -179,7 +179,7 @@ export function WaiterDashboard() {
         </div>
 
         {/* Active Orders */}
-        <div className="lg:col-span-2 bg-white rounded-[32px] p-8 shadow-card">
+        <div className="lg:col-span-2 bg-white rounded-[32px] p-4 md:p-8 shadow-card">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
               <ShoppingCart size={20} />
@@ -187,7 +187,7 @@ export function WaiterDashboard() {
             <h3 className="text-lg font-black text-secondary tracking-tight">Pedidos Activos</h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto custom-scrollbar pr-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[300px] md:max-h-[500px] overflow-y-auto custom-scrollbar pr-2">
             {activeOrders.map((order: any) => {
               const config = statusConfig[order.status] || statusConfig.open;
               const Icon = config.icon;

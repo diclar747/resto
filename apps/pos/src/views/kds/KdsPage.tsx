@@ -234,7 +234,7 @@ export function KdsPage() {
 
       {/* Tickets grid */}
       <div className="flex-1 overflow-auto">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {activeTickets.map((ticket: any) => {
             const minutes = getElapsedMinutes(ticket.createdAt);
             const isLate = minutes > 15;
@@ -420,7 +420,7 @@ function NewOrderAlertModal({
         <div className="h-1.5 bg-gradient-to-r from-red-500 via-amber-500 to-red-500 animate-pulse" />
 
         {/* Header */}
-        <div className="px-8 pt-6 pb-4 flex items-center justify-between">
+        <div className="px-4 md:px-8 pt-4 md:pt-6 pb-3 md:pb-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/30 animate-bounce">
               <Bell size={28} className="text-white" />
@@ -439,7 +439,7 @@ function NewOrderAlertModal({
         </div>
 
         {/* Order Info Tags */}
-        <div className="px-8 pb-4 flex flex-wrap gap-2">
+        <div className="px-4 md:px-8 pb-4 flex flex-wrap gap-2">
           {tableName && (
             <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-widest">
               <MapPin size={12} /> Mesa {tableName}
@@ -471,8 +471,8 @@ function NewOrderAlertModal({
         </div>
 
         {/* Items List */}
-        <div className="px-8 pb-4">
-          <div className="bg-gray-800 rounded-2xl p-4 max-h-[300px] overflow-y-auto custom-scrollbar">
+        <div className="px-4 md:px-8 pb-4">
+          <div className="bg-gray-800 rounded-2xl p-4 max-h-[200px] md:max-h-[300px] overflow-y-auto custom-scrollbar">
             <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">Detalle del Pedido</p>
             <div className="space-y-3">
               {items.length > 0 ? items.map((item: any, i: number) => {
@@ -511,7 +511,7 @@ function NewOrderAlertModal({
         </div>
 
         {/* Actions */}
-        <div className="px-8 pb-8 flex gap-3">
+        <div className="px-4 md:px-8 pb-5 md:pb-8 flex gap-3">
           <button
             onClick={onDismiss}
             className="flex-1 py-4 bg-gray-800 text-gray-300 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-gray-700 transition-all"

@@ -37,12 +37,12 @@ export function LoginPage() {
       <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px]" />
       <div className="absolute bottom-[-10%] left-[-5%] w-[300px] h-[300px] bg-accent/10 rounded-full blur-[80px]" />
 
-      <div className="bg-white/70 backdrop-blur-xl border border-white/40 rounded-[40px] shadow-2xl w-full max-w-md p-10 relative z-10">
+      <div className="bg-white/70 backdrop-blur-xl border border-white/40 rounded-[40px] shadow-2xl w-full max-w-md p-6 md:p-10 relative z-10">
         <div className="text-center mb-10">
           <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-6 rotate-3">
             <Utensils className="text-white" size={32} />
           </div>
-          <h1 className="text-3xl font-black text-secondary tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-black text-secondary tracking-tight">
             Resto<span className="text-primary">POS</span>
           </h1>
           <p className="text-text-secondary font-semibold text-sm mt-1 uppercase tracking-widest">Panel de Control</p>

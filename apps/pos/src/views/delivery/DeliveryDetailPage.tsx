@@ -133,7 +133,7 @@ export function DeliveryDetailPage() {
                 } ${isCurrent ? 'ring-4 ring-purple-100 scale-110' : ''}`}>
                   <Icon size={18} />
                 </div>
-                <p className={`text-[10px] font-black uppercase tracking-widest mt-2 ${isCompleted ? 'text-purple-600' : 'text-gray-400'}`}>
+                <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-wide md:tracking-widest mt-2 ${isCompleted ? 'text-purple-600' : 'text-gray-400'}`}>
                   {step.label}
                 </p>
               </div>

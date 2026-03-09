@@ -129,11 +129,11 @@ export function RestaurantsPage() {
     branch.users?.find((u) => u.role.name === 'admin');
 
   return (
-    <div className="p-8 space-y-8 bg-[#F4F7FE] min-h-full">
+    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-[#F4F7FE] min-h-full">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-secondary tracking-tight">Restaurantes</h1>
+          <h1 className="text-xl md:text-3xl font-black text-secondary tracking-tight">Restaurantes</h1>
           <p className="text-text-secondary font-medium mt-1">
             {activeCount} activos · {inactiveCount} inactivos · {branches?.length || 0} total
           </p>
@@ -230,7 +230,7 @@ export function RestaurantsPage() {
                         <span className="font-medium text-indigo-600">
                           {admin.user.firstName} {admin.user.lastName}
                         </span>
-                        <span className="text-indigo-400 ml-auto">{admin.user.email}</span>
+                        <span className="text-indigo-400 ml-auto truncate">{admin.user.email}</span>
                       </div>
                     </div>
                   )}
@@ -318,7 +318,7 @@ export function RestaurantsPage() {
       {/* Create/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-[32px] w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 shadow-2xl">
+          <div className="bg-white rounded-[32px] w-full max-w-2xl max-h-[90vh] overflow-y-auto p-4 md:p-8 shadow-2xl">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-black text-secondary tracking-tight">
                 {editing ? 'Editar Restaurante' : 'Nuevo Restaurante'}
@@ -356,7 +356,7 @@ export function RestaurantsPage() {
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <label className="text-xs font-black text-secondary uppercase tracking-widest">Teléfono</label>
                       <input
@@ -378,7 +378,7 @@ export function RestaurantsPage() {
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <label className="text-xs font-black text-secondary uppercase tracking-widest">Moneda</label>
                       <select
@@ -422,7 +422,7 @@ export function RestaurantsPage() {
                     Este usuario será el administrador principal del restaurante. Podrá gestionar personal, menú y configuración.
                   </p>
                   <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div className="space-y-2">
                         <label className="text-xs font-black text-secondary uppercase tracking-widest">Nombre *</label>
                         <input
@@ -459,7 +459,7 @@ export function RestaurantsPage() {
                         required
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div className="space-y-2">
                         <label className="text-xs font-black text-secondary uppercase tracking-widest">Contraseña *</label>
                         <div className="relative">

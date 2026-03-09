@@ -7,7 +7,7 @@ import { PaymentModal } from './PaymentModal';
 import { ReceiptModal } from './ReceiptModal';
 import { formatCurrency } from '../../../utils/currency';
 
-export function Cart() {
+export function Cart({ onOrderSent }: { onOrderSent?: () => void } = {}) {
   const { items, removeItem, updateQuantity, clear, getSubtotal, getItemCount, tableId, activeOrderId, orderType, notes, setOrderNotes } = useCartStore();
   const [loading, setLoading] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
@@ -85,6 +85,7 @@ export function Cart() {
 
       clear();
       setShowPayment(false);
+      onOrderSent?.();
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Error al procesar pedido');
     } finally {

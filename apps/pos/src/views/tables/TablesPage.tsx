@@ -249,11 +249,11 @@ export function TablesPage() {
 
   return (
     <div className="h-full bg-background overflow-hidden relative">
-      <div className={`h-full flex flex-col p-6 space-y-6 transition-all duration-300 ${selectedTable ? 'blur-sm opacity-40 pointer-events-none' : ''}`}>
+      <div className={`h-full flex flex-col p-3 md:p-6 space-y-3 md:space-y-6 transition-all duration-300 ${selectedTable ? 'blur-sm opacity-40 pointer-events-none' : ''}`}>
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-3xl font-black text-secondary tracking-tight">Gestión de <span className="text-primary italic">Mesas</span></h2>
+            <h2 className="text-xl md:text-3xl font-black text-secondary tracking-tight">Gestión de <span className="text-primary italic">Mesas</span></h2>
             <p className="text-text-secondary font-medium text-sm mt-1">Plano del restaurante en tiempo real</p>
           </div>
 
@@ -289,7 +289,7 @@ export function TablesPage() {
 
         {/* Tables Grid */}
         <div className="flex-1 overflow-auto">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-5">
             {filteredTables?.map((table: any) => {
               const style = statusColors[table.status] || statusColors.free;
               return (
@@ -417,7 +417,7 @@ export function TablesPage() {
                         </span>
                       )}
                     </div>
-                    <p className="text-4xl font-black tracking-tight">
+                    <p className="text-2xl md:text-4xl font-black tracking-tight">
                       {activeOrder?.total ? formatCurrency(activeOrder.total) : '₲ 0'}
                     </p>
                     <div className="flex items-center gap-4 mt-2">
@@ -506,7 +506,7 @@ export function TablesPage() {
 
             {/* Footer Actions for Occupied Tables */}
             {isOccupied && (
-              <div className="p-6 border-t border-gray-50 flex gap-3">
+              <div className="p-4 md:p-6 border-t border-gray-50 flex gap-3">
                 <button
                   onClick={handleFreeTable}
                   disabled={actionLoading}
