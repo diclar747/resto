@@ -658,6 +658,7 @@ model Client {
   firstName     String
   lastName      String?
   email         String?   @unique
+  passwordHash  String?
   phone         String?   @unique
   address       String?
   birthday      DateTime?

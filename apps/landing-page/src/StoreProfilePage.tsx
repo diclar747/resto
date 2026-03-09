@@ -1,15 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
-    MapPin, ArrowLeft, Star, Phone, Instagram, Facebook, Globe, Clock, Utensils
+    MapPin, ArrowLeft, Star, Phone, Instagram, Facebook, Globe, Clock, Utensils,
+    Search, ShoppingBag, Plus, Minus, X, MessageSquare
 } from 'lucide-react';
 import api from './api';
+import { useMarketplaceCartStore } from './stores/marketplaceCart.store';
 
 export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
     const { id } = useParams();
     const [branch, setBranch] = useState<any>(null);
     const [menu, setMenu] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+    const cart = useMarketplaceCartStore();
+    const [isCartOpen, setIsCartOpen] = useState(false);
+    const [isCheckingOut, setIsCheckingOut] = useState(false);
+    const [orderSuccess, setOrderSuccess] = useState(false);
+
+    const [reviews, setReviews] = useState<any[]>([]);
+    const [newRating, setNewRating] = useState(5);
+    const [newComment, setNewComment] = useState('');
+    const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -25,13 +39,85 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
             setBranch(foundBranch);
 
             if (foundBranch) {
-                const menuRes = await api.get(`/marketplace/branches/${id}/menu`);
+                const [menuRes, reviewsRes] = await Promise.all([
+                    api.get(`/marketplace/branches/${id}/menu`),
+                    api.get(`/marketplace/branches/${id}/reviews`)
+                ]);
                 setMenu(menuRes.data);
+                setReviews(reviewsRes.data);
             }
         } catch (error) {
             console.error('Error fetching store info:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleCheckout = async () => {
+        const tokenString = localStorage.getItem('client-auth-storage');
+        let tokenExists = false;
+        if (tokenString) {
+            try {
+                const parsed = JSON.parse(tokenString);
+                if (parsed?.state?.token) tokenExists = true;
+            } catch (e) { }
+        }
+
+        if (!tokenExists) {
+            alert('Debes iniciar sesión o registrarte (desde el menú de la página principal) para hacer un pedido.');
+            return;
+        }
+
+        try {
+            setIsCheckingOut(true);
+            await api.post('/marketplace/orders', {
+                branchId: branch.id,
+                type: 'delivery',
+                items: cart.items.map(i => ({
+                    productVariantId: i.variantId,
+                    quantity: i.quantity
+                }))
+            });
+            cart.clearCart();
+            setIsCartOpen(false);
+            setOrderSuccess(true);
+            setTimeout(() => setOrderSuccess(false), 5000);
+        } catch (error: any) {
+            alert(error.response?.data?.message || 'Error al procesar el pedido.');
+        } finally {
+            setIsCheckingOut(false);
+        }
+    };
+
+    const handleReviewSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const tokenString = localStorage.getItem('client-auth-storage');
+        let tokenExists = false;
+        if (tokenString) {
+            try {
+                const parsed = JSON.parse(tokenString);
+                if (parsed?.state?.token) tokenExists = true;
+            } catch (e) { }
+        }
+
+        if (!tokenExists) {
+            alert('Debes iniciar sesión para dejar una reseña.');
+            return;
+        }
+
+        try {
+            setIsSubmittingReview(true);
+            const res = await api.post(`/marketplace/branches/${id}/reviews`, {
+                rating: newRating,
+                comment: newComment
+            });
+            setReviews([{ ...res.data, isNew: true }, ...reviews]);
+            setNewComment('');
+            setNewRating(5);
+        } catch (error: any) {
+            alert(error.response?.data?.message || 'Error al publicar la reseña.');
+        } finally {
+            setIsSubmittingReview(false);
         }
     };
 
@@ -53,6 +139,16 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
     }
 
     const settings = branch.settings || {};
+
+    const filteredMenu = menu.map(category => ({
+        ...category,
+        products: category.products.filter((product: any) => {
+            const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (product.description || '').toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesCategory = activeCategory ? category.id === activeCategory : true;
+            return matchesSearch && matchesCategory;
+        })
+    })).filter(category => category.products.length > 0);
 
     return (
         <div className={`min-h-screen pb-20 transition-colors duration-500 ${isDarkMode ? 'bg-secondary' : 'bg-[#F4F7FE]'}`}>
@@ -142,6 +238,55 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
 
                     {/* Menu Section */}
                     <div className="pt-12">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
+                            <div className="flex items-center gap-3">
+                                <Utensils className="text-primary" size={28} />
+                                <h2 className={`text-3xl font-black tracking-tight ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
+                                    Menú Digital
+                                </h2>
+                            </div>
+
+                            {menu.length > 0 && (
+                                <div className="flex gap-4 w-full md:w-auto">
+                                    <div className="relative w-full md:w-72">
+                                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                        <input
+                                            type="text"
+                                            placeholder="Buscar platos..."
+                                            className={`w-full pl-10 pr-4 py-3 rounded-2xl font-bold transition-all border outline-none focus:ring-2 focus:ring-primary/40 ${isDarkMode ? 'bg-white/5 border-white/10 text-white placeholder-white/30' : 'bg-gray-50 border-gray-100 text-secondary placeholder-gray-400'}`}
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {menu.length > 0 && (
+                            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-6 mb-4">
+                                <button
+                                    onClick={() => setActiveCategory(null)}
+                                    className={`px-6 py-2 rounded-xl text-sm font-black whitespace-nowrap transition-all ${activeCategory === null
+                                        ? 'bg-primary text-white shadow-lg'
+                                        : isDarkMode ? 'bg-white/5 text-white/50 hover:text-white' : 'bg-gray-100 text-gray-500 hover:text-secondary'
+                                        }`}
+                                >
+                                    Todos
+                                </button>
+                                {menu.map(cat => (
+                                    <button
+                                        key={cat.id}
+                                        onClick={() => setActiveCategory(cat.id)}
+                                        className={`px-6 py-2 rounded-xl text-sm font-black whitespace-nowrap transition-all ${activeCategory === cat.id
+                                            ? 'bg-primary text-white shadow-lg'
+                                            : isDarkMode ? 'bg-white/5 text-white/50 hover:text-white' : 'bg-gray-100 text-gray-500 hover:text-secondary'
+                                            }`}
+                                    >
+                                        {cat.name}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                         <div className="flex items-center gap-3 mb-10">
                             <Utensils className="text-primary" size={28} />
                             <h2 className={`text-3xl font-black tracking-tight ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
@@ -149,15 +294,15 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
                             </h2>
                         </div>
 
-                        {menu.length === 0 ? (
+                        {filteredMenu.length === 0 ? (
                             <div className="text-center py-20 bg-gray-50 dark:bg-white/5 rounded-[32px]">
                                 <Utensils size={40} className="mx-auto mb-4 text-gray-300 dark:text-white/20" />
-                                <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Aún no hay platos publicados</h3>
-                                <p className="text-text-secondary mt-2">Vuelve pronto para descubrir sus delicias.</p>
+                                <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-secondary'}`}>{menu.length === 0 ? 'Aún no hay platos publicados' : 'No se encontraron resultados'}</h3>
+                                <p className="text-text-secondary mt-2">{menu.length === 0 ? 'Vuelve pronto para descubrir sus delicias.' : 'Prueba buscando otra palabra.'}</p>
                             </div>
                         ) : (
                             <div className="space-y-16">
-                                {menu.map((category) => (
+                                {filteredMenu.map((category) => (
                                     <div key={category.id}>
                                         <h3 className={`text-2xl font-black mb-8 pb-4 border-b uppercase tracking-widest ${isDarkMode ? 'text-white border-white/10' : 'text-secondary border-gray-100'}`}>
                                             {category.name}
@@ -168,23 +313,41 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
                                                 const price = defaultVariant ? defaultVariant.price : 0;
 
                                                 return (
-                                                    <div key={product.id} className={`group flex gap-4 p-4 rounded-3xl border transition-all hover:shadow-xl ${isDarkMode ? 'bg-white/5 border-white/5 hover:bg-white/10' : 'bg-white border-gray-100 hover:border-primary/10'}`}>
-                                                        <div className="w-28 h-28 rounded-2xl overflow-hidden bg-gray-100 shrink-0">
+                                                    <div key={product.id} className={`group flex flex-col sm:flex-row gap-4 p-4 rounded-3xl border transition-all hover:shadow-xl relative overflow-hidden ${isDarkMode ? 'bg-white/5 border-white/5 hover:bg-white/10' : 'bg-white border-gray-100 hover:border-primary/10'}`}>
+                                                        <div className="w-full sm:w-32 h-40 sm:h-32 rounded-2xl overflow-hidden bg-gray-100 shrink-0">
                                                             {product.imageUrl ? (
                                                                 <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                                             ) : (
-                                                                <div className="w-full h-full flex items-center justify-center text-gray-300"><Utensils size={24} /></div>
+                                                                <div className="w-full h-full flex items-center justify-center text-gray-300"><Utensils size={32} /></div>
                                                             )}
                                                         </div>
-                                                        <div className="flex flex-col justify-center flex-1">
-                                                            <h4 className={`font-black text-lg leading-tight mb-1 ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
-                                                                {product.name}
-                                                            </h4>
-                                                            <p className={`text-xs line-clamp-2 mb-3 ${isDarkMode ? 'text-white/60' : 'text-text-secondary'}`}>
-                                                                {product.description || 'Delicioso plato preparado con los mejores ingredientes.'}
-                                                            </p>
-                                                            <div className="font-black text-primary text-lg mt-auto">
-                                                                Gs. {Number(price).toLocaleString()}
+                                                        <div className="flex flex-col justify-between flex-1 py-1">
+                                                            <div>
+                                                                <h4 className={`font-black text-lg leading-tight mb-2 pr-12 ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
+                                                                    {product.name}
+                                                                </h4>
+                                                                <p className={`text-xs line-clamp-2 md:line-clamp-3 mb-4 ${isDarkMode ? 'text-white/60' : 'text-text-secondary'}`}>
+                                                                    {product.description || 'Delicioso plato preparado con los mejores ingredientes.'}
+                                                                </p>
+                                                            </div>
+                                                            <div className="flex items-end justify-between mt-auto">
+                                                                <div className="font-black text-primary text-xl">
+                                                                    Gs. {Number(price).toLocaleString()}
+                                                                </div>
+                                                                <button
+                                                                    onClick={() => cart.addItem({
+                                                                        id: `${product.id}-${defaultVariant?.id}`,
+                                                                        productId: product.id,
+                                                                        variantId: defaultVariant?.id,
+                                                                        name: product.name,
+                                                                        price: Number(price),
+                                                                        quantity: 1,
+                                                                        branchId: branch.id
+                                                                    })}
+                                                                    className={`w-10 h-10 flex items-center justify-center rounded-xl bg-primary text-white shadow-lg hover:scale-110 transition-transform`}
+                                                                >
+                                                                    <Plus size={20} />
+                                                                </button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -196,8 +359,203 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
                             </div>
                         )}
                     </div>
+
+                    {/* Reviews Section */}
+                    <div className="pt-16 mt-16 border-t border-gray-100 dark:border-white/10">
+                        <div className="flex items-center gap-3 mb-10">
+                            <MessageSquare className="text-primary" size={28} />
+                            <h2 className={`text-3xl font-black tracking-tight ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
+                                Reseñas
+                            </h2>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                            {/* Submit Review */}
+                            <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-100'}`}>
+                                <h3 className={`text-xl font-black mb-6 ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Deja tu Opinión</h3>
+                                <form onSubmit={handleReviewSubmit} className="space-y-6">
+                                    <div>
+                                        <label className={`block text-sm font-bold mb-3 ${isDarkMode ? 'text-white/80' : 'text-secondary'}`}>Calificación</label>
+                                        <div className="flex gap-2">
+                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                <button
+                                                    key={star}
+                                                    type="button"
+                                                    onClick={() => setNewRating(star)}
+                                                    className="focus:outline-none transition-transform hover:scale-110"
+                                                >
+                                                    <Star
+                                                        size={28}
+                                                        className={star <= newRating ? "text-amber-400 fill-amber-400" : "text-gray-300 dark:text-white/20"}
+                                                    />
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className={`block text-sm font-bold mb-3 ${isDarkMode ? 'text-white/80' : 'text-secondary'}`}>Comentario</label>
+                                        <textarea
+                                            value={newComment}
+                                            onChange={(e) => setNewComment(e.target.value)}
+                                            placeholder="¿Qué te pareció la comida?"
+                                            rows={3}
+                                            className={`w-full p-4 rounded-2xl resize-none font-medium outline-none focus:ring-2 focus:ring-primary/50 transition-all ${isDarkMode ? 'bg-black/20 text-white placeholder-white/30 border-white/5' : 'bg-white text-secondary placeholder-gray-400 border-gray-100'}`}
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmittingReview}
+                                        className="w-full py-4 bg-primary text-white font-black rounded-2xl shadow-lg hover:shadow-primary/30 transition-all hover:-translate-y-1 disabled:opacity-50"
+                                    >
+                                        {isSubmittingReview ? 'Publicando...' : 'Publicar Reseña'}
+                                    </button>
+                                </form>
+                            </div>
+
+                            {/* Review List */}
+                            <div className="lg:col-span-2 space-y-4 max-h-[500px] overflow-y-auto no-scrollbar pr-2">
+                                {reviews.length === 0 ? (
+                                    <div className="text-center py-12 border-2 border-dashed rounded-3xl border-gray-200 dark:border-white/10">
+                                        <Star className="mx-auto mb-3 text-gray-300 dark:text-white/20" size={32} />
+                                        <p className="font-bold text-gray-500 dark:text-white/50">Sé el primero en dejar una reseña.</p>
+                                    </div>
+                                ) : (
+                                    reviews.map((review, i) => (
+                                        <div key={review.id || i} className={`p-6 rounded-3xl border ${review.isNew ? 'border-primary bg-primary/5' : isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-100'} animate-in slide-in-from-bottom-5 fade-in duration-500`}>
+                                            <div className="flex justify-between items-start mb-4">
+                                                <div>
+                                                    <h4 className={`font-black tracking-tight ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
+                                                        {review.userName}
+                                                    </h4>
+                                                    <p className="text-xs font-bold text-text-secondary mt-1">
+                                                        {new Date(review.createdAt).toLocaleDateString()}
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-center gap-1 bg-amber-400/10 px-3 py-1 rounded-full">
+                                                    <Star size={14} className="text-amber-400 fill-amber-400" />
+                                                    <span className="text-sm font-black text-amber-500">{review.rating}.0</span>
+                                                </div>
+                                            </div>
+                                            {review.comment && (
+                                                <p className={`text-sm italic font-medium ${isDarkMode ? 'text-white/70' : 'text-secondary/70'}`}>
+                                                    "{review.comment}"
+                                                </p>
+                                            )}
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Cart Trigger FAB */}
+                    {cart.items.length > 0 && cart.branchId === branch.id && (
+                        <div className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[60]">
+                            <button
+                                onClick={() => setIsCartOpen(true)}
+                                className="relative flex items-center justify-center gap-3 bg-primary text-white h-16 px-8 rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-transform"
+                            >
+                                <ShoppingBag size={24} />
+                                <div className="text-left hidden sm:block">
+                                    <div className="text-[10px] font-black uppercase tracking-widest opacity-80">Tu Pedido</div>
+                                    <div className="text-sm font-black">Gs. {cart.total.toLocaleString()}</div>
+                                </div>
+                                <div className="absolute -top-2 -right-2 w-7 h-7 bg-red-500 text-white flex items-center justify-center rounded-full text-xs font-black border-2 border-white dark:border-secondary shadow-lg">
+                                    {cart.items.reduce((acc, curr) => acc + curr.quantity, 0)}
+                                </div>
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
+
+            {/* Cart Sidebar */}
+            {isCartOpen && (
+                <div className="fixed inset-0 z-[100] flex justify-end">
+                    <div className="absolute inset-0 bg-secondary/80 backdrop-blur-sm animate-in fade-in" onClick={() => setIsCartOpen(false)} />
+                    <div className={`relative w-full max-w-md h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 ${isDarkMode ? 'bg-secondary border-l border-white/10' : 'bg-white'}`}>
+                        {/* Cart Header */}
+                        <div className={`p-6 border-b flex items-center justify-between ${isDarkMode ? 'border-white/10' : 'border-gray-100'}`}>
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                                    <ShoppingBag size={20} />
+                                </div>
+                                <h2 className={`text-xl font-black ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Tu Carrito</h2>
+                            </div>
+                            <button onClick={() => setIsCartOpen(false)} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+                                <X size={20} className={isDarkMode ? 'text-white' : 'text-secondary'} />
+                            </button>
+                        </div>
+
+                        {/* Cart Items */}
+                        <div className="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar">
+                            {cart.items.length === 0 ? (
+                                <div className="text-center py-20 opacity-50">
+                                    <ShoppingBag size={48} className="mx-auto mb-4" />
+                                    <p className="font-bold">Tu carrito está vacío</p>
+                                </div>
+                            ) : (
+                                cart.items.map(item => (
+                                    <div key={item.id} className={`flex gap-4 p-4 rounded-2xl border ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-100'}`}>
+                                        <div className="flex-1">
+                                            <h4 className={`font-black text-sm mb-1 ${isDarkMode ? 'text-white' : 'text-secondary'}`}>{item.name}</h4>
+                                            <p className="text-primary font-bold text-xs mb-3">Gs. {item.price.toLocaleString()}</p>
+
+                                            <div className="flex items-center gap-3 bg-white dark:bg-black/20 w-max rounded-lg p-1 border dark:border-white/10 shadow-sm">
+                                                <button onClick={() => cart.updateQuantity(item.id, item.quantity - 1)} className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-gray-100 dark:hover:bg-white/10">
+                                                    <Minus size={14} />
+                                                </button>
+                                                <span className="w-4 text-center text-xs font-black">{item.quantity}</span>
+                                                <button onClick={() => cart.updateQuantity(item.id, item.quantity + 1)} className="w-6 h-6 flex items-center justify-center rounded-md text-primary hover:bg-primary/10">
+                                                    <Plus size={14} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className={`font-black text-sm ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
+                                                Gs. {(item.price * item.quantity).toLocaleString()}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+
+                        {/* Checkout Footer */}
+                        {cart.items.length > 0 && (
+                            <div className={`p-6 border-t ${isDarkMode ? 'bg-surface border-white/10' : 'bg-white border-gray-100'}`}>
+                                <div className="flex justify-between items-center mb-6">
+                                    <span className={`text-sm font-bold opacity-60 ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Total a Pagar</span>
+                                    <span className="text-2xl font-black text-primary">Gs. {cart.total.toLocaleString()}</span>
+                                </div>
+
+                                <button
+                                    onClick={handleCheckout}
+                                    disabled={isCheckingOut}
+                                    className="w-full flex items-center justify-center gap-2 py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+                                >
+                                    {isCheckingOut ? 'Procesando...' : <><MapPin size={18} /> Confirmar Pedido</>}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {/* Success Toast */}
+            {orderSuccess && (
+                <div className="fixed top-10 left-1/2 -translate-x-1/2 z-[200] animate-in slide-in-from-top fade-in duration-500">
+                    <div className="bg-emerald-500 text-white px-8 py-4 rounded-[24px] shadow-2xl flex items-center gap-4 border-4 border-emerald-400">
+                        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                            <Utensils size={24} />
+                        </div>
+                        <div>
+                            <h4 className="font-black text-lg">¡Pedido Enviado!</h4>
+                            <p className="font-bold text-emerald-50 text-sm">Tu orden ya está en la cocina del restaurante.</p>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

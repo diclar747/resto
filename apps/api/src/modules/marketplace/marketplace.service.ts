@@ -60,6 +60,17 @@ export class MarketplaceService {
         });
     }
 
+    async addBranchReview(branchId: string, data: { userName: string; rating: number; comment?: string }) {
+        return this.prisma.branchReview.create({
+            data: {
+                branchId,
+                userName: data.userName,
+                rating: data.rating,
+                comment: data.comment,
+            }
+        });
+    }
+
     async getBranchMenu(branchId: string) {
         return this.prisma.category.findMany({
             where: { branchId, isActive: true, parentId: null },

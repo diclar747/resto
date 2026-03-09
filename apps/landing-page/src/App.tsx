@@ -6,8 +6,10 @@ import {
   ShoppingBag, Utensils, LayoutDashboard, CheckCircle2, Menu, X,
   TrendingUp, Users, ShieldCheck, Zap, Globe, Clock, ChevronRight,
   Star, DollarSign, Download, Play, Smartphone, Package, BarChart3,
-  Store
+  Store, User, LogOut
 } from 'lucide-react';
+import { ClientAuthModals } from './components/ClientAuthModals';
+import { useClientAuthStore } from './stores/clientAuth.store';
 
 export default function App() {
   const [isDarkMode, setIsDarkMode] = React.useState(false);
@@ -37,6 +39,10 @@ export default function App() {
 
 function Nav({ isDarkMode, setIsDarkMode }: any) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [authModal, setAuthModal] = React.useState<{ isOpen: boolean, mode: 'login' | 'register' }>({ isOpen: false, mode: 'login' });
+  const { client, logout } = useClientAuthStore();
+  const [showProfileMenu, setShowProfileMenu] = React.useState(false);
+
   return (
     <nav className="fixed top-0 w-full z-50 px-6 py-6 transition-all duration-300">
       <div className={`max-w-7xl mx-auto rounded-[32px] flex items-center justify-between py-4 px-8 border shadow-2xl transition-all duration-500 ${isDarkMode ? 'bg-secondary/40 border-white/10 backdrop-blur-2xl' : 'bg-white/70 border-white/20 backdrop-blur-xl'}`}>
@@ -65,13 +71,45 @@ function Nav({ isDarkMode, setIsDarkMode }: any) {
           >
             {isDarkMode ? <Zap size={18} fill="currentColor" /> : <Zap size={18} />}
           </button>
-          <a href="/pos/login" className={`text-xs font-black uppercase tracking-widest transition-colors ${isDarkMode ? 'text-white hover:text-primary' : 'text-secondary hover:text-primary'}`}>Ingresar</a>
-          <a
-            href="/pos/login"
-            className="px-6 py-3 bg-primary text-white rounded-2xl font-black text-xs shadow-lg shadow-primary/20 hover:scale-[1.05] hover:shadow-primary/40 active:scale-95 transition-all uppercase tracking-widest"
-          >
-            Prueba Gratuita
-          </a>
+
+          {client ? (
+            <div className="relative">
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className={`flex items-center gap-3 px-4 py-2 rounded-2xl border transition-all ${isDarkMode ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-white border-gray-100 shadow-sm hover:shadow-md'}`}
+              >
+                <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-black">
+                  {client.firstName.charAt(0)}
+                </div>
+                <span className={`text-sm font-bold ${isDarkMode ? 'text-white' : 'text-secondary'}`}>{client.firstName}</span>
+              </button>
+
+              {showProfileMenu && (
+                <div className={`absolute right-0 mt-3 w-56 rounded-[24px] shadow-2xl border p-2 animate-in fade-in slide-in-from-top-2 z-50 ${isDarkMode ? 'bg-secondary border-white/10' : 'bg-white border-gray-100'}`}>
+                  <div className={`px-4 py-3 border-b mb-2 ${isDarkMode ? 'border-white/10' : 'border-gray-50'}`}>
+                    <p className={`text-sm font-black ${isDarkMode ? 'text-white' : 'text-secondary'}`}>{client.firstName} {client.lastName}</p>
+                    <p className={`text-xs ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>{client.email}</p>
+                  </div>
+                  <button
+                    onClick={() => { logout(); setShowProfileMenu(false); }}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10`}
+                  >
+                    <LogOut size={16} /> Cerrar Sesión
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <button onClick={() => setAuthModal({ isOpen: true, mode: 'login' })} className={`text-[10px] font-black uppercase tracking-[0.15em] transition-colors ${isDarkMode ? 'text-white hover:text-primary' : 'text-secondary hover:text-primary'}`}>Ingresar</button>
+              <button
+                onClick={() => setAuthModal({ isOpen: true, mode: 'register' })}
+                className="px-6 py-3 bg-primary text-white rounded-2xl font-black text-[10px] shadow-lg shadow-primary/20 hover:scale-[1.05] hover:shadow-primary/40 active:scale-95 transition-all uppercase tracking-[0.15em]"
+              >
+                Registrarse
+              </button>
+            </>
+          )}
         </div>
 
         <button className={`md:hidden p-2 rounded-xl border ${isDarkMode ? 'text-white border-white/10' : 'text-secondary border-gray-100'}`} onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -93,12 +131,25 @@ function Nav({ isDarkMode, setIsDarkMode }: any) {
             <a href="#features" onClick={() => setIsMenuOpen(false)} className="block text-3xl font-black tracking-tight hover:text-primary transition-colors">Funciones</a>
             <a href="#pricing" onClick={() => setIsMenuOpen(false)} className="block text-3xl font-black tracking-tight hover:text-primary transition-colors">Precios</a>
             <div className="pt-12 space-y-4">
-              <a href="/pos/login" className="block w-full py-4 text-center font-black rounded-2xl bg-gray-100 uppercase tracking-widest text-xs">Iniciar Sesión</a>
-              <a href="/pos/login" className="block w-full py-4 text-center font-black rounded-2xl bg-primary text-white shadow-xl uppercase tracking-widest text-xs">Crear Cuenta</a>
+              {client ? (
+                <button onClick={() => { logout(); setIsMenuOpen(false); }} className="block w-full py-4 text-center font-black rounded-2xl bg-red-50 text-red-500 uppercase tracking-widest text-xs">Cerrar Sesión</button>
+              ) : (
+                <>
+                  <button onClick={() => { setAuthModal({ isOpen: true, mode: 'login' }); setIsMenuOpen(false); }} className="block w-full py-4 text-center font-black rounded-2xl bg-gray-100 uppercase tracking-widest text-xs">Iniciar Sesión</button>
+                  <button onClick={() => { setAuthModal({ isOpen: true, mode: 'register' }); setIsMenuOpen(false); }} className="block w-full py-4 text-center font-black rounded-2xl bg-primary text-white shadow-xl uppercase tracking-widest text-xs">Crear Cuenta</button>
+                </>
+              )}
             </div>
           </div>
         </div>
       )}
+
+      <ClientAuthModals
+        isOpen={authModal.isOpen}
+        onClose={() => setAuthModal({ ...authModal, isOpen: false })}
+        initialMode={authModal.mode}
+        isDarkMode={isDarkMode}
+      />
     </nav>
   );
 }
