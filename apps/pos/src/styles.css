@@ -56,7 +56,8 @@
 
   /* Premium Buttons */
   .btn-primary {
-    @apply px-6 py-2.5 rounded-2xl font-bold transition-all duration-200 bg-primary text-white hover:opacity-90 shadow-[0px_4px_12px_rgba(0, 74, 173, 0.2)] active:scale-95;
+    @apply px-6 py-2.5 rounded-2xl font-bold transition-all duration-200 bg-primary text-white hover:opacity-90 active:scale-95;
+    box-shadow: 0px 4px 12px rgba(0, 74, 173, 0.2);
   }
 
   .btn-secondary {
@@ -119,7 +120,11 @@
 
   /* Product Cards */
   .product-card {
-    @apply relative overflow-hidden bg-white rounded-[30px] shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-[14px_17px_40px_4px_rgba(112, 144, 176, 0.15)];
+    @apply relative overflow-hidden bg-white rounded-[30px] shadow-card transition-all duration-300 hover:-translate-y-1;
+  }
+
+  .product-card:hover {
+    box-shadow: 14px 17px 40px 4px rgba(112, 144, 176, 0.15);
   }
 
   [data-theme="dark"] .product-card {
