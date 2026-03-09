@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
@@ -130,6 +130,49 @@ export class AuthService {
     } catch {
       throw new UnauthorizedException('Token de refresh inválido');
     }
+  }
+
+  async getProfile(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true, email: true, firstName: true, lastName: true,
+        phone: true, avatarUrl: true, isActive: true, createdAt: true,
+        branches: { include: { role: true, branch: true } },
+      },
+    });
+    if (!user) throw new UnauthorizedException('Usuario no encontrado');
+    return user;
+  }
+
+  async updateProfile(userId: string, data: {
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+    avatarUrl?: string;
+    pin?: string;
+  }) {
+    const { firstName, lastName, phone, avatarUrl, pin } = data;
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { firstName, lastName, phone, avatarUrl, pin },
+      select: {
+        id: true, email: true, firstName: true, lastName: true,
+        phone: true, avatarUrl: true, isActive: true,
+      },
+    });
+  }
+
+  async changePassword(userId: string, currentPassword: string, newPassword: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new UnauthorizedException('Usuario no encontrado');
+
+    const valid = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!valid) throw new BadRequestException('Contraseña actual incorrecta');
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await this.prisma.user.update({ where: { id: userId }, data: { passwordHash } });
+    return { message: 'Contraseña actualizada' };
   }
 
   private generateTokens(payload: JwtPayload) {

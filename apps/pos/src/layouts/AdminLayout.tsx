@@ -14,6 +14,7 @@ const navItems = [
   { to: '/admin/cash-register', icon: DollarSign, label: 'Cierre de Caja' },
   { to: '/admin/reports', icon: BarChart3, label: 'Estadísticas' },
   { to: '/admin/users', icon: Users, label: 'Staff' },
+  { to: '/admin/settings', icon: Settings, label: 'Configuración' },
 ];
 
 export function AdminLayout() {
@@ -181,7 +182,7 @@ export function AdminLayout() {
               <Bell size={20} />
               <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 border-2 border-white rounded-full"></span>
             </button>
-            <button className="hidden md:flex w-10 h-10 items-center justify-center rounded-xl text-gray-400 hover:bg-gray-50 hover:text-primary transition-all">
+            <button onClick={() => navigate('/admin/settings')} className="hidden md:flex w-10 h-10 items-center justify-center rounded-xl text-gray-400 hover:bg-gray-50 hover:text-primary transition-all">
               <Settings size={20} />
             </button>
           </div>
