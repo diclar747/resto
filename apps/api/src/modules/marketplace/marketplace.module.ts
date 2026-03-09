@@ -9,6 +9,8 @@ import { OrdersModule } from '../orders/orders.module';
 import { MarketplaceAuthController } from './auth/marketplace-auth.controller';
 import { MarketplaceAuthService } from './auth/marketplace-auth.service';
 import { MarketplaceOrdersController } from './orders/marketplace-orders.controller';
+import { MarketplaceClientsController } from './clients/marketplace-clients.controller';
+import { MarketplaceClientsService } from './clients/marketplace-clients.service';
 
 @Module({
     imports: [
@@ -26,9 +28,10 @@ import { MarketplaceOrdersController } from './orders/marketplace-orders.control
     controllers: [
         MarketplaceController,
         MarketplaceAuthController,
-        MarketplaceOrdersController
+        MarketplaceOrdersController,
+        MarketplaceClientsController
     ],
-    providers: [MarketplaceService, MarketplaceAuthService],
+    providers: [MarketplaceService, MarketplaceAuthService, MarketplaceClientsService],
     exports: [MarketplaceService],
 })
 export class MarketplaceModule { }

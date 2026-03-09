@@ -659,13 +659,16 @@ model Client {
   lastName      String?
   email         String?   @unique
   passwordHash  String?
+  pin           String?   @db.VarChar(6)
   phone         String?   @unique
+  avatarUrl     String?
   address       String?
   birthday      DateTime?
   loyaltyPoints Int       @default(0)
   totalSpent    Decimal   @db.Decimal(10, 2) @default(0)
   visitCount    Int       @default(0)
   notes         String?
+  settings      Json?     @default("{\"notifications\": {\"email\": true, \"push\": true, \"sms\": false}}")
   isActive      Boolean   @default(true)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

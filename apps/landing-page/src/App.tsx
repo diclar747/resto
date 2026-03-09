@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { MarketplacePage } from './MarketplacePage';
 import { StoreProfilePage } from './StoreProfilePage';
+import { ClientDashboardPage } from './ClientDashboardPage';
 import {
   ShoppingBag, Utensils, LayoutDashboard, CheckCircle2, Menu, X,
   TrendingUp, Users, ShieldCheck, Zap, Globe, Clock, ChevronRight,
@@ -18,20 +19,10 @@ export default function App() {
     <div className={`min-h-screen font-outfit transition-colors duration-500 ${isDarkMode ? 'bg-secondary text-white' : 'bg-background text-text-main'}`}>
       <Routes>
         <Route path="/" element={<Home isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />} />
-        <Route path="/marketplace" element={
-          <>
-            <Nav isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
-            <MarketplacePage isDarkMode={isDarkMode} />
-            <Footer isDarkMode={isDarkMode} />
-          </>
-        } />
-        <Route path="/marketplace/store/:id" element={
-          <>
-            <Nav isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
-            <StoreProfilePage isDarkMode={isDarkMode} />
-            <Footer isDarkMode={isDarkMode} />
-          </>
-        } />
+        <Route path="/marketplace" element={<MarketplacePage isDarkMode={isDarkMode} />} />
+        <Route path="/marketplace/store/:id" element={<StoreProfilePage isDarkMode={isDarkMode} />} />
+        <Route path="/marketplace/dashboard" element={<ClientDashboardPage isDarkMode={isDarkMode} />} />
+        <Route path="/precios" element={<div className="pt-32 text-center text-4xl font-black">Próximamente...</div>} />
       </Routes>
     </div>
   );
@@ -89,6 +80,16 @@ function Nav({ isDarkMode, setIsDarkMode }: any) {
                   <div className={`px-4 py-3 border-b mb-2 ${isDarkMode ? 'border-white/10' : 'border-gray-50'}`}>
                     <p className={`text-sm font-black ${isDarkMode ? 'text-white' : 'text-secondary'}`}>{client.firstName} {client.lastName}</p>
                     <p className={`text-xs ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>{client.email}</p>
+                  </div>
+                  <div className="py-2 border-b border-gray-100 dark:border-white/5">
+                    <Link to="/marketplace/dashboard" className="flex items-center gap-3 px-4 py-2 text-sm font-bold text-secondary dark:text-white hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                      <User size={16} className="text-primary" />
+                      Mi Perfil
+                    </Link>
+                    <Link to="/marketplace/dashboard?tab=orders" className="flex items-center gap-3 px-4 py-2 text-sm font-bold text-secondary dark:text-white hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                      <ShoppingBag size={16} className="text-primary" />
+                      Mis Pedidos
+                    </Link>
                   </div>
                   <button
                     onClick={() => { logout(); setShowProfileMenu(false); }}
