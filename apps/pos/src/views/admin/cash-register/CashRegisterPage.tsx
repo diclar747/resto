@@ -20,8 +20,12 @@ export function CashRegisterPage() {
 
   const { data: currentRegister } = useQuery({
     queryKey: ['cash-register-current', branchId],
-    queryFn: () => api.get(`/cash-register/current?branchId=${branchId}`).then((r) => r.data),
+    queryFn: () => api.get(`/cash-register/current?branchId=${branchId}`).then((r) => r.data).catch((err) => {
+      if (err.response?.status === 404) return null;
+      throw err;
+    }),
     enabled: !!branchId,
+    retry: (failureCount, error: any) => error?.response?.status !== 404 && failureCount < 3,
   });
 
   const { data: movements } = useQuery({

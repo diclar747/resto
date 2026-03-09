@@ -35,7 +35,9 @@ export class PaymentsService {
 
     let changeAmount: number | undefined;
 
-    if (method === 'cash' && receivedAmount !== undefined) {
+    const normalizedMethod = method.toUpperCase();
+
+    if (normalizedMethod === 'CASH' && receivedAmount !== undefined) {
       if (receivedAmount < amount) {
         throw new BadRequestException(
           'Received amount is less than payment amount',
@@ -61,7 +63,7 @@ export class PaymentsService {
     // Record movement in open cash register for the branch
     await this._recordCashMovement(
       order.branchId,
-      method === 'cash' ? 'cash_in' : 'payment',
+      normalizedMethod === 'CASH' ? 'cash_in' : 'payment',
       amount,
       `Payment for order #${order.orderNumber} (${method})`,
       payment.id,

@@ -12,6 +12,7 @@ import {
   HttpStatus,
   BadRequestException,
 } from '@nestjs/common';
+import { IsString, IsArray } from 'class-validator';
 import { TablesService, TableStatus, CreateTableDto, UpdateTableDto } from './tables.service';
 import { TablesGateway } from './tables.gateway';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -20,11 +21,16 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 // ─── Request body shapes ──────────────────────────────────────────────────────
 
 class UpdateStatusBody {
+  @IsString()
   status: TableStatus;
 }
 
 class MergeTablesBody {
+  @IsArray()
+  @IsString({ each: true })
   tableIds: string[];
+
+  @IsString()
   targetTableId: string;
 }
 

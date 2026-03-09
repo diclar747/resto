@@ -8,24 +8,49 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+import { IsString, IsNumber, IsOptional, IsArray, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 import { PaymentsService, PaymentInput } from './payments.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { RequirePermissions } from '../../common/decorators/permissions.decorator';
 
-class ProcessPaymentDto {
-  orderId: string;
+class PaymentInputDto {
+  @IsString()
   method: string;
+
+  @IsNumber()
   amount: number;
+}
+
+class ProcessPaymentDto {
+  @IsString()
+  orderId: string;
+
+  @IsString()
+  method: string;
+
+  @IsNumber()
+  amount: number;
+
+  @IsOptional()
+  @IsNumber()
   receivedAmount?: number;
 }
 
 class SplitPaymentDto {
+  @IsString()
   orderId: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => PaymentInputDto)
   payments: PaymentInput[];
 }
 
 class RefundPaymentDto {
+  @IsOptional()
+  @IsNumber()
   amount?: number;
 }
 
