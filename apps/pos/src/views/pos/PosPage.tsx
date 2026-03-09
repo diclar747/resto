@@ -101,7 +101,7 @@ export function PosPage() {
 
         {/* Right: Cart — desktop only */}
         <div className="w-[380px] xl:w-[420px] hidden xl:flex">
-          <div className="w-full card-glass !p-0 overflow-hidden flex flex-col">
+          <div className="w-full bg-white/70 dark:bg-surface/80 backdrop-blur-xl rounded-[30px] shadow-card border border-white/20 dark:border-white/5 !p-0 overflow-hidden flex flex-col">
             <Cart />
           </div>
         </div>

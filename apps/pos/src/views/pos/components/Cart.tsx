@@ -167,7 +167,7 @@ export function Cart({ onOrderSent }: { onOrderSent?: () => void } = {}) {
       </div>
 
       {/* Footer */}
-      <div className="p-6 space-y-4 bg-white/80 dark:bg-surface/90 backdrop-blur-xl border-t border-gray-50 dark:border-white/5">
+      <div className="p-6 space-y-4 bg-white/80 dark:bg-[#1a2537] backdrop-blur-xl border-t border-gray-50 dark:border-white/5">
         <div className="space-y-2">
           <p className="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em] ml-2">Nota Rápida</p>
           <input
