@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { MarketplacePage } from './MarketplacePage';
+import { StoreProfilePage } from './StoreProfilePage';
 import {
   ShoppingBag, Utensils, LayoutDashboard, CheckCircle2, Menu, X,
   TrendingUp, Users, ShieldCheck, Zap, Globe, Clock, ChevronRight,
@@ -19,6 +20,13 @@ export default function App() {
           <>
             <Nav isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
             <MarketplacePage isDarkMode={isDarkMode} />
+            <Footer isDarkMode={isDarkMode} />
+          </>
+        } />
+        <Route path="/marketplace/store/:id" element={
+          <>
+            <Nav isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+            <StoreProfilePage isDarkMode={isDarkMode} />
             <Footer isDarkMode={isDarkMode} />
           </>
         } />

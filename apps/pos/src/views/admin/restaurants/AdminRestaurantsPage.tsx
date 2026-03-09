@@ -15,7 +15,13 @@ export function AdminRestaurantsPage() {
     const [showModal, setShowModal] = useState(false);
     const [editMode, setEditMode] = useState<string | null>(null);
     const [form, setForm] = useState({
-        name: '', address: '', phone: '', whatsapp: '', bannerUrl: ''
+        name: '', address: '', phone: '', whatsapp: '', bannerUrl: '',
+        settings: {
+            googleMapsUrl: '',
+            instagramUrl: '',
+            facebookUrl: '',
+            tiktokUrl: ''
+        }
     });
 
     const { data: branches, isLoading } = useQuery({
@@ -65,18 +71,25 @@ export function AdminRestaurantsPage() {
     });
 
     const openCreate = () => {
-        setForm({ name: '', address: '', phone: '', whatsapp: '', bannerUrl: '' });
+        setForm({ name: '', address: '', phone: '', whatsapp: '', bannerUrl: '', settings: { googleMapsUrl: '', instagramUrl: '', facebookUrl: '', tiktokUrl: '' } });
         setEditMode(null);
         setShowModal(true);
     };
 
     const openEdit = (branch: any) => {
+        const s = branch.settings || {};
         setForm({
             name: branch.name || '',
             address: branch.address || '',
             phone: branch.phone || '',
             whatsapp: branch.whatsapp || '',
-            bannerUrl: branch.bannerUrl || ''
+            bannerUrl: branch.bannerUrl || '',
+            settings: {
+                googleMapsUrl: s.googleMapsUrl || '',
+                instagramUrl: s.instagramUrl || '',
+                facebookUrl: s.facebookUrl || '',
+                tiktokUrl: s.tiktokUrl || ''
+            }
         });
         setEditMode(branch.id);
         setShowModal(true);
@@ -240,6 +253,26 @@ export function AdminRestaurantsPage() {
                             <div>
                                 <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-2 mb-2 block">Branding (URL Imagen)</label>
                                 <input className="w-full px-5 py-4 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-primary/20" value={form.bannerUrl} onChange={e => setForm({ ...form, bannerUrl: e.target.value })} placeholder="https://..." />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-2 mb-2 block">Google Maps URL</label>
+                                    <input className="w-full px-5 py-4 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-primary/20" value={form.settings.googleMapsUrl} onChange={e => setForm({ ...form, settings: { ...form.settings, googleMapsUrl: e.target.value } })} placeholder="Enlace a Google Maps" />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-2 mb-2 block">Instagram URL</label>
+                                    <input className="w-full px-5 py-4 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-primary/20" value={form.settings.instagramUrl} onChange={e => setForm({ ...form, settings: { ...form.settings, instagramUrl: e.target.value } })} placeholder="@usuario" />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-2 mb-2 block">Facebook URL</label>
+                                    <input className="w-full px-5 py-4 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-primary/20" value={form.settings.facebookUrl} onChange={e => setForm({ ...form, settings: { ...form.settings, facebookUrl: e.target.value } })} placeholder="Enlace o @usuario" />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-2 mb-2 block">TikTok URL</label>
+                                    <input className="w-full px-5 py-4 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-primary/20" value={form.settings.tiktokUrl} onChange={e => setForm({ ...form, settings: { ...form.settings, tiktokUrl: e.target.value } })} placeholder="@usuario" />
+                                </div>
                             </div>
                         </div>
 

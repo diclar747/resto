@@ -3,6 +3,7 @@ import {
     Search, Filter, MapPin, Store, ArrowRight, Utensils,
     Pizza, Coffee, Sandwich, IceCream, Star, Clock, Phone
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import api from './api'; // Assuming there is an axios instance
 
 export function MarketplacePage({ isDarkMode }: { isDarkMode: boolean }) {
@@ -165,12 +166,12 @@ export function MarketplacePage({ isDarkMode }: { isDarkMode: boolean }) {
                                                     <Phone size={18} />
                                                 </a>
                                             )}
-                                            <button
-                                                onClick={() => window.open(`http://localhost:5175/mesa/MP-${branch.id}`, '_blank')}
+                                            <Link
+                                                to={`/marketplace/store/${branch.id}`}
                                                 className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all font-outfit"
                                             >
                                                 Ver Menú <ArrowRight size={14} />
-                                            </button>
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>
