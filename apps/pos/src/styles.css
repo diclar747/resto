@@ -173,6 +173,24 @@
   animation: slideInFromTop 0.3s ease-out;
 }
 
+/* Dark mode: Cart panel overrides */
+[data-theme="dark"] .cart-wrapper {
+  background-color: rgba(30, 41, 59, 0.85) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+[data-theme="dark"] .cart-inner {
+  background-color: transparent !important;
+}
+[data-theme="dark"] .cart-footer {
+  background-color: #1a2537 !important;
+}
+[data-theme="dark"] .cart-footer input {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+[data-theme="dark"] .cart-footer input:focus {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
 /* Print styles for PDF export */
 @media print {
   aside, header, nav, .no-print,
