@@ -328,7 +328,7 @@ function KpiCard({ title, value, trend, positive, icon: Icon, color }: any) {
         <div className={`w-14 h-14 rounded-2xl ${color} flex items-center justify-center text-white shadow-lg shadow-black/5 group-hover:scale-110 transition-transform`}>
           <Icon size={24} />
         </div>
-        <div className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-black uppercase ${positive ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+        <div className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-black uppercase ${positive ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400'}`}>
           {positive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
           {trend}
         </div>

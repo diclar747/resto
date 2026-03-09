@@ -52,7 +52,7 @@ export function StoreBrandingPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <div className="flex p-1.5 bg-white rounded-2xl shadow-sm border border-gray-100">
+                    <div className="flex p-1.5 bg-white dark:bg-surface rounded-2xl shadow-sm border border-gray-100 dark:border-white/10">
                         {[
                             { id: 'profile', icon: Layout, label: 'Visuals' },
                             { id: 'marketplace', icon: Globe, label: 'Market' },
@@ -81,13 +81,13 @@ export function StoreBrandingPage() {
                 {/* Left Column: Form Settings */}
                 <div className="lg:col-span-7 space-y-8">
                     {activeTab === 'profile' && (
-                        <div className="bg-white rounded-[40px] p-10 shadow-card space-y-8 animate-in fade-in duration-500">
+                        <div className="bg-white dark:bg-surface rounded-[40px] p-10 shadow-card space-y-8 animate-in fade-in duration-500">
                             <div className="space-y-6">
                                 <h3 className="text-2xl font-black text-secondary tracking-tight">Identity <span className="text-primary">& Visuals</span></h3>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Store Name</label>
+                                        <label className="text-[10px] font-black text-gray-400 dark:text-white/40 uppercase tracking-widest ml-2">Store Name</label>
                                         <input
                                             className="w-full px-6 py-4 bg-[#F4F7FE] border-none rounded-[24px] text-sm font-bold outline-none focus:ring-4 focus:ring-primary/5 transition-all"
                                             value={form.name}
@@ -95,7 +95,7 @@ export function StoreBrandingPage() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">WhatsApp Direct</label>
+                                        <label className="text-[10px] font-black text-gray-400 dark:text-white/40 uppercase tracking-widest ml-2">WhatsApp Direct</label>
                                         <div className="relative">
                                             <MessageCircle className="absolute left-6 top-1/2 -translate-y-1/2 text-emerald-500" size={18} />
                                             <input
@@ -109,7 +109,7 @@ export function StoreBrandingPage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Brand Brief</label>
+                                    <label className="text-[10px] font-black text-gray-400 dark:text-white/40 uppercase tracking-widest ml-2">Brand Brief</label>
                                     <textarea
                                         className="w-full px-6 py-4 bg-[#F4F7FE] border-none rounded-[24px] text-sm font-bold outline-none focus:ring-4 focus:ring-primary/5 transition-all min-h-[120px] resize-none"
                                         placeholder="Cuéntale a tus clientes sobre tu restaurante..."
@@ -120,7 +120,7 @@ export function StoreBrandingPage() {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Logo Illustration URL</label>
+                                        <label className="text-[10px] font-black text-gray-400 dark:text-white/40 uppercase tracking-widest ml-2">Logo Illustration URL</label>
                                         <div className="relative">
                                             <ImageIcon className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
                                             <input
@@ -131,7 +131,7 @@ export function StoreBrandingPage() {
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Marketplace Banner URL</label>
+                                        <label className="text-[10px] font-black text-gray-400 dark:text-white/40 uppercase tracking-widest ml-2">Marketplace Banner URL</label>
                                         <div className="relative">
                                             <ImageIcon className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
                                             <input
@@ -147,13 +147,13 @@ export function StoreBrandingPage() {
                     )}
 
                     {activeTab === 'marketplace' && (
-                        <div className="bg-white rounded-[40px] p-10 shadow-card space-y-8 animate-in fade-in duration-500">
+                        <div className="bg-white dark:bg-surface rounded-[40px] p-10 shadow-card space-y-8 animate-in fade-in duration-500">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h3 className="text-2xl font-black text-secondary tracking-tight">Sync <span className="text-primary">Status</span></h3>
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1 italic">Conectado a Resto Market Hub</p>
+                                    <p className="text-[10px] font-black text-gray-400 dark:text-white/40 uppercase tracking-widest mt-1 italic">Conectado a Resto Market Hub</p>
                                 </div>
-                                <div className="px-5 py-2 bg-emerald-50 text-emerald-600 rounded-full flex items-center gap-2">
+                                <div className="px-5 py-2 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center gap-2">
                                     <div className="w-2 h-2 bg-emerald-500 rounded-full animate-ping" />
                                     <span className="text-[10px] font-black uppercase tracking-widest">En Línea</span>
                                 </div>
@@ -161,22 +161,22 @@ export function StoreBrandingPage() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="p-6 bg-[#F4F7FE] rounded-[32px] border border-transparent hover:border-primary/20 transition-all cursor-pointer group">
-                                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform">
+                                    <div className="w-12 h-12 bg-white dark:bg-surface rounded-2xl flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform">
                                         <Share2 className="text-primary" size={24} />
                                     </div>
                                     <h4 className="text-sm font-black text-secondary uppercase">Social Sync</h4>
-                                    <p className="text-[10px] font-medium text-gray-400 mt-2">Sincroniza automáticamente tu menú con Facebook & Instagram Catalog.</p>
+                                    <p className="text-[10px] font-medium text-gray-400 dark:text-white/40 mt-2">Sincroniza automáticamente tu menú con Facebook & Instagram Catalog.</p>
                                     <div className="mt-4 flex items-center gap-2 text-primary">
                                         <span className="text-[9px] font-black uppercase tracking-widest">Configurar</span>
                                         <ChevronRight size={14} />
                                     </div>
                                 </div>
                                 <div className="p-6 bg-[#F4F7FE] rounded-[32px] border border-transparent hover:border-primary/20 transition-all cursor-pointer group">
-                                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform">
-                                        <Zap className="text-amber-500" size={24} />
+                                    <div className="w-12 h-12 bg-white dark:bg-surface rounded-2xl flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform">
+                                        <Zap className="text-amber-500 dark:text-amber-400" size={24} />
                                     </div>
                                     <h4 className="text-sm font-black text-secondary uppercase">Market SEO</h4>
-                                    <p className="text-[10px] font-medium text-gray-400 mt-2">Optimiza tu visibilidad en los buscadores del marketplace.</p>
+                                    <p className="text-[10px] font-medium text-gray-400 dark:text-white/40 mt-2">Optimiza tu visibilidad en los buscadores del marketplace.</p>
                                     <div className="mt-4 flex items-center gap-2 text-primary">
                                         <span className="text-[9px] font-black uppercase tracking-widest">Gestionar Tags</span>
                                         <ChevronRight size={14} />
@@ -195,11 +195,11 @@ export function StoreBrandingPage() {
                     )}
 
                     {activeTab === 'specials' && (
-                        <div className="bg-white rounded-[40px] p-10 shadow-card space-y-8 animate-in fade-in duration-500">
+                        <div className="bg-white dark:bg-surface rounded-[40px] p-10 shadow-card space-y-8 animate-in fade-in duration-500">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h3 className="text-2xl font-black text-secondary tracking-tight italic text-primary">Plato <span className="text-secondary underline font-black">del Día</span></h3>
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1 italic">Promociones destacadas en portada</p>
+                                    <p className="text-[10px] font-black text-gray-400 dark:text-white/40 uppercase tracking-widest mt-1 italic">Promociones destacadas en portada</p>
                                 </div>
                                 <button className="p-3 bg-secondary text-white rounded-xl shadow-lg shadow-secondary/20 hover:scale-110 active:scale-90 transition-all"><Plus size={20} /></button>
                             </div>
@@ -212,11 +212,11 @@ export function StoreBrandingPage() {
                                 ].map((s, i) => (
                                     <div key={i} className={`p-6 bg-[#F4F7FE] rounded-[32px] flex items-center justify-between group transition-all ${!s.active ? 'opacity-50 grayscale' : ''}`}>
                                         <div className="flex items-center gap-5">
-                                            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center font-black text-secondary shadow-sm">
+                                            <div className="w-12 h-12 bg-white dark:bg-surface rounded-2xl flex items-center justify-center font-black text-secondary shadow-sm">
                                                 {s.day[0]}
                                             </div>
                                             <div>
-                                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">{s.day}</p>
+                                                <p className="text-[9px] font-black text-gray-400 dark:text-white/40 uppercase tracking-[0.2em]">{s.day}</p>
                                                 <p className="text-sm font-black text-secondary italic">{s.dish}</p>
                                             </div>
                                         </div>
@@ -236,13 +236,13 @@ export function StoreBrandingPage() {
                 {/* Right Column: Preview */}
                 <div className="lg:col-span-5 space-y-8">
                     <div className="sticky top-8 space-y-6">
-                        <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] ml-2">Marketplace Preview</h4>
+                        <h4 className="text-[10px] font-black text-gray-400 dark:text-white/40 uppercase tracking-[0.3em] ml-2">Marketplace Preview</h4>
 
-                        <div className="bg-white rounded-[40px] shadow-2xl overflow-hidden border border-white">
+                        <div className="bg-white dark:bg-surface rounded-[40px] shadow-2xl overflow-hidden border border-white dark:border-white/10">
                             {/* Mock Mobile View */}
                             <div className="h-20 bg-emerald-500/10 p-6 flex items-center justify-between border-b border-white/20">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-white rounded-full p-2 shadow-inner">
+                                    <div className="w-10 h-10 bg-white dark:bg-surface rounded-full p-2 shadow-inner">
                                         {form.logoUrl ? <img src={form.logoUrl} className="w-full h-full object-contain" /> : <ImageIcon className="text-gray-200" />}
                                     </div>
                                     <h5 className="font-black text-secondary text-sm italic">{form.name || 'Your Resto'}</h5>
@@ -256,7 +256,7 @@ export function StoreBrandingPage() {
                                 {form.bannerUrl ? (
                                     <img src={form.bannerUrl} className="w-full h-full object-cover" />
                                 ) : (
-                                    <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-300">
+                                    <div className="w-full h-full bg-gray-100 dark:bg-white/10 flex items-center justify-center text-gray-300">
                                         <ImageIcon size={48} />
                                     </div>
                                 )}
@@ -271,15 +271,15 @@ export function StoreBrandingPage() {
 
                             <div className="p-8 space-y-6">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Featured Today</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-white/40">Featured Today</span>
                                     <span className="text-[10px] font-black uppercase text-primary underline">Ver Menú Completo</span>
                                 </div>
 
                                 <div className="p-6 bg-[#F4F7FE] rounded-[32px] border border-transparent shadow-sm flex items-center gap-4">
-                                    <div className="w-14 h-14 bg-white rounded-2xl shadow-inner" />
+                                    <div className="w-14 h-14 bg-white dark:bg-surface rounded-2xl shadow-inner" />
                                     <div className="flex-1">
                                         <p className="text-sm font-black text-secondary italic">Plato Especial Resto</p>
-                                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">Lunes de Tradición</p>
+                                        <p className="text-[9px] font-bold text-gray-400 dark:text-white/40 uppercase tracking-widest mt-1">Lunes de Tradición</p>
                                     </div>
                                     <p className="text-lg font-black text-primary">$ 25.000</p>
                                 </div>
@@ -292,13 +292,13 @@ export function StoreBrandingPage() {
                             </div>
                         </div>
 
-                        <div className="p-6 bg-white rounded-[32px] border border-white shadow-xl flex items-center gap-4">
-                            <div className="w-12 h-12 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center">
+                        <div className="p-6 bg-white dark:bg-surface rounded-[32px] border border-white dark:border-white/10 shadow-xl flex items-center gap-4">
+                            <div className="w-12 h-12 bg-amber-50 dark:bg-amber-950/30 text-amber-500 dark:text-amber-400 rounded-2xl flex items-center justify-center">
                                 <Zap size={24} />
                             </div>
                             <div>
                                 <p className="text-sm font-black text-secondary uppercase italic">Turbo Boost Active</p>
-                                <p className="text-[10px] font-medium text-gray-400">Tu restaurante está destacado en el radio local de 5km.</p>
+                                <p className="text-[10px] font-medium text-gray-400 dark:text-white/40">Tu restaurante está destacado en el radio local de 5km.</p>
                             </div>
                         </div>
                     </div>

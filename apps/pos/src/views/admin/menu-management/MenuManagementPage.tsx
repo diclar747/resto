@@ -171,7 +171,7 @@ export function MenuManagementPage() {
                           </div>
                           <button
                             onClick={(e) => { e.stopPropagation(); if (confirm('¿Eliminar?')) deleteProduct.mutate(product.id); }}
-                            className="p-2 opacity-0 group-hover:opacity-100 text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
+                            className="p-2 opacity-0 group-hover:opacity-100 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-all"
                           >
                             <Trash2 size={18} />
                           </button>
@@ -195,7 +195,7 @@ export function MenuManagementPage() {
                         <div className="flex items-center justify-between pt-2">
                           <button
                             onClick={() => toggleAvailability.mutate({ id: product.id, available: !product.available })}
-                            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${product.available ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
+                            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${product.available ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400'
                               }`}
                           >
                             {product.available ? 'En Stock' : 'Agotado'}
@@ -256,7 +256,7 @@ export function MenuManagementPage() {
                 <div>
                   <label className="text-[10px] font-black uppercase text-text-secondary ml-4 mb-2 block">Categoría de Destino</label>
                   <select
-                    className="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all appearance-none"
+                    className="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 dark:bg-surface dark:text-text-main border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-primary/20 outline-none transition-all appearance-none"
                     value={productForm.categoryId}
                     onChange={(e) => setProductForm({ ...productForm, categoryId: e.target.value })}
                   >

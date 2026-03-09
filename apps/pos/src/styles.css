@@ -139,6 +139,19 @@
   }
 }
 
+/* Dark mode: native form elements */
+[data-theme="dark"] select,
+[data-theme="dark"] select option {
+  background-color: var(--color-surface);
+  color: var(--color-text-main);
+}
+
+[data-theme="dark"] input[type="date"],
+[data-theme="dark"] input[type="time"],
+[data-theme="dark"] input[type="datetime-local"] {
+  color-scheme: dark;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

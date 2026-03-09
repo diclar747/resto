@@ -93,7 +93,7 @@ export function DashboardPage() {
                 <div className={`p-4 rounded-2xl bg-gradient-to-br ${stat.color} text-white shadow-lg`}>
                   <Icon size={24} />
                 </div>
-                <div className={`flex items-center gap-1 text-xs font-black px-2 py-1 rounded-full ${stat.isPositive ? 'bg-success/10 text-success' : 'bg-rose-50 text-rose-500'}`}>
+                <div className={`flex items-center gap-1 text-xs font-black px-2 py-1 rounded-full ${stat.isPositive ? 'bg-success/10 text-success' : 'bg-rose-50 dark:bg-rose-950/30 text-rose-500 dark:text-rose-400'}`}>
                   {stat.isPositive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
                   {stat.change}
                 </div>

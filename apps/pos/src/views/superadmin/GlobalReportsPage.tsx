@@ -59,7 +59,7 @@ export function GlobalReportsPage() {
           <select
             value={selectedBranch}
             onChange={(e) => setSelectedBranch(e.target.value)}
-            className="px-4 py-2.5 bg-white dark:bg-surface border border-gray-100 dark:border-white/10 rounded-xl text-xs font-bold shadow-sm"
+            className="px-4 py-2.5 bg-white dark:bg-surface dark:text-text-main border border-gray-100 dark:border-white/10 rounded-xl text-xs font-bold shadow-sm"
           >
             <option value="all">Todas las Sucursales</option>
             {activeBranches.map((b: any) => (

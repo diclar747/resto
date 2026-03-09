@@ -31,15 +31,15 @@ export function WasteTab({ branchId }: { branchId: string }) {
     });
 
     const reasons = [
-        { id: 'DECAY', label: 'Vencimiento / Descomposición', color: 'text-amber-600' },
+        { id: 'DECAY', label: 'Vencimiento / Descomposición', color: 'text-amber-600 dark:text-amber-400' },
         { id: 'SPILLAGE', label: 'Derrame / Rotura', color: 'text-blue-600' },
-        { id: 'THEFT', label: 'Perdida / Robo', color: 'text-rose-600' },
-        { id: 'ERROR', label: 'Error Preparación', color: 'text-gray-600' },
+        { id: 'THEFT', label: 'Perdida / Robo', color: 'text-rose-600 dark:text-rose-400' },
+        { id: 'ERROR', label: 'Error Preparación', color: 'text-gray-600 dark:text-white/60' },
     ];
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between gap-4 border-b border-gray-100 pb-6">
+            <div className="flex items-center justify-between gap-4 border-b border-gray-100 dark:border-white/10 pb-6">
                 <div>
                     <h4 className="text-xl font-black text-secondary uppercase tracking-tight italic">Waste <span className="text-rose-500 underline">Analytics</span></h4>
                     <p className="text-[10px] font-bold text-text-secondary mt-1">Control de mermas, desperdicios y pérdidas operativas</p>
@@ -52,20 +52,20 @@ export function WasteTab({ branchId }: { branchId: string }) {
                 </button>
             </div>
 
-            <div className="bg-white rounded-[32px] overflow-hidden border border-gray-50 shadow-sm">
+            <div className="bg-white dark:bg-surface rounded-[32px] overflow-hidden border border-gray-50 dark:border-white/5 shadow-sm">
                 <table className="w-full border-collapse text-left">
-                    <thead className="bg-gray-50/50">
+                    <thead className="bg-gray-50/50 dark:bg-white/5">
                         <tr>
-                            <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Insumo</th>
-                            <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Cantidad</th>
-                            <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Motivo</th>
-                            <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Fecha</th>
-                            <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Notas</th>
+                            <th className="px-8 py-5 text-[10px] font-black text-gray-400 dark:text-white/40 uppercase tracking-widest">Insumo</th>
+                            <th className="px-8 py-5 text-[10px] font-black text-gray-400 dark:text-white/40 uppercase tracking-widest">Cantidad</th>
+                            <th className="px-8 py-5 text-[10px] font-black text-gray-400 dark:text-white/40 uppercase tracking-widest">Motivo</th>
+                            <th className="px-8 py-5 text-[10px] font-black text-gray-400 dark:text-white/40 uppercase tracking-widest">Fecha</th>
+                            <th className="px-8 py-5 text-[10px] font-black text-gray-400 dark:text-white/40 uppercase tracking-widest">Notas</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-50">
+                    <tbody className="divide-y divide-gray-50 dark:divide-white/5">
                         {wasteRecords?.map((record: any) => (
-                            <tr key={record.id} className="hover:bg-gray-50/30 transition-colors">
+                            <tr key={record.id} className="hover:bg-gray-50/30 dark:hover:bg-white/5 transition-colors">
                                 <td className="px-8 py-5">
                                     <p className="text-sm font-black text-secondary">{record.ingredient?.name}</p>
                                 </td>
@@ -73,7 +73,7 @@ export function WasteTab({ branchId }: { branchId: string }) {
                                     {record.quantity} {record.ingredient?.unit}
                                 </td>
                                 <td className="px-8 py-5">
-                                    <span className={`text-[10px] font-black uppercase ${reasons.find(r => r.id === record.reason)?.color || 'text-gray-400'}`}>
+                                    <span className={`text-[10px] font-black uppercase ${reasons.find(r => r.id === record.reason)?.color || 'text-gray-400 dark:text-white/40'}`}>
                                         {reasons.find(r => r.id === record.reason)?.label || record.reason}
                                     </span>
                                 </td>
@@ -91,14 +91,14 @@ export function WasteTab({ branchId }: { branchId: string }) {
 
             {showForm && (
                 <div className="fixed inset-0 bg-secondary/80 backdrop-blur-sm flex items-center justify-center z-[140] p-4">
-                    <div className="bg-white rounded-[40px] p-10 w-full max-w-md shadow-2xl border border-white">
+                    <div className="bg-white dark:bg-surface rounded-[40px] p-10 w-full max-w-md shadow-2xl border border-white dark:border-white/10">
                         <h3 className="text-2xl font-black text-secondary tracking-tighter mb-8">Loss <span className="text-rose-500">Registration</span></h3>
 
                         <div className="space-y-4">
                             <div>
                                 <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-2 block px-2">Insumo Afectado</label>
                                 <select
-                                    className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl text-sm font-bold outline-none"
+                                    className="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm font-bold outline-none dark:bg-surface dark:text-text-main dark:[color-scheme:dark]"
                                     value={wasteForm.ingredientId}
                                     onChange={(e) => setWasteForm({ ...wasteForm, ingredientId: e.target.value })}
                                 >
@@ -114,7 +114,7 @@ export function WasteTab({ branchId }: { branchId: string }) {
                                     <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-2 block px-2">Cantidad</label>
                                     <input
                                         type="number"
-                                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl text-sm font-bold outline-none"
+                                        className="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm font-bold outline-none dark:text-text-main dark:[color-scheme:dark]"
                                         value={wasteForm.quantity}
                                         onChange={(e) => setWasteForm({ ...wasteForm, quantity: parseFloat(e.target.value) })}
                                     />
@@ -122,7 +122,7 @@ export function WasteTab({ branchId }: { branchId: string }) {
                                 <div>
                                     <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-2 block px-2">Motivo</label>
                                     <select
-                                        className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl text-sm font-bold outline-none"
+                                        className="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm font-bold outline-none dark:bg-surface dark:text-text-main dark:[color-scheme:dark]"
                                         value={wasteForm.reason}
                                         onChange={(e) => setWasteForm({ ...wasteForm, reason: e.target.value })}
                                     >
@@ -134,7 +134,7 @@ export function WasteTab({ branchId }: { branchId: string }) {
                             <div>
                                 <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-2 block px-2">Observaciones</label>
                                 <textarea
-                                    className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl text-sm font-bold outline-none min-h-[100px] resize-none"
+                                    className="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm font-bold outline-none min-h-[100px] resize-none dark:text-text-main"
                                     placeholder="Detalles sobre la pérdida..."
                                     value={wasteForm.notes}
                                     onChange={(e) => setWasteForm({ ...wasteForm, notes: e.target.value })}
@@ -143,7 +143,7 @@ export function WasteTab({ branchId }: { branchId: string }) {
                         </div>
 
                         <div className="flex gap-4 mt-10">
-                            <button onClick={() => setShowForm(false)} className="flex-1 py-4 bg-gray-100 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all hover:bg-gray-200">Cerrar</button>
+                            <button onClick={() => setShowForm(false)} className="flex-1 py-4 bg-gray-100 dark:bg-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all hover:bg-gray-200">Cerrar</button>
                             <button
                                 onClick={() => recordWaste.mutate(wasteForm)}
                                 disabled={!wasteForm.ingredientId || !wasteForm.quantity}

@@ -101,7 +101,7 @@ export function InventoryPage() {
             </div>
             <div className="bg-white dark:bg-surface rounded-[32px] p-8 shadow-xl border-none flex items-center gap-6 relative overflow-hidden">
               <div className={`absolute top-0 right-0 w-32 h-32 -mr-16 -mt-16 rounded-full blur-3xl opacity-20 ${lowStockItems.length > 0 ? 'bg-rose-500' : 'bg-emerald-500'}`} />
-              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-inner transition-colors ${lowStockItems.length > 0 ? 'bg-rose-50 text-rose-500 animate-pulse' : 'bg-emerald-50 text-emerald-500'}`}>
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-inner transition-colors ${lowStockItems.length > 0 ? 'bg-rose-50 dark:bg-rose-950/30 text-rose-500 dark:text-rose-400 animate-pulse' : 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-500 dark:text-emerald-400'}`}>
                 <AlertTriangle size={32} />
               </div>
               <div>
@@ -160,7 +160,7 @@ export function InventoryPage() {
                       <tr key={ing.id} className="group hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors">
                         <td className="px-8 py-6">
                           <div className="flex items-center gap-4">
-                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black ${isLow ? 'bg-rose-50 text-rose-500 shadow-sm animate-pulse' : 'bg-primary/5 text-primary shadow-inner'}`}>
+                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black ${isLow ? 'bg-rose-50 dark:bg-rose-950/30 text-rose-500 dark:text-rose-400 shadow-sm animate-pulse' : 'bg-primary/5 text-primary shadow-inner'}`}>
                               {ing.name[0].toUpperCase()}
                             </div>
                             <div>
@@ -219,7 +219,7 @@ export function InventoryPage() {
                 <div>
                   <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-2 block px-2">Unidad</label>
                   <select
-                    className="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-primary/20 outline-none"
+                    className="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 dark:bg-surface dark:text-text-main border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-primary/20 outline-none"
                     value={ingredientForm.unit}
                     onChange={(e) => setIngredientForm({ ...ingredientForm, unit: e.target.value })}
                   >

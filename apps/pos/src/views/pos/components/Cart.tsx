@@ -109,9 +109,9 @@ export function Cart({ onOrderSent }: { onOrderSent?: () => void } = {}) {
           </span>
         </div>
         {activeOrderId && (
-          <div className="mt-3 flex items-center gap-2 px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-2xl">
+          <div className="mt-3 flex items-center gap-2 px-4 py-2.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-2xl">
             <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            <span className="text-[10px] font-black text-amber-700 uppercase tracking-widest">Añadiendo a orden existente</span>
+            <span className="text-[10px] font-black text-amber-700 dark:text-amber-400 uppercase tracking-widest">Añadiendo a orden existente</span>
           </div>
         )}
       </div>
@@ -135,7 +135,7 @@ export function Cart({ onOrderSent }: { onOrderSent?: () => void } = {}) {
                 </div>
                 <button
                   onClick={() => removeItem(item.id)}
-                  className="p-2 flex items-center justify-center rounded-xl text-rose-300 hover:text-rose-500 hover:bg-rose-50 transition-colors"
+                  className="p-2 flex items-center justify-center rounded-xl text-rose-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
                 >
                   <Trash2 size={14} />
                 </button>

@@ -265,7 +265,7 @@ export function RestaurantsPage() {
                         if (confirm(`¿Eliminar "${branch.name}"? Esta acción desactivará el restaurante.`))
                           deleteMutation.mutate(branch.id);
                       }}
-                      className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-rose-500 hover:bg-rose-50 transition-all ml-auto"
+                      className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all ml-auto"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -384,7 +384,7 @@ export function RestaurantsPage() {
                       <select
                         value={form.currency}
                         onChange={(e) => setForm({ ...form, currency: e.target.value })}
-                        className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 dark:bg-surface dark:text-text-main border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
                       >
                         <option value="PYG">PYG - Guaraní</option>
                         <option value="USD">USD - Dólar</option>
@@ -398,7 +398,7 @@ export function RestaurantsPage() {
                       <select
                         value={form.timezone}
                         onChange={(e) => setForm({ ...form, timezone: e.target.value })}
-                        className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 dark:bg-surface dark:text-text-main border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
                       >
                         <option value="America/Asuncion">Asunción (Paraguay)</option>
                         <option value="America/Argentina/Buenos_Aires">Buenos Aires</option>

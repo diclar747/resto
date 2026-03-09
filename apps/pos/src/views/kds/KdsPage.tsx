@@ -171,7 +171,7 @@ export function KdsPage() {
             onClick={() => setSelectedStation(null)}
             className={`px-4 py-2 rounded-xl text-sm font-black uppercase tracking-wider transition-all whitespace-nowrap ${
               !selectedStation
-                ? 'bg-white text-gray-900 shadow-lg'
+                ? 'bg-white dark:bg-surface text-gray-900 dark:text-text-main shadow-lg'
                 : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
             }`}
           >
@@ -183,7 +183,7 @@ export function KdsPage() {
               onClick={() => setSelectedStation(station.id)}
               className={`px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all whitespace-nowrap ${
                 selectedStation === station.id
-                  ? 'bg-white text-gray-900 shadow-lg'
+                  ? 'bg-white dark:bg-surface text-gray-900 dark:text-text-main shadow-lg'
                   : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
               }`}
             >

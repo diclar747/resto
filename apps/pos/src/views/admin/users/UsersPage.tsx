@@ -305,7 +305,7 @@ export function UsersPage() {
             <select
               value={filterRole}
               onChange={(e) => setFilterRole(e.target.value)}
-              className="px-4 py-2.5 bg-white dark:bg-surface border border-gray-100 dark:border-white/10 rounded-2xl text-xs font-bold shadow-sm appearance-none pr-8 outline-none"
+              className="px-4 py-2.5 bg-white dark:bg-surface dark:text-text-main border border-gray-100 dark:border-white/10 rounded-2xl text-xs font-bold shadow-sm appearance-none pr-8 outline-none"
             >
               <option value="all">Todos los roles</option>
               {roles?.map((r: any) => (
@@ -320,7 +320,7 @@ export function UsersPage() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as any)}
-              className="px-4 py-2.5 bg-white dark:bg-surface border border-gray-100 dark:border-white/10 rounded-2xl text-xs font-bold shadow-sm appearance-none pr-8 outline-none"
+              className="px-4 py-2.5 bg-white dark:bg-surface dark:text-text-main border border-gray-100 dark:border-white/10 rounded-2xl text-xs font-bold shadow-sm appearance-none pr-8 outline-none"
             >
               <option value="all">Todos</option>
               <option value="active">Activos</option>
@@ -457,7 +457,7 @@ export function UsersPage() {
                     onClick={() => {
                       if (confirm(`¿Eliminar a ${fullName} permanentemente?`)) deleteUser.mutate(user.id);
                     }}
-                    className="p-2.5 bg-rose-50 hover:bg-rose-100 text-rose-400 hover:text-rose-600 rounded-xl transition-colors"
+                    className="p-2.5 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 text-rose-400 dark:text-rose-400 hover:text-rose-600 rounded-xl transition-colors"
                     title="Eliminar"
                   >
                     <Trash2 size={14} />

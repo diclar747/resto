@@ -135,7 +135,7 @@ export function DeliveryDashboard() {
             {getNextStatus(active.status) && (
               <button
                 onClick={() => updateStatusMutation.mutate({ id: active.id, status: getNextStatus(active.status)! })}
-                className="flex-1 py-3 bg-white text-purple-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all text-center"
+                className="flex-1 py-3 bg-white dark:bg-surface text-purple-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all text-center"
               >
                 {getActionLabel(active.status)}
               </button>

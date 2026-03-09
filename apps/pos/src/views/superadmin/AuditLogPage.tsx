@@ -76,7 +76,7 @@ export function AuditLogPage() {
           <select
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value)}
-            className="px-4 py-3 bg-white dark:bg-surface border border-gray-100 dark:border-white/10 rounded-2xl text-xs font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/10"
+            className="px-4 py-3 bg-white dark:bg-surface dark:text-text-main border border-gray-100 dark:border-white/10 rounded-2xl text-xs font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/10"
           >
             <option value="all">Todas las acciones</option>
             <option value="CREATE">Creaciones</option>
