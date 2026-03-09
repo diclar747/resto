@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Decimal } from '@prisma/client/runtime/library';
 
-type GroupBy = 'hour' | 'day';
+type GroupBy = 'hour' | 'day' | 'week';
 
 @Injectable()
 export class ReportsService {
@@ -51,12 +51,16 @@ export class ReportsService {
       const key =
         groupBy === 'hour'
           ? this.hourKey(order.closedAt)
-          : this.dayKey(order.closedAt);
+          : groupBy === 'week'
+            ? this.weekKey(order.closedAt)
+            : this.dayKey(order.closedAt);
 
       const label =
         groupBy === 'hour'
           ? this.hourLabel(order.closedAt)
-          : this.dayLabel(order.closedAt);
+          : groupBy === 'week'
+            ? this.weekLabel(order.closedAt)
+            : this.dayLabel(order.closedAt);
 
       if (!buckets.has(key)) {
         buckets.set(key, { label, revenue: new Decimal(0), orderCount: 0 });
@@ -536,6 +540,100 @@ export class ReportsService {
   }
 
   // ---------------------------------------------------------------------------
+  // Cash Movements (Income / Expense / Balance)
+  // ---------------------------------------------------------------------------
+
+  async cashMovements(
+    branchId: string,
+    from: Date,
+    to: Date,
+    type?: string,
+  ) {
+    const movements = await this.prisma.cashRegisterMovement.findMany({
+      where: {
+        cashRegister: { branchId },
+        createdAt: { gte: from, lte: to },
+        ...(type && type !== 'all' ? { type } : {}),
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    let totalIncome = new Decimal(0);
+    let totalExpense = new Decimal(0);
+
+    const buckets = new Map<string, { label: string; income: Decimal; expense: Decimal }>();
+    const categoryMap = new Map<string, { total: Decimal; count: number }>();
+
+    for (const mov of movements) {
+      const amount = new Decimal(mov.amount.toString());
+
+      if (mov.type === 'INCOME') {
+        totalIncome = totalIncome.add(amount);
+      } else {
+        totalExpense = totalExpense.add(amount);
+      }
+
+      // Group by day
+      const key = this.dayKey(mov.createdAt);
+      if (!buckets.has(key)) {
+        buckets.set(key, { label: key, income: new Decimal(0), expense: new Decimal(0) });
+      }
+      const bucket = buckets.get(key)!;
+      if (mov.type === 'INCOME') {
+        bucket.income = bucket.income.add(amount);
+      } else {
+        bucket.expense = bucket.expense.add(amount);
+      }
+
+      // Category breakdown (expenses)
+      if (mov.type === 'EXPENSE') {
+        const cat = mov.description || 'Sin categoría';
+        if (!categoryMap.has(cat)) {
+          categoryMap.set(cat, { total: new Decimal(0), count: 0 });
+        }
+        const entry = categoryMap.get(cat)!;
+        entry.total = entry.total.add(amount);
+        entry.count += 1;
+      }
+    }
+
+    const data = Array.from(buckets.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([, b]) => ({
+        label: b.label,
+        income: b.income.toFixed(2),
+        expense: b.expense.toFixed(2),
+        balance: b.income.sub(b.expense).toFixed(2),
+      }));
+
+    const byCategory = Array.from(categoryMap.entries())
+      .map(([category, e]) => ({
+        category,
+        total: e.total.toFixed(2),
+        count: e.count,
+      }))
+      .sort((a, b) => parseFloat(b.total) - parseFloat(a.total));
+
+    return {
+      branchId,
+      from,
+      to,
+      totalIncome: totalIncome.toFixed(2),
+      totalExpense: totalExpense.toFixed(2),
+      balance: totalIncome.sub(totalExpense).toFixed(2),
+      data,
+      byCategory,
+      recentMovements: movements.slice(-20).reverse().map((m) => ({
+        id: m.id,
+        type: m.type,
+        amount: new Decimal(m.amount.toString()).toFixed(2),
+        description: m.description,
+        createdAt: m.createdAt,
+      })),
+    };
+  }
+
+  // ---------------------------------------------------------------------------
   // Private helpers
   // ---------------------------------------------------------------------------
 
@@ -553,6 +651,30 @@ export class ReportsService {
 
   private dayLabel(date: Date): string {
     return this.dayKey(date);
+  }
+
+  private weekKey(date: Date): string {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() - d.getDay() + 1); // Monday
+    return `${d.getFullYear()}-W${this.pad(this.getISOWeek(d))}`;
+  }
+
+  private weekLabel(date: Date): string {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() - d.getDay() + 1); // Monday start
+    const end = new Date(d);
+    end.setDate(end.getDate() + 6);
+    return `${this.pad(d.getDate())}/${this.pad(d.getMonth() + 1)} - ${this.pad(end.getDate())}/${this.pad(end.getMonth() + 1)}`;
+  }
+
+  private getISOWeek(date: Date): number {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
+    const yearStart = new Date(d.getFullYear(), 0, 4);
+    return Math.round(((d.getTime() - yearStart.getTime()) / 86400000 + yearStart.getDay() + 1) / 7);
   }
 
   private pad(n: number): string {

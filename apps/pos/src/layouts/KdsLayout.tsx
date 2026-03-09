@@ -1,11 +1,13 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/auth.store';
-import { ArrowLeft, Bell, LogOut, User, ChefHat } from 'lucide-react';
+import { ArrowLeft, Bell, LogOut, User, ChefHat, Maximize2, Minimize2 } from 'lucide-react';
+import { useFullscreen } from '../hooks/useFullscreen';
 import { useState } from 'react';
 
 export function KdsLayout() {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
+  const { isFullscreen, toggleFullscreen } = useFullscreen();
   const [showProfile, setShowProfile] = useState(false);
 
   return (
@@ -40,6 +42,9 @@ export function KdsLayout() {
         </div>
 
         <div className="flex items-center gap-3">
+          <button onClick={toggleFullscreen} title={isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'} className="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 transition-all">
+            {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+          </button>
           {/* Notification Bell - controlled by KdsPage via custom event */}
           <div id="kds-notification-bell" />
 

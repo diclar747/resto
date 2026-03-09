@@ -17,14 +17,14 @@ export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
   /**
-   * GET /reports/sales?branchId=&from=&to=&groupBy=hour|day
+   * GET /reports/sales?branchId=&from=&to=&groupBy=hour|day|week
    */
   @Get('sales')
   salesByPeriod(
     @Query('branchId') branchId: string,
     @Query('from') from: string,
     @Query('to') to: string,
-    @Query('groupBy') groupBy: 'hour' | 'day' = 'day',
+    @Query('groupBy') groupBy: 'hour' | 'day' | 'week' = 'day',
   ) {
     this.requireParams({ branchId, from, to });
     return this.reportsService.salesByPeriod(
@@ -130,6 +130,25 @@ export class ReportsController {
   ) {
     this.requireParams({ branchId, date });
     return this.reportsService.dailySummary(branchId, new Date(date));
+  }
+
+  /**
+   * GET /reports/movements?branchId=&from=&to=&type=INCOME|EXPENSE|all
+   */
+  @Get('movements')
+  cashMovements(
+    @Query('branchId') branchId: string,
+    @Query('from') from: string,
+    @Query('to') to: string,
+    @Query('type') type?: string,
+  ) {
+    this.requireParams({ branchId, from, to });
+    return this.reportsService.cashMovements(
+      branchId,
+      new Date(from),
+      new Date(to),
+      type,
+    );
   }
 
   // ---------------------------------------------------------------------------

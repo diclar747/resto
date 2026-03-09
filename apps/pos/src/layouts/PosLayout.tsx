@@ -1,12 +1,15 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/auth.store';
 import {
-  ShoppingCart, Grid3X3, UtensilsCrossed, LayoutDashboard, LogOut, ChefHat, Bell
+  ShoppingCart, Grid3X3, UtensilsCrossed, LayoutDashboard, LogOut, ChefHat, Bell,
+  Maximize2, Minimize2
 } from 'lucide-react';
+import { useFullscreen } from '../hooks/useFullscreen';
 
 export function PosLayout() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
+  const { isFullscreen, toggleFullscreen } = useFullscreen();
 
   const handleLogout = () => {
     logout();
@@ -42,6 +45,9 @@ export function PosLayout() {
           </div>
 
           <div className="flex items-center gap-3">
+            <button onClick={toggleFullscreen} title={isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'} className="w-9 h-9 flex items-center justify-center rounded-xl text-text-secondary hover:bg-primary/5 hover:text-primary transition-all">
+              {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+            </button>
             <button className="w-9 h-9 flex items-center justify-center rounded-xl text-text-secondary hover:bg-primary/5 hover:text-primary transition-all relative">
               <Bell size={18} />
             </button>

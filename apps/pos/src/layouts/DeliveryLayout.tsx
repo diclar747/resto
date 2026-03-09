@@ -1,6 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/auth.store';
-import { LayoutDashboard, Clock, LogOut, Bike } from 'lucide-react';
+import { LayoutDashboard, Clock, LogOut, Bike, Maximize2, Minimize2 } from 'lucide-react';
+import { useFullscreen } from '../hooks/useFullscreen';
 
 const tabs = [
   { to: '/delivery', icon: LayoutDashboard, label: 'Entregas', end: true },
@@ -10,6 +11,7 @@ const tabs = [
 export function DeliveryLayout() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
+  const { isFullscreen, toggleFullscreen } = useFullscreen();
 
   return (
     <div className="h-[100dvh] flex flex-col bg-background">
@@ -27,12 +29,20 @@ export function DeliveryLayout() {
           </div>
         </div>
 
-        <button
-          onClick={() => { logout(); navigate('/login'); }}
-          className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-400 dark:text-white/40 hover:text-rose-500 hover:bg-rose-50 transition-all"
-        >
-          <LogOut size={18} />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggleFullscreen}
+            className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-400 dark:text-white/40 hover:text-purple-600 hover:bg-purple-50 transition-all"
+          >
+            {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+          </button>
+          <button
+            onClick={() => { logout(); navigate('/login'); }}
+            className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-400 dark:text-white/40 hover:text-rose-500 hover:bg-rose-50 transition-all"
+          >
+            <LogOut size={18} />
+          </button>
+        </div>
       </header>
 
       {/* Main Content */}

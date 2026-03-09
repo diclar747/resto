@@ -3,8 +3,10 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/auth.store';
 import {
     LayoutDashboard, Store, Users, BarChart3,
-    ArrowLeft, LogOut, Settings, Bell, Search, User, FileText, Menu, X
+    ArrowLeft, LogOut, Settings, Bell, Search, User, FileText, Menu, X,
+    Maximize2, Minimize2
 } from 'lucide-react';
+import { useFullscreen } from '../hooks/useFullscreen';
 
 const navItems = [
     { to: '/superadmin', icon: LayoutDashboard, label: 'Panel Global', end: true },
@@ -17,6 +19,7 @@ const navItems = [
 export function SuperAdminLayout() {
     const { user, logout } = useAuthStore();
     const navigate = useNavigate();
+    const { isFullscreen, toggleFullscreen } = useFullscreen();
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
@@ -120,6 +123,9 @@ export function SuperAdminLayout() {
                     </div>
 
                     <div className="flex items-center gap-2 md:gap-4 ml-auto">
+                        <button onClick={toggleFullscreen} title={isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'} className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 dark:text-white/40 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-indigo-600 transition-all">
+                            {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+                        </button>
                         <button className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 dark:text-white/40 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-indigo-600 transition-all relative">
                             <Bell size={20} />
                             <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 border-2 border-white dark:border-surface rounded-full"></span>

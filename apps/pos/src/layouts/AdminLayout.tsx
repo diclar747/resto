@@ -3,12 +3,14 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/auth.store';
 import {
   LayoutDashboard, UtensilsCrossed, Package, BarChart3, Users, DollarSign,
-  ArrowLeft, LogOut, Settings, Bell, Search, User, Store, ChevronDown, Menu, X
+  ArrowLeft, LogOut, Settings, Bell, Search, User, Store, ChevronDown, Menu, X,
+  Maximize2, Minimize2
 } from 'lucide-react';
+import { useFullscreen } from '../hooks/useFullscreen';
 import api from '../api/client';
 
 const navItems = [
-  { to: '/admin', icon: LayoutDashboard, label: 'Resumen', end: true },
+  { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
   { to: '/admin/menu', icon: UtensilsCrossed, label: 'Menú Digital' },
   { to: '/admin/inventory', icon: Package, label: 'Inventario' },
   { to: '/admin/cash-register', icon: DollarSign, label: 'Cierre de Caja' },
@@ -19,6 +21,7 @@ const navItems = [
 
 export function AdminLayout() {
   const { user, logout, setBranch } = useAuthStore();
+  const { isFullscreen, toggleFullscreen } = useFullscreen();
   const navigate = useNavigate();
   const [branches, setBranches] = useState<any[]>([]);
   const [showBranchSelector, setShowBranchSelector] = useState(false);
@@ -178,6 +181,9 @@ export function AdminLayout() {
           </div>
 
           <div className="flex items-center gap-2 md:gap-4 ml-auto">
+            <button onClick={toggleFullscreen} title={isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'} className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 dark:text-white/40 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-primary transition-all">
+              {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+            </button>
             <button className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 dark:text-white/40 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-primary transition-all relative">
               <Bell size={20} />
               <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 border-2 border-white rounded-full"></span>

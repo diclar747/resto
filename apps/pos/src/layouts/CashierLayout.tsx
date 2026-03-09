@@ -2,8 +2,9 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/auth.store';
 import {
   LayoutDashboard, ShoppingCart, Grid3X3, DollarSign,
-  ArrowLeft, LogOut, User
+  ArrowLeft, LogOut, User, Maximize2, Minimize2
 } from 'lucide-react';
+import { useFullscreen } from '../hooks/useFullscreen';
 
 const navItems = [
   { to: '/cashier', icon: LayoutDashboard, label: 'Dashboard', end: true },
@@ -15,6 +16,7 @@ const navItems = [
 export function CashierLayout() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
+  const { isFullscreen, toggleFullscreen } = useFullscreen();
 
   return (
     <div className="h-screen flex bg-background overflow-hidden">
@@ -55,6 +57,12 @@ export function CashierLayout() {
 
         <div className="p-6">
           <div className="bg-gray-50 dark:bg-white/5 rounded-[32px] p-5 space-y-3">
+            <button
+              onClick={toggleFullscreen}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-black text-secondary hover:bg-white dark:hover:bg-white/10 hover:shadow-sm transition-all uppercase tracking-widest"
+            >
+              {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />} {isFullscreen ? 'Salir Fullscreen' : 'Pantalla Completa'}
+            </button>
             <button
               onClick={() => navigate('/pos')}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-black text-secondary hover:bg-white dark:hover:bg-white/10 hover:shadow-sm transition-all uppercase tracking-widest"

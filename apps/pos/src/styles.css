@@ -172,3 +172,23 @@
 .animate-in {
   animation: slideInFromTop 0.3s ease-out;
 }
+
+/* Print styles for PDF export */
+@media print {
+  aside, header, nav, .no-print,
+  [class*="bottom-nav"], [class*="mobile-nav"] {
+    display: none !important;
+  }
+  .recharts-wrapper {
+    page-break-inside: avoid;
+  }
+  main {
+    margin: 0 !important;
+    padding: 20px !important;
+    overflow: visible !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}
