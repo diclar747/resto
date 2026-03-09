@@ -33,6 +33,7 @@ import { ReportsPage } from './views/admin/reports/ReportsPage';
 import { UsersPage } from './views/admin/users/UsersPage';
 import { CashRegisterPage } from './views/admin/cash-register/CashRegisterPage';
 import { SettingsPage } from './views/admin/settings/SettingsPage';
+import { AdminTablesPage } from './views/admin/tables/AdminTablesPage';
 
 // Super Admin
 import { SuperAdminDashboard } from './views/superadmin/SuperAdminDashboard';
@@ -114,6 +115,7 @@ export default function App() {
           <Route path="users" element={<UsersPage />} />
           <Route path="cash-register" element={<CashRegisterPage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="tables" element={<AdminTablesPage />} />
         </Route>
 
         {/* Cashier */}

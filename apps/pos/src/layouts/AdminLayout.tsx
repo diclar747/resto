@@ -4,13 +4,14 @@ import { useAuthStore } from '../stores/auth.store';
 import {
   LayoutDashboard, UtensilsCrossed, Package, BarChart3, Users, DollarSign,
   ArrowLeft, LogOut, Settings, Bell, Search, User, Store, ChevronDown, Menu, X,
-  Maximize2, Minimize2
+  Maximize2, Minimize2, Grid
 } from 'lucide-react';
 import { useFullscreen } from '../hooks/useFullscreen';
 import api from '../api/client';
 
 const navItems = [
   { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
+  { to: '/admin/tables', icon: Grid, label: 'Mesas' },
   { to: '/admin/menu', icon: UtensilsCrossed, label: 'Menú Digital' },
   { to: '/admin/inventory', icon: Package, label: 'Inventario' },
   { to: '/admin/cash-register', icon: DollarSign, label: 'Cierre de Caja' },
