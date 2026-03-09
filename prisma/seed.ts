@@ -54,110 +54,107 @@ async function main() {
   console.log('Seeding database...');
 
   // 1. Create roles
+  const superadminPermissions = [
+    'branches.manage', 'branches.view',
+    'users.manage', 'users.view',
+    'orders.create', 'orders.view', 'orders.edit', 'orders.void', 'orders.discount',
+    'tables.view', 'tables.manage',
+    'kds.view', 'kds.update',
+    'menu.view', 'menu.manage',
+    'inventory.view', 'inventory.manage',
+    'cash_register:open', 'cash_register:close', 'cash_register:read', 'cash_register:movement',
+    'payments:create', 'payments:read', 'payments:refund',
+    'reports.view', 'audit.view',
+    'crm.view', 'crm.manage',
+    'promotions.view', 'promotions.manage',
+    'delivery.view', 'delivery.manage',
+    'suppliers.view', 'suppliers.manage',
+    'settings.manage',
+  ];
   const superAdminRole = await prisma.role.upsert({
     where: { name: 'superadmin' },
-    update: {},
-    create: {
-      name: 'superadmin',
-      permissions: [
-        'branches.manage', 'branches.view',
-        'users.manage', 'users.view',
-        'reports.view',
-        'audit.view',
-      ],
-    },
+    update: { permissions: superadminPermissions },
+    create: { name: 'superadmin', permissions: superadminPermissions },
   });
 
+  const adminPermissions = [
+    'orders.create', 'orders.view', 'orders.edit', 'orders.void', 'orders.discount',
+    'tables.view', 'tables.manage',
+    'kds.view', 'kds.update',
+    'menu.view', 'menu.manage',
+    'inventory.view', 'inventory.manage',
+    'cash_register:open', 'cash_register:close', 'cash_register:read', 'cash_register:movement',
+    'payments:create', 'payments:read', 'payments:refund',
+    'users.view', 'users.manage',
+    'reports.view',
+    'crm.view', 'crm.manage',
+    'promotions.view', 'promotions.manage',
+    'delivery.view', 'delivery.manage',
+    'suppliers.view', 'suppliers.manage',
+    'settings.manage',
+  ];
   const adminRole = await prisma.role.upsert({
     where: { name: 'admin' },
-    update: {},
-    create: {
-      name: 'admin',
-      permissions: [
-        'orders.create', 'orders.view', 'orders.edit', 'orders.void', 'orders.discount',
-        'tables.view', 'tables.manage',
-        'kds.view', 'kds.update',
-        'menu.view', 'menu.manage',
-        'inventory.view', 'inventory.manage',
-        'cash_register:open', 'cash_register:close', 'cash_register:read', 'cash_register:movement',
-        'payments:create', 'payments:read', 'payments:refund',
-        'users.view', 'users.manage',
-        'reports.view',
-        'crm.view', 'crm.manage',
-        'promotions.view', 'promotions.manage',
-        'delivery.view', 'delivery.manage',
-        'suppliers.view', 'suppliers.manage',
-        'settings.manage',
-      ],
-    },
+    update: { permissions: adminPermissions },
+    create: { name: 'admin', permissions: adminPermissions },
   });
 
+  const cashierPermissions = [
+    'orders.create', 'orders.view', 'orders.edit', 'orders.discount',
+    'tables.view',
+    'cash_register:open', 'cash_register:close', 'cash_register:read', 'cash_register:movement',
+    'payments:create', 'payments:read',
+    'crm.view',
+  ];
   const cashierRole = await prisma.role.upsert({
     where: { name: 'cashier' },
-    update: {},
-    create: {
-      name: 'cashier',
-      permissions: [
-        'orders.create', 'orders.view', 'orders.edit', 'orders.discount',
-        'tables.view',
-        'cash_register:open', 'cash_register:close', 'cash_register:read', 'cash_register:movement',
-        'payments:create', 'payments:read',
-        'crm.view',
-      ],
-    },
+    update: { permissions: cashierPermissions },
+    create: { name: 'cashier', permissions: cashierPermissions },
   });
 
+  const waiterPermissions = [
+    'orders.create', 'orders.view', 'orders.edit',
+    'tables.view', 'tables.manage',
+    'menu.view',
+  ];
   const waiterRole = await prisma.role.upsert({
     where: { name: 'waiter' },
-    update: {},
-    create: {
-      name: 'waiter',
-      permissions: [
-        'orders.create', 'orders.view', 'orders.edit',
-        'tables.view', 'tables.manage',
-        'menu.view',
-      ],
-    },
+    update: { permissions: waiterPermissions },
+    create: { name: 'waiter', permissions: waiterPermissions },
   });
 
+  const kitchenPermissions = ['kds.view', 'kds.update', 'orders.view'];
   const kitchenRole = await prisma.role.upsert({
     where: { name: 'kitchen' },
-    update: {},
-    create: {
-      name: 'kitchen',
-      permissions: ['kds.view', 'kds.update', 'orders.view'],
-    },
+    update: { permissions: kitchenPermissions },
+    create: { name: 'kitchen', permissions: kitchenPermissions },
   });
 
+  const managerPermissions = [
+    'orders.create', 'orders.view', 'orders.edit', 'orders.void', 'orders.discount',
+    'tables.view', 'tables.manage',
+    'kds.view', 'kds.update',
+    'menu.view', 'menu.manage',
+    'inventory.view', 'inventory.manage',
+    'cash_register:open', 'cash_register:close', 'cash_register:read', 'cash_register:movement',
+    'payments:create', 'payments:read', 'payments:refund',
+    'reports.view',
+    'crm.view', 'crm.manage',
+    'promotions.view', 'promotions.manage',
+    'delivery.view', 'delivery.manage',
+    'suppliers.view', 'suppliers.manage',
+  ];
   const managerRole = await prisma.role.upsert({
     where: { name: 'manager' },
-    update: {},
-    create: {
-      name: 'manager',
-      permissions: [
-        'orders.create', 'orders.view', 'orders.edit', 'orders.void', 'orders.discount',
-        'tables.view', 'tables.manage',
-        'kds.view', 'kds.update',
-        'menu.view', 'menu.manage',
-        'inventory.view', 'inventory.manage',
-        'cash_register:open', 'cash_register:close', 'cash_register:read', 'cash_register:movement',
-        'payments:create', 'payments:read', 'payments:refund',
-        'reports.view',
-        'crm.view', 'crm.manage',
-        'promotions.view', 'promotions.manage',
-        'delivery.view', 'delivery.manage',
-        'suppliers.view', 'suppliers.manage',
-      ],
-    },
+    update: { permissions: managerPermissions },
+    create: { name: 'manager', permissions: managerPermissions },
   });
 
+  const driverPermissions = ['delivery.view', 'delivery.manage', 'orders.view'];
   const driverRole = await prisma.role.upsert({
     where: { name: 'driver' },
-    update: {},
-    create: {
-      name: 'driver',
-      permissions: ['delivery.view', 'delivery.manage', 'orders.view'],
-    },
+    update: { permissions: driverPermissions },
+    create: { name: 'driver', permissions: driverPermissions },
   });
 
   // 2. Create branches

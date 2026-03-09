@@ -43,6 +43,27 @@ export class OrdersService {
     });
   }
 
+  async findActiveByTable(tableId: string) {
+    return this.prisma.order.findFirst({
+      where: {
+        tableId,
+        status: { in: ['open', 'in_progress'] },
+      },
+      include: {
+        table: true,
+        waiter: { select: { id: true, firstName: true, lastName: true } },
+        items: {
+          include: {
+            productVariant: { include: { product: true } },
+            modifiers: { include: { modifier: true } },
+          },
+        },
+        payments: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   async findById(id: string) {
     const order = await this.prisma.order.findUnique({
       where: { id },

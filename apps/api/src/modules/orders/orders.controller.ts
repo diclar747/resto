@@ -33,6 +33,12 @@ export class OrdersController {
     });
   }
 
+  @Get('active')
+  @RequirePermissions('orders.view')
+  findActiveByTable(@Query('tableId') tableId: string) {
+    return this.ordersService.findActiveByTable(tableId);
+  }
+
   @Get(':id')
   @RequirePermissions('orders.view')
   findById(@Param('id') id: string) {
