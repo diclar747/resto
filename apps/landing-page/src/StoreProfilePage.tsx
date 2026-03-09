@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
     MapPin, ArrowLeft, Star, Phone, Instagram, Facebook, Globe, Clock, Utensils,
-    Search, ShoppingBag, Plus, Minus, X, MessageSquare
+    Search, ShoppingBag, Plus, Minus, X, MessageSquare, AlertTriangle
 } from 'lucide-react';
 import api from './api';
 import { useMarketplaceCartStore } from './stores/marketplaceCart.store';
@@ -24,6 +24,8 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
     const [newRating, setNewRating] = useState(5);
     const [newComment, setNewComment] = useState('');
     const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
+    const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -64,7 +66,7 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
         }
 
         if (!tokenExists) {
-            alert('Debes iniciar sesión o registrarte (desde el menú de la página principal) para hacer un pedido.');
+            setAlertMessage('Debes iniciar sesión o registrarte (desde el menú de la página principal) para hacer un pedido.');
             return;
         }
 
@@ -83,7 +85,7 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
             setOrderSuccess(true);
             setTimeout(() => setOrderSuccess(false), 5000);
         } catch (error: any) {
-            alert(error.response?.data?.message || 'Error al procesar el pedido.');
+            setAlertMessage(error.response?.data?.message || 'Error al procesar el pedido.');
         } finally {
             setIsCheckingOut(false);
         }
@@ -101,7 +103,7 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
         }
 
         if (!tokenExists) {
-            alert('Debes iniciar sesión para dejar una reseña.');
+            setAlertMessage('Debes iniciar sesión o registrarte (desde el menú de la página principal) para dejar una reseña.');
             return;
         }
 
@@ -115,7 +117,7 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
             setNewComment('');
             setNewRating(5);
         } catch (error: any) {
-            alert(error.response?.data?.message || 'Error al publicar la reseña.');
+            setAlertMessage(error.response?.data?.message || 'Error al publicar la reseña.');
         } finally {
             setIsSubmittingReview(false);
         }
@@ -553,6 +555,28 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
                             <h4 className="font-black text-lg">¡Pedido Enviado!</h4>
                             <p className="font-bold text-emerald-50 text-sm">Tu orden ya está en la cocina del restaurante.</p>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Custom Alert Modal */}
+            {alertMessage && (
+                <div className="fixed inset-0 z-[300] flex items-center justify-center px-4">
+                    <div className="absolute inset-0 bg-secondary/80 backdrop-blur-sm animate-in fade-in" onClick={() => setAlertMessage(null)} />
+                    <div className={`relative w-full max-w-sm p-8 rounded-[32px] shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-300 border ${isDarkMode ? 'bg-surface border-white/10' : 'bg-white border-gray-100'}`}>
+                        <div className="w-16 h-16 bg-amber-400/10 rounded-full flex items-center justify-center text-amber-500 mb-6">
+                            <AlertTriangle size={32} />
+                        </div>
+                        <h3 className={`text-xl font-black mb-3 ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Aviso</h3>
+                        <p className={`font-medium mb-8 ${isDarkMode ? 'text-white/70' : 'text-text-secondary'}`}>
+                            {alertMessage}
+                        </p>
+                        <button
+                            onClick={() => setAlertMessage(null)}
+                            className="w-full py-4 bg-primary text-white font-black rounded-2xl shadow-lg hover:shadow-primary/30 transition-all hover:-translate-y-1"
+                        >
+                            Aceptar
+                        </button>
                     </div>
                 </div>
             )}
