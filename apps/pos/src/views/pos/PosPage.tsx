@@ -63,7 +63,7 @@ export function PosPage() {
               <input
                 type="text"
                 placeholder="¿Qué estás buscando?"
-                className="w-full pl-11 md:pl-14 pr-4 md:pr-6 py-3 md:py-4 bg-white/50 dark:bg-white/5 border border-white dark:border-white/10 rounded-xl md:rounded-[24px] focus:bg-white dark:focus:bg-surface focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all font-medium text-sm"
+                className="w-full pl-11 md:pl-14 pr-4 md:pr-6 py-3 md:py-4 bg-white/50 dark:bg-white/5 border border-white dark:border-white/10 rounded-xl md:rounded-[24px] focus:bg-white dark:focus:bg-white/10 focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all font-medium text-sm"
               />
             </div>
           </div>

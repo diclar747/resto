@@ -94,7 +94,7 @@ export function Cart({ onOrderSent }: { onOrderSent?: () => void } = {}) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white/40 dark:bg-white/5 backdrop-blur-md border-l border-white/20 font-outfit">
+    <div className="flex flex-col h-full bg-white/40 dark:bg-transparent backdrop-blur-md border-l border-white/20 dark:border-white/5 font-outfit">
       {/* Header */}
       <div className="p-6">
         <div className="flex items-center justify-between bg-secondary p-4 rounded-[24px] shadow-lg">
@@ -167,7 +167,7 @@ export function Cart({ onOrderSent }: { onOrderSent?: () => void } = {}) {
       </div>
 
       {/* Footer */}
-      <div className="p-6 space-y-4 bg-white/80 dark:bg-white/5 backdrop-blur-xl border-t border-gray-50 dark:border-white/5">
+      <div className="p-6 space-y-4 bg-white/80 dark:bg-surface/90 backdrop-blur-xl border-t border-gray-50 dark:border-white/5">
         <div className="space-y-2">
           <p className="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em] ml-2">Nota Rápida</p>
           <input
@@ -175,7 +175,7 @@ export function Cart({ onOrderSent }: { onOrderSent?: () => void } = {}) {
             placeholder="Alergias, preferencias..."
             value={notes}
             onChange={(e) => setOrderNotes(e.target.value)}
-            className="w-full px-5 py-3.5 bg-gray-50 dark:bg-white/5 border-none rounded-[20px] focus:bg-white dark:focus:bg-surface focus:ring-4 focus:ring-primary/5 transition-all text-sm font-bold placeholder:text-gray-300 outline-none"
+            className="w-full px-5 py-3.5 bg-gray-50 dark:bg-white/5 border-none rounded-[20px] focus:bg-white dark:focus:bg-white/10 focus:ring-4 focus:ring-primary/5 transition-all text-sm font-bold placeholder:text-gray-300 dark:placeholder:text-white/20 outline-none"
           />
         </div>
 
