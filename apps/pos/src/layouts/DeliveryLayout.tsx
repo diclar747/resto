@@ -12,9 +12,9 @@ export function DeliveryLayout() {
   const navigate = useNavigate();
 
   return (
-    <div className="h-[100dvh] flex flex-col bg-[#F4F7FE]">
+    <div className="h-[100dvh] flex flex-col bg-background">
       {/* Top Header */}
-      <header className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between shrink-0">
+      <header className="bg-white dark:bg-surface border-b border-gray-100 dark:border-white/10 px-6 py-4 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200 rotate-3">
             <Bike className="text-white" size={20} />
@@ -29,7 +29,7 @@ export function DeliveryLayout() {
 
         <button
           onClick={() => { logout(); navigate('/login'); }}
-          className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:text-rose-500 hover:bg-rose-50 transition-all"
+          className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-400 dark:text-white/40 hover:text-rose-500 hover:bg-rose-50 transition-all"
         >
           <LogOut size={18} />
         </button>
@@ -41,7 +41,7 @@ export function DeliveryLayout() {
       </main>
 
       {/* Bottom Tab Navigation */}
-      <nav className="bg-white border-t border-gray-100 px-4 py-2 flex items-center justify-around shrink-0 safe-bottom">
+      <nav className="bg-white dark:bg-surface border-t border-gray-100 dark:border-white/10 px-4 py-2 flex items-center justify-around shrink-0 safe-bottom">
         {tabs.map(({ to, icon: Icon, label, end }) => (
           <NavLink
             key={to}
@@ -50,7 +50,7 @@ export function DeliveryLayout() {
             className={({ isActive }) =>
               `flex flex-col items-center gap-1 px-6 py-2 rounded-2xl transition-all ${isActive
                 ? 'text-purple-600 bg-purple-50'
-                : 'text-gray-400 hover:text-gray-600'
+                : 'text-gray-400 dark:text-white/40 hover:text-gray-600'
               }`
             }
           >

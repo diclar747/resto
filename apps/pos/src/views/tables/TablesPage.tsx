@@ -269,7 +269,7 @@ export function TablesPage() {
               </div>
             </div>
 
-            <div className="flex p-1 bg-white rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex p-1 bg-white dark:bg-surface rounded-2xl shadow-sm border border-gray-100 dark:border-white/10">
               {zones.map((zone: string) => (
                 <button
                   key={zone}
@@ -296,7 +296,7 @@ export function TablesPage() {
                 <button
                   key={table.id}
                   onClick={() => setSelectedTable(table)}
-                  className={`relative bg-white rounded-[28px] p-4 shadow-sm border-2 ${style.border} transition-all group overflow-hidden hover:shadow-xl hover:-translate-y-1 active:scale-95`}
+                  className={`relative bg-white dark:bg-surface rounded-[28px] p-4 shadow-sm border-2 ${style.border} transition-all group overflow-hidden hover:shadow-xl hover:-translate-y-1 active:scale-95`}
                 >
                   <div className="w-full aspect-square mb-3">
                     <TableIllustration capacity={table.capacity || 4} status={table.status} number={table.number} />
@@ -324,9 +324,9 @@ export function TablesPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-secondary/50 backdrop-blur-md" onClick={() => { setSelectedTable(null); setShowPayment(false); }} />
 
-          <div className="relative w-full max-w-md bg-white rounded-[32px] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+          <div className="relative w-full max-w-md bg-white dark:bg-surface rounded-[32px] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
             {/* Modal Header */}
-            <div className="p-6 border-b border-gray-50 bg-background/50">
+            <div className="p-6 border-b border-gray-50 dark:border-white/5 bg-background/50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14">
@@ -344,7 +344,7 @@ export function TablesPage() {
                 </div>
                 <button
                   onClick={() => { setSelectedTable(null); setShowPayment(false); }}
-                  className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 hover:text-secondary hover:bg-gray-200 transition-all"
+                  className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/10 flex items-center justify-center text-gray-400 dark:text-white/40 hover:text-secondary hover:bg-gray-200 dark:hover:bg-white/15 transition-all"
                 >
                   <X size={20} />
                 </button>
@@ -386,7 +386,7 @@ export function TablesPage() {
                   <div className="w-full grid grid-cols-2 gap-3">
                     <button
                       onClick={handleCancelReservation}
-                      className="py-3.5 bg-gray-100 text-secondary rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
+                      className="py-3.5 bg-gray-100 dark:bg-white/10 text-secondary rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-gray-200 dark:hover:bg-white/15 transition-all flex items-center justify-center gap-2"
                     >
                       <Ban size={14} /> Cancelar
                     </button>
@@ -461,7 +461,7 @@ export function TablesPage() {
                   {/* No order yet */}
                   {!activeOrder && (
                     <div className="flex flex-col items-center text-center py-4 space-y-2">
-                      <ShoppingCart className="text-gray-200" size={40} />
+                      <ShoppingCart className="text-gray-200 dark:text-white/15" size={40} />
                       <p className="text-sm font-bold text-text-secondary">Sin pedido activo</p>
                       <p className="text-xs text-text-secondary">Añade productos desde el POS</p>
                     </div>
@@ -471,7 +471,7 @@ export function TablesPage() {
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       onClick={handleAddMore}
-                      className="flex flex-col items-center gap-2 p-4 bg-background border border-gray-100 rounded-2xl hover:border-primary/20 hover:bg-primary/5 transition-all group"
+                      className="flex flex-col items-center gap-2 p-4 bg-background border border-gray-100 dark:border-white/10 rounded-2xl hover:border-primary/20 hover:bg-primary/5 transition-all group"
                     >
                       <div className="p-2.5 bg-amber-100 text-amber-600 rounded-xl group-hover:scale-110 transition-transform">
                         <ShoppingCart size={20} />
@@ -482,7 +482,7 @@ export function TablesPage() {
                     {selectedTable.status !== 'bill_requested' && (
                       <button
                         onClick={handleRequestBill}
-                        className="flex flex-col items-center gap-2 p-4 bg-background border border-gray-100 rounded-2xl hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group"
+                        className="flex flex-col items-center gap-2 p-4 bg-background border border-gray-100 dark:border-white/10 rounded-2xl hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group"
                       >
                         <div className="p-2.5 bg-indigo-100 text-indigo-600 rounded-xl group-hover:scale-110 transition-transform">
                           <Bell size={20} />
@@ -506,11 +506,11 @@ export function TablesPage() {
 
             {/* Footer Actions for Occupied Tables */}
             {isOccupied && (
-              <div className="p-4 md:p-6 border-t border-gray-50 flex gap-3">
+              <div className="p-4 md:p-6 border-t border-gray-50 dark:border-white/5 flex gap-3">
                 <button
                   onClick={handleFreeTable}
                   disabled={actionLoading}
-                  className="flex-1 py-3.5 bg-gray-100 text-secondary rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-gray-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="flex-1 py-3.5 bg-gray-100 dark:bg-white/10 text-secondary rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-gray-200 dark:hover:bg-white/15 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   <Unlock size={14} /> Liberar
                 </button>

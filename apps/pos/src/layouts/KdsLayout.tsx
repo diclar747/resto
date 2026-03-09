@@ -14,7 +14,7 @@ export function KdsLayout() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate('/pos')}
-            className="text-gray-400 hover:text-white p-1.5 rounded-lg hover:bg-gray-700 transition-all"
+            className="text-gray-400 dark:text-white/40 hover:text-white p-1.5 rounded-lg hover:bg-gray-700 transition-all"
           >
             <ArrowLeft size={20} />
           </button>
@@ -24,12 +24,12 @@ export function KdsLayout() {
             </div>
             <div>
               <h1 className="text-lg font-black text-white tracking-tight leading-none">Cocina <span className="text-amber-400 italic">KDS</span></h1>
-              <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Kitchen Display System</p>
+              <p className="text-[9px] font-bold text-gray-500 dark:text-white/40 uppercase tracking-widest">Kitchen Display System</p>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-sm text-gray-400">
+        <div className="flex items-center gap-2 text-sm text-gray-400 dark:text-white/40">
           <span className="hidden md:block font-medium">
             {new Date().toLocaleDateString('es-AR', {
               weekday: 'long',
@@ -54,7 +54,7 @@ export function KdsLayout() {
               </div>
               <div className="hidden md:block text-left">
                 <p className="text-xs font-bold text-gray-200 leading-none">{user?.firstName} {user?.lastName}</p>
-                <p className="text-[10px] text-gray-500 font-medium">Cocina</p>
+                <p className="text-[10px] text-gray-500 dark:text-white/40 font-medium">Cocina</p>
               </div>
             </button>
 
@@ -70,7 +70,7 @@ export function KdsLayout() {
                       </div>
                       <div>
                         <p className="text-sm font-black text-white">{user?.firstName} {user?.lastName}</p>
-                        <p className="text-[10px] text-gray-400 font-medium">{user?.email}</p>
+                        <p className="text-[10px] text-gray-400 dark:text-white/40 font-medium">{user?.email}</p>
                         <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-amber-500/20 text-amber-400">
                           Cocina
                         </span>

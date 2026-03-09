@@ -200,7 +200,7 @@ export function KdsPage() {
           <button
             onClick={() => setSoundEnabled(!soundEnabled)}
             className={`p-2 rounded-xl transition-all ${
-              soundEnabled ? 'bg-amber-500/20 text-amber-400' : 'bg-gray-800 text-gray-500'
+              soundEnabled ? 'bg-amber-500/20 text-amber-400' : 'bg-gray-800 text-gray-500 dark:text-white/40'
             }`}
             title={soundEnabled ? 'Sonido activado' : 'Sonido desactivado'}
           >
@@ -254,7 +254,7 @@ export function KdsPage() {
                     <span className="font-black text-lg text-gray-900">#{ticket.order?.orderNumber}</span>
                   </div>
                   <div className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full ${
-                    isLate ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-500'
+                    isLate ? 'bg-red-100 text-red-600' : 'bg-gray-100 dark:bg-white/10 text-gray-500 dark:text-white/40'
                   }`}>
                     <Clock size={12} />
                     {minutes}m
@@ -289,7 +289,7 @@ export function KdsPage() {
 
                 {/* Station */}
                 {ticket.kitchenStation?.name && (
-                  <div className="text-[10px] font-bold text-gray-500 mb-2 flex items-center gap-1.5 uppercase tracking-widest">
+                  <div className="text-[10px] font-bold text-gray-500 dark:text-white/40 mb-2 flex items-center gap-1.5 uppercase tracking-widest">
                     {ticket.kitchenStation?.color && (
                       <div className="w-2.5 h-2.5 rounded-full shadow-sm" style={{ backgroundColor: ticket.kitchenStation.color }} />
                     )}
@@ -298,7 +298,7 @@ export function KdsPage() {
                 )}
 
                 {/* Items */}
-                <div className="space-y-1.5 mb-4 border-t border-gray-200/50 pt-3">
+                <div className="space-y-1.5 mb-4 border-t border-gray-200/50 dark:border-white/15 pt-3">
                   {ticket.items?.map((item: any) => (
                     <div key={item.id} className="text-sm">
                       <div className="flex items-start justify-between">
@@ -308,7 +308,7 @@ export function KdsPage() {
                         </span>
                       </div>
                       {item.orderItem?.productVariant?.name && item.orderItem?.productVariant?.name !== 'Estándar' && (
-                        <span className="text-xs text-gray-500 ml-4">
+                        <span className="text-xs text-gray-500 dark:text-white/40 ml-4">
                           ({item.orderItem.productVariant.name})
                         </span>
                       )}
@@ -361,10 +361,10 @@ export function KdsPage() {
           {activeTickets.length === 0 && (
             <div className="col-span-full text-center py-20">
               <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gray-800 flex items-center justify-center">
-                <ChefHat size={36} className="text-gray-600" />
+                <ChefHat size={36} className="text-gray-600 dark:text-white/60" />
               </div>
-              <p className="text-lg font-black text-gray-500 uppercase tracking-widest">Sin pedidos pendientes</p>
-              <p className="text-sm text-gray-600 mt-1">Los nuevos pedidos aparecerán aquí automáticamente</p>
+              <p className="text-lg font-black text-gray-500 dark:text-white/40 uppercase tracking-widest">Sin pedidos pendientes</p>
+              <p className="text-sm text-gray-600 dark:text-white/60 mt-1">Los nuevos pedidos aparecerán aquí automáticamente</p>
             </div>
           )}
         </div>
@@ -432,7 +432,7 @@ function NewOrderAlertModal({
           </div>
           <button
             onClick={onDismiss}
-            className="w-10 h-10 rounded-xl bg-gray-800 flex items-center justify-center text-gray-500 hover:text-white hover:bg-gray-700 transition-all"
+            className="w-10 h-10 rounded-xl bg-gray-800 flex items-center justify-center text-gray-500 dark:text-white/40 hover:text-white hover:bg-gray-700 transition-all"
           >
             <X size={20} />
           </button>
@@ -473,7 +473,7 @@ function NewOrderAlertModal({
         {/* Items List */}
         <div className="px-4 md:px-8 pb-4">
           <div className="bg-gray-800 rounded-2xl p-4 max-h-[200px] md:max-h-[300px] overflow-y-auto custom-scrollbar">
-            <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">Detalle del Pedido</p>
+            <p className="text-[10px] font-black text-gray-500 dark:text-white/40 uppercase tracking-widest mb-3">Detalle del Pedido</p>
             <div className="space-y-3">
               {items.length > 0 ? items.map((item: any, i: number) => {
                 // Handle both ticket items and order items format
@@ -492,7 +492,7 @@ function NewOrderAlertModal({
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-white">{productName}</p>
                       {variantName && variantName !== 'Estándar' && (
-                        <p className="text-xs text-gray-400">Variante: {variantName}</p>
+                        <p className="text-xs text-gray-400 dark:text-white/40">Variante: {variantName}</p>
                       )}
                       {modifiers.map((m: any, j: number) => (
                         <p key={j} className="text-xs text-blue-400">+ {m.modifier?.name || m.name}</p>
@@ -504,7 +504,7 @@ function NewOrderAlertModal({
                   </div>
                 );
               }) : (
-                <p className="text-sm text-gray-500 text-center py-4">Cargando detalle...</p>
+                <p className="text-sm text-gray-500 dark:text-white/40 text-center py-4">Cargando detalle...</p>
               )}
             </div>
           </div>

@@ -83,7 +83,7 @@ export function SuperAdminUsersPage() {
   );
 
   return (
-    <div className="p-8 space-y-8 bg-[#F4F7FE] min-h-full">
+    <div className="p-8 space-y-8 bg-background min-h-full">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black text-secondary tracking-tight">Administradores</h1>
@@ -104,7 +104,7 @@ export function SuperAdminUsersPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar usuario..."
-          className="w-full pl-12 pr-4 py-3 bg-white border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 focus:border-indigo-600/20 transition-all text-sm font-medium"
+          className="w-full pl-12 pr-4 py-3 bg-white dark:bg-surface border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 focus:border-indigo-600/20 transition-all text-sm font-medium"
         />
       </div>
 
@@ -118,7 +118,7 @@ export function SuperAdminUsersPage() {
             const role = user.role || user.userBranches?.[0]?.role?.name || 'admin';
             const branchName = user.userBranches?.[0]?.branch?.name || 'Sin asignar';
             return (
-              <div key={user.id} className="bg-white rounded-[32px] p-6 shadow-card hover:scale-[1.02] transition-transform duration-300">
+              <div key={user.id} className="bg-white dark:bg-surface rounded-[32px] p-6 shadow-card hover:scale-[1.02] transition-transform duration-300">
                 <div className="flex items-start gap-4 mb-4">
                   <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-indigo-600 shadow-sm">
                     <Users size={22} />
@@ -132,16 +132,16 @@ export function SuperAdminUsersPage() {
                 </div>
 
                 <div className="flex items-center gap-2 mb-4">
-                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${roleStyles[role] || 'bg-gray-100 text-gray-600'}`}>
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${roleStyles[role] || 'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-white/60'}`}>
                     <Shield size={10} className="inline mr-1" />
                     {roleLabels[role] || role}
                   </span>
-                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-gray-100 text-gray-600">
+                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-white/60">
                     {branchName}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 pt-4 border-t border-gray-50">
+                <div className="flex items-center gap-2 pt-4 border-t border-gray-50 dark:border-white/5">
                   <button
                     onClick={() => {
                       setEditing(user);
@@ -178,12 +178,12 @@ export function SuperAdminUsersPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-[32px] w-full max-w-lg p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-surface rounded-[32px] w-full max-w-lg p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-black text-secondary tracking-tight">
                 {editing ? 'Editar Administrador' : 'Nuevo Administrador'}
               </h2>
-              <button onClick={closeModal} className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:text-secondary transition-colors">
+              <button onClick={closeModal} className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-400 dark:text-white/40 hover:text-secondary transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -192,31 +192,31 @@ export function SuperAdminUsersPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-xs font-black text-secondary uppercase tracking-widest">Nombre</label>
-                  <input type="text" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium" required />
+                  <input type="text" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium" required />
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-black text-secondary uppercase tracking-widest">Apellido</label>
-                  <input type="text" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium" required />
+                  <input type="text" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium" required />
                 </div>
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-black text-secondary uppercase tracking-widest">Email</label>
-                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium" required />
+                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium" required />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-xs font-black text-secondary uppercase tracking-widest">{editing ? 'Nueva Contraseña' : 'Contraseña'}</label>
-                  <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium" {...(!editing && { required: true })} placeholder={editing ? 'Dejar vacío para mantener' : ''} />
+                  <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium" {...(!editing && { required: true })} placeholder={editing ? 'Dejar vacío para mantener' : ''} />
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-black text-secondary uppercase tracking-widest">PIN</label>
-                  <input type="text" value={form.pin} onChange={(e) => setForm({ ...form, pin: e.target.value.replace(/\D/g, '').slice(0, 4) })} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium" maxLength={4} placeholder="4 dígitos" />
+                  <input type="text" value={form.pin} onChange={(e) => setForm({ ...form, pin: e.target.value.replace(/\D/g, '').slice(0, 4) })} className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium" maxLength={4} placeholder="4 dígitos" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-xs font-black text-secondary uppercase tracking-widest">Rol</label>
-                  <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium">
+                  <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium">
                     <option value="superadmin">Super Admin</option>
                     <option value="admin">Administrador</option>
                     <option value="manager">Gerente</option>
@@ -224,7 +224,7 @@ export function SuperAdminUsersPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-black text-secondary uppercase tracking-widest">Sucursal</label>
-                  <select value={form.branchId} onChange={(e) => setForm({ ...form, branchId: e.target.value })} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium">
+                  <select value={form.branchId} onChange={(e) => setForm({ ...form, branchId: e.target.value })} className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium">
                     <option value="">Seleccionar...</option>
                     {branches?.map((b: any) => (
                       <option key={b.id} value={b.id}>{b.name}</option>
@@ -234,7 +234,7 @@ export function SuperAdminUsersPage() {
               </div>
 
               <div className="flex gap-3 pt-4">
-                <button type="button" onClick={closeModal} className="flex-1 py-3 bg-gray-100 text-secondary rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-gray-200 transition-all">
+                <button type="button" onClick={closeModal} className="flex-1 py-3 bg-gray-100 dark:bg-white/10 text-secondary rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-gray-200 dark:hover:bg-white/15 transition-all">
                   Cancelar
                 </button>
                 <button type="submit" className="flex-1 py-3 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-200 hover:scale-105 transition-all">

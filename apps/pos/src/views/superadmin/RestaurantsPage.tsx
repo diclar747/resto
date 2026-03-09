@@ -129,7 +129,7 @@ export function RestaurantsPage() {
     branch.users?.find((u) => u.role.name === 'admin');
 
   return (
-    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-[#F4F7FE] min-h-full">
+    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-background min-h-full">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -154,7 +154,7 @@ export function RestaurantsPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar restaurante..."
-          className="w-full pl-12 pr-4 py-3 bg-white border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 focus:border-indigo-600/20 transition-all text-sm font-medium"
+          className="w-full pl-12 pr-4 py-3 bg-white dark:bg-surface border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 focus:border-indigo-600/20 transition-all text-sm font-medium"
         />
       </div>
 
@@ -165,7 +165,7 @@ export function RestaurantsPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-20">
-          <Store size={48} className="mx-auto text-gray-200 mb-4" />
+          <Store size={48} className="mx-auto text-gray-200 dark:text-white/15 mb-4" />
           <p className="text-text-secondary font-medium">No se encontraron restaurantes</p>
         </div>
       ) : (
@@ -175,23 +175,23 @@ export function RestaurantsPage() {
             const isExpanded = expandedBranch === branch.id;
 
             return (
-              <div key={branch.id} className={`bg-white rounded-[32px] shadow-card transition-all duration-300 overflow-hidden ${branch.isActive === false ? 'opacity-60' : ''}`}>
+              <div key={branch.id} className={`bg-white dark:bg-surface rounded-[32px] shadow-card transition-all duration-300 overflow-hidden ${branch.isActive === false ? 'opacity-60' : ''}`}>
                 {/* Card header */}
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg ${branch.isActive !== false ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white' : 'bg-gray-200 text-gray-400'}`}>
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg ${branch.isActive !== false ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white' : 'bg-gray-200 dark:bg-white/15 text-gray-400 dark:text-white/40'}`}>
                         <Store size={22} />
                       </div>
                       <div>
                         <h3 className="text-lg font-black text-secondary tracking-tight">{branch.name}</h3>
-                        <span className={`text-[10px] font-black uppercase tracking-widest ${branch.isActive !== false ? 'text-emerald-500' : 'text-gray-400'}`}>
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${branch.isActive !== false ? 'text-emerald-500' : 'text-gray-400 dark:text-white/40'}`}>
                           {branch.isActive !== false ? 'Activo' : 'Inactivo'}
                         </span>
                       </div>
                     </div>
                     <div className="flex items-center gap-1 text-xs text-text-secondary">
-                      <span className="bg-gray-50 px-2 py-1 rounded-lg font-bold">{branch.currency || 'PYG'}</span>
+                      <span className="bg-gray-50 dark:bg-white/5 px-2 py-1 rounded-lg font-bold">{branch.currency || 'PYG'}</span>
                     </div>
                   </div>
 
@@ -236,15 +236,15 @@ export function RestaurantsPage() {
                   )}
 
                   {/* Action buttons */}
-                  <div className="flex items-center gap-2 pt-4 mt-4 border-t border-gray-50">
+                  <div className="flex items-center gap-2 pt-4 mt-4 border-t border-gray-50 dark:border-white/5">
                     <button
                       onClick={() => toggleActive(branch)}
-                      className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold hover:bg-gray-50 transition-all"
+                      className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold hover:bg-gray-50 dark:hover:bg-white/5 transition-all"
                       title={branch.isActive !== false ? 'Desactivar' : 'Activar'}
                     >
                       {branch.isActive !== false
                         ? <ToggleRight size={18} className="text-emerald-500" />
-                        : <ToggleLeft size={18} className="text-gray-400" />
+                        : <ToggleLeft size={18} className="text-gray-400 dark:text-white/40" />
                       }
                     </button>
                     <button
@@ -274,14 +274,14 @@ export function RestaurantsPage() {
 
                 {/* Expanded staff list */}
                 {isExpanded && (
-                  <div className="border-t border-gray-100 bg-gray-50/50 p-5">
+                  <div className="border-t border-gray-100 dark:border-white/10 bg-gray-50/50 dark:bg-white/5 p-5">
                     <h4 className="text-xs font-black text-secondary uppercase tracking-widest mb-3">
                       Personal del restaurante ({branch.users?.length || 0})
                     </h4>
                     {branch.users && branch.users.length > 0 ? (
                       <div className="space-y-2">
                         {branch.users.map((ub) => (
-                          <div key={ub.user.id} className="flex items-center gap-3 p-3 bg-white rounded-xl">
+                          <div key={ub.user.id} className="flex items-center gap-3 p-3 bg-white dark:bg-surface rounded-xl">
                             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-black">
                               {ub.user.firstName[0]}{ub.user.lastName[0]}
                             </div>
@@ -296,7 +296,7 @@ export function RestaurantsPage() {
                               ub.role.name === 'cashier' ? 'bg-emerald-100 text-emerald-700' :
                               ub.role.name === 'waiter' ? 'bg-amber-100 text-amber-700' :
                               ub.role.name === 'kitchen' ? 'bg-orange-100 text-orange-700' :
-                              'bg-gray-100 text-gray-600'
+                              'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-white/60'
                             }`}>
                               {ub.role.name}
                             </span>
@@ -318,12 +318,12 @@ export function RestaurantsPage() {
       {/* Create/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-[32px] w-full max-w-2xl max-h-[90vh] overflow-y-auto p-4 md:p-8 shadow-2xl">
+          <div className="bg-white dark:bg-surface rounded-[32px] w-full max-w-2xl max-h-[90vh] overflow-y-auto p-4 md:p-8 shadow-2xl">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-black text-secondary tracking-tight">
                 {editing ? 'Editar Restaurante' : 'Nuevo Restaurante'}
               </h2>
-              <button onClick={closeModal} className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:text-secondary transition-colors">
+              <button onClick={closeModal} className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-400 dark:text-white/40 hover:text-secondary transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -342,7 +342,7 @@ export function RestaurantsPage() {
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                       placeholder="Ej: Restaurante El Buen Sabor"
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
                       required
                     />
                   </div>
@@ -353,7 +353,7 @@ export function RestaurantsPage() {
                       value={form.address}
                       onChange={(e) => setForm({ ...form, address: e.target.value })}
                       placeholder="Ej: Av. Mariscal López 1234, Asunción"
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
                     />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -364,7 +364,7 @@ export function RestaurantsPage() {
                         value={form.phone}
                         onChange={(e) => setForm({ ...form, phone: e.target.value })}
                         placeholder="Ej: 021-555-1234"
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
                       />
                     </div>
                     <div className="space-y-2">
@@ -374,7 +374,7 @@ export function RestaurantsPage() {
                         value={form.whatsapp}
                         onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
                         placeholder="Ej: +595 981 555 123"
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
                       />
                     </div>
                   </div>
@@ -384,7 +384,7 @@ export function RestaurantsPage() {
                       <select
                         value={form.currency}
                         onChange={(e) => setForm({ ...form, currency: e.target.value })}
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
                       >
                         <option value="PYG">PYG - Guaraní</option>
                         <option value="USD">USD - Dólar</option>
@@ -398,7 +398,7 @@ export function RestaurantsPage() {
                       <select
                         value={form.timezone}
                         onChange={(e) => setForm({ ...form, timezone: e.target.value })}
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
                       >
                         <option value="America/Asuncion">Asunción (Paraguay)</option>
                         <option value="America/Argentina/Buenos_Aires">Buenos Aires</option>
@@ -430,7 +430,7 @@ export function RestaurantsPage() {
                           value={adminForm.firstName}
                           onChange={(e) => setAdminForm({ ...adminForm, firstName: e.target.value })}
                           placeholder="Juan"
-                          className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
+                          className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
                           required
                         />
                       </div>
@@ -441,7 +441,7 @@ export function RestaurantsPage() {
                           value={adminForm.lastName}
                           onChange={(e) => setAdminForm({ ...adminForm, lastName: e.target.value })}
                           placeholder="Pérez"
-                          className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
+                          className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
                           required
                         />
                       </div>
@@ -455,7 +455,7 @@ export function RestaurantsPage() {
                         value={adminForm.email}
                         onChange={(e) => setAdminForm({ ...adminForm, email: e.target.value })}
                         placeholder="admin@restaurante.com"
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
                         required
                       />
                     </div>
@@ -468,14 +468,14 @@ export function RestaurantsPage() {
                             value={adminForm.password}
                             onChange={(e) => setAdminForm({ ...adminForm, password: e.target.value })}
                             placeholder="Mínimo 6 caracteres"
-                            className="w-full px-4 py-3 pr-12 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
+                            className="w-full px-4 py-3 pr-12 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
                             required
                             minLength={6}
                           />
                           <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-secondary"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/40 hover:text-secondary"
                           >
                             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                           </button>
@@ -493,7 +493,7 @@ export function RestaurantsPage() {
                           placeholder="1234"
                           inputMode="numeric"
                           maxLength={4}
-                          className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
+                          className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
                         />
                       </div>
                     </div>
@@ -504,7 +504,7 @@ export function RestaurantsPage() {
                         value={adminForm.phone}
                         onChange={(e) => setAdminForm({ ...adminForm, phone: e.target.value })}
                         placeholder="+595 981 555 123"
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 text-sm font-medium"
                       />
                     </div>
                   </div>
@@ -513,7 +513,7 @@ export function RestaurantsPage() {
 
               {/* Submit buttons */}
               <div className="flex gap-3 pt-4">
-                <button type="button" onClick={closeModal} className="flex-1 py-3 bg-gray-100 text-secondary rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-gray-200 transition-all">
+                <button type="button" onClick={closeModal} className="flex-1 py-3 bg-gray-100 dark:bg-white/10 text-secondary rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-gray-200 dark:hover:bg-white/15 transition-all">
                   Cancelar
                 </button>
                 <button

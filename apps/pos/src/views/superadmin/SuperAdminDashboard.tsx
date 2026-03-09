@@ -71,7 +71,7 @@ export function SuperAdminDashboard() {
   ];
 
   return (
-    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-[#F4F7FE] min-h-full">
+    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-background min-h-full">
       {/* Header */}
       <div>
         <h1 className="text-xl md:text-3xl font-black text-secondary tracking-tight">Panel Global</h1>
@@ -85,7 +85,7 @@ export function SuperAdminDashboard() {
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.label} className="bg-white rounded-[32px] p-6 shadow-card relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
+            <div key={stat.label} className="bg-white dark:bg-surface rounded-[32px] p-6 shadow-card relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
               <div className="flex items-center justify-between relative z-10">
                 <div className={`p-4 rounded-2xl bg-gradient-to-br ${stat.color} text-white shadow-lg`}>
                   <Icon size={24} />
@@ -109,7 +109,7 @@ export function SuperAdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
         {/* Revenue Chart */}
-        <div className="lg:col-span-2 bg-white rounded-[32px] p-4 md:p-8 shadow-card">
+        <div className="lg:col-span-2 bg-white dark:bg-surface rounded-[32px] p-4 md:p-8 shadow-card">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600">
@@ -134,14 +134,14 @@ export function SuperAdminDashboard() {
             </ResponsiveContainer>
           ) : (
             <div className="flex flex-col items-center justify-center py-16 text-center space-y-3">
-              <Building2 className="text-gray-200" size={48} />
+              <Building2 className="text-gray-200 dark:text-white/15" size={48} />
               <p className="text-sm font-medium text-text-secondary">No hay sucursales registradas</p>
             </div>
           )}
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-white rounded-[32px] p-4 md:p-8 shadow-card">
+        <div className="bg-white dark:bg-surface rounded-[32px] p-4 md:p-8 shadow-card">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600">
               <Clock size={20} />
@@ -151,7 +151,7 @@ export function SuperAdminDashboard() {
 
           <div className="space-y-4">
             {recentActivity.map((item, i) => (
-              <div key={i} className="flex items-start gap-3 p-3 rounded-2xl hover:bg-gray-50 transition-colors">
+              <div key={i} className="flex items-start gap-3 p-3 rounded-2xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
                 <div className="w-2 h-2 rounded-full bg-indigo-500 mt-2 shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-secondary truncate">{item.action}</p>

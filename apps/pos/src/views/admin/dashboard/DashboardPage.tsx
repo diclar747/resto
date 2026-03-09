@@ -66,7 +66,7 @@ export function DashboardPage() {
   ];
 
   return (
-    <div className="p-8 space-y-8 bg-[#F4F7FE] min-h-full">
+    <div className="p-8 space-y-8 bg-background min-h-full">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -74,7 +74,7 @@ export function DashboardPage() {
           <p className="text-text-secondary font-medium mt-1">Sincronización en tiempo real • {new Date().toLocaleDateString('es-AR', { dateStyle: 'full' })}</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-white text-secondary rounded-xl font-bold text-xs shadow-sm border border-gray-100 hover:shadow-md transition-all">
+          <button className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-surface text-secondary rounded-xl font-bold text-xs shadow-sm border border-gray-100 dark:border-white/10 hover:shadow-md transition-all">
             <Filter size={14} /> Filtros Avanzados
           </button>
           <button className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl font-bold text-xs shadow-lg shadow-primary/20 hover:scale-105 transition-all">
@@ -88,7 +88,7 @@ export function DashboardPage() {
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.label} className="bg-white rounded-[32px] p-6 shadow-card border-none relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
+            <div key={stat.label} className="bg-white dark:bg-surface rounded-[32px] p-6 shadow-card border-none relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
               <div className="flex items-center justify-between relative z-10">
                 <div className={`p-4 rounded-2xl bg-gradient-to-br ${stat.color} text-white shadow-lg`}>
                   <Icon size={24} />
@@ -112,7 +112,7 @@ export function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Payment Methods Breakdown */}
-        <div className="bg-white rounded-[32px] p-8 shadow-card border-none">
+        <div className="bg-white dark:bg-surface rounded-[32px] p-8 shadow-card border-none">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-success/10 rounded-xl flex items-center justify-center text-success">
@@ -131,7 +131,7 @@ export function DashboardPage() {
                     <span className="text-sm font-black text-secondary uppercase tracking-wider">{pm.method}</span>
                     <span className="text-sm font-black text-secondary">{formatCurrency(pm.total)}</span>
                   </div>
-                  <div className="w-full bg-gray-50 rounded-full h-3 overflow-hidden">
+                  <div className="w-full bg-gray-50 dark:bg-white/5 rounded-full h-3 overflow-hidden">
                     <div
                       className="bg-gradient-to-r from-primary to-blue-400 h-3 rounded-full shadow-sm transition-all duration-1000"
                       style={{ width: `${pm.percentage}%` }}
@@ -144,7 +144,7 @@ export function DashboardPage() {
               ))
             ) : (
               <div className="flex flex-col items-center justify-center py-10 text-center space-y-3">
-                <Clock className="text-gray-200" size={48} />
+                <Clock className="text-gray-200 dark:text-white/15" size={48} />
                 <p className="text-sm font-medium text-text-secondary">Sin transacciones registradas hoy</p>
               </div>
             )}
@@ -152,7 +152,7 @@ export function DashboardPage() {
         </div>
 
         {/* Top Selling Products */}
-        <div className="bg-white rounded-[32px] p-8 shadow-card border-none">
+        <div className="bg-white dark:bg-surface rounded-[32px] p-8 shadow-card border-none">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
@@ -166,9 +166,9 @@ export function DashboardPage() {
           <div className="space-y-4">
             {summary?.topProducts && summary.topProducts.length > 0 ? (
               summary.topProducts.slice(0, 6).map((p: any, i: number) => (
-                <div key={p.productVariantId} className="group flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors">
+                <div key={p.productVariantId} className="group flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
                   <div className="flex items-center gap-4">
-                    <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-[10px] font-black text-text-secondary group-hover:bg-primary group-hover:text-white transition-colors">
+                    <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-[10px] font-black text-text-secondary group-hover:bg-primary group-hover:text-white transition-colors">
                       0{i + 1}
                     </div>
                     <div>
@@ -184,7 +184,7 @@ export function DashboardPage() {
               ))
             ) : (
               <div className="flex flex-col items-center justify-center py-10 text-center space-y-3">
-                <Clock className="text-gray-200" size={48} />
+                <Clock className="text-gray-200 dark:text-white/15" size={48} />
                 <p className="text-sm font-medium text-text-secondary">Aún no hay ventas para analizar</p>
               </div>
             )}

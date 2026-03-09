@@ -89,7 +89,7 @@ export function DeliveryDashboard() {
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.label} className="bg-white rounded-2xl p-4 shadow-card text-center">
+            <div key={stat.label} className="bg-white dark:bg-surface rounded-2xl p-4 shadow-card text-center">
               <div className={`w-10 h-10 mx-auto rounded-xl bg-gradient-to-br ${stat.color} text-white flex items-center justify-center shadow-lg mb-2`}>
                 <Icon size={20} />
               </div>
@@ -157,7 +157,7 @@ export function DeliveryDashboard() {
             {pending.map((delivery: any) => {
               const style = statusStyles[delivery.status] || statusStyles.pending;
               return (
-                <div key={delivery.id} className="bg-white rounded-2xl p-5 shadow-card hover:scale-[1.01] transition-transform">
+                <div key={delivery.id} className="bg-white dark:bg-surface rounded-2xl p-5 shadow-card hover:scale-[1.01] transition-transform">
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <p className="font-black text-secondary">
@@ -188,7 +188,7 @@ export function DeliveryDashboard() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => navigate(`/delivery/${delivery.id}`)}
-                      className="flex-1 py-2.5 bg-gray-100 text-secondary rounded-xl font-black text-xs uppercase tracking-widest hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
+                      className="flex-1 py-2.5 bg-gray-100 dark:bg-white/10 text-secondary rounded-xl font-black text-xs uppercase tracking-widest hover:bg-gray-200 dark:hover:bg-white/15 transition-all flex items-center justify-center gap-2"
                     >
                       Detalle <ArrowRight size={14} />
                     </button>
@@ -214,8 +214,8 @@ export function DeliveryDashboard() {
             })}
           </div>
         ) : (
-          <div className="bg-white rounded-2xl p-12 shadow-card text-center">
-            <Package className="mx-auto text-gray-200 mb-3" size={48} />
+          <div className="bg-white dark:bg-surface rounded-2xl p-12 shadow-card text-center">
+            <Package className="mx-auto text-gray-200 dark:text-white/15 mb-3" size={48} />
             <p className="text-sm font-medium text-text-secondary">No hay entregas pendientes</p>
           </div>
         )}
@@ -227,7 +227,7 @@ export function DeliveryDashboard() {
           <h3 className="text-lg font-black text-secondary tracking-tight mb-4">Completadas Hoy</h3>
           <div className="space-y-2">
             {completedToday.map((delivery: any) => (
-              <div key={delivery.id} className="bg-white rounded-2xl p-4 shadow-card flex items-center justify-between">
+              <div key={delivery.id} className="bg-white dark:bg-surface rounded-2xl p-4 shadow-card flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
                     <CheckCircle size={16} className="text-emerald-600" />

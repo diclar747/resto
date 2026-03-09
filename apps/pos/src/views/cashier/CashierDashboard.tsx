@@ -37,7 +37,7 @@ export function CashierDashboard() {
   ];
 
   return (
-    <div className="p-8 space-y-8 bg-[#F4F7FE] min-h-full">
+    <div className="p-8 space-y-8 bg-background min-h-full">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -72,7 +72,7 @@ export function CashierDashboard() {
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.label} className="bg-white rounded-[32px] p-6 shadow-card relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
+            <div key={stat.label} className="bg-white dark:bg-surface rounded-[32px] p-6 shadow-card relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
               <div className="flex items-center gap-4">
                 <div className={`p-4 rounded-2xl bg-gradient-to-br ${stat.color} text-white shadow-lg`}>
                   <Icon size={24} />
@@ -92,7 +92,7 @@ export function CashierDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Payment Methods */}
-        <div className="bg-white rounded-[32px] p-8 shadow-card">
+        <div className="bg-white dark:bg-surface rounded-[32px] p-8 shadow-card">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600">
               <Wallet size={20} />
@@ -108,14 +108,14 @@ export function CashierDashboard() {
                     <span className="text-sm font-black text-secondary uppercase tracking-wider">{pm.method}</span>
                     <span className="text-sm font-black text-secondary">{formatCurrency(pm.total)}</span>
                   </div>
-                  <div className="w-full bg-gray-50 rounded-full h-3 overflow-hidden">
+                  <div className="w-full bg-gray-50 dark:bg-white/5 rounded-full h-3 overflow-hidden">
                     <div className="bg-gradient-to-r from-primary to-blue-400 h-3 rounded-full" style={{ width: `${pm.percentage}%` }} />
                   </div>
                 </div>
               ))
             ) : (
               <div className="flex flex-col items-center justify-center py-10 text-center space-y-3">
-                <CreditCard className="text-gray-200" size={48} />
+                <CreditCard className="text-gray-200 dark:text-white/15" size={48} />
                 <p className="text-sm font-medium text-text-secondary">Sin transacciones aún</p>
               </div>
             )}
@@ -123,7 +123,7 @@ export function CashierDashboard() {
         </div>
 
         {/* Recent Transactions */}
-        <div className="bg-white rounded-[32px] p-8 shadow-card">
+        <div className="bg-white dark:bg-surface rounded-[32px] p-8 shadow-card">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
               <Receipt size={20} />
@@ -134,10 +134,10 @@ export function CashierDashboard() {
           <div className="space-y-3">
             {recentOrders && recentOrders.length > 0 ? (
               recentOrders.slice(0, 8).map((order: any) => (
-                <div key={order.id} className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 transition-colors">
+                <div key={order.id} className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                      <Receipt size={14} className="text-gray-500" />
+                    <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center">
+                      <Receipt size={14} className="text-gray-500 dark:text-white/40" />
                     </div>
                     <div>
                       <p className="text-sm font-black text-secondary">#{order.orderNumber}</p>
@@ -157,7 +157,7 @@ export function CashierDashboard() {
               ))
             ) : (
               <div className="flex flex-col items-center justify-center py-10 text-center space-y-3">
-                <Clock className="text-gray-200" size={48} />
+                <Clock className="text-gray-200 dark:text-white/15" size={48} />
                 <p className="text-sm font-medium text-text-secondary">No hay ventas registradas hoy</p>
               </div>
             )}

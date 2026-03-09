@@ -43,16 +43,16 @@ export function PaymentModal({ total, onClose, onComplete }: PaymentModalProps) 
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-4">
       <div className="absolute inset-0 bg-secondary/80 backdrop-blur-md" onClick={onClose} />
 
-      <div className="relative w-full max-w-md bg-white rounded-[32px] shadow-2xl overflow-hidden max-h-[95vh] flex flex-col">
+      <div className="relative w-full max-w-md bg-white dark:bg-surface rounded-[32px] shadow-2xl overflow-hidden max-h-[95vh] flex flex-col">
         {/* Header */}
-        <div className="p-5 pb-4 border-b border-gray-50">
+        <div className="p-5 pb-4 border-b border-gray-50 dark:border-white/5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-black text-secondary tracking-tight">
               Finalizar <span className="text-primary italic">Cobro</span>
             </h3>
             <button
               onClick={onClose}
-              className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 hover:text-secondary hover:bg-gray-200 transition-all"
+              className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-white/10 flex items-center justify-center text-gray-400 dark:text-white/40 hover:text-secondary hover:bg-gray-200 dark:hover:bg-white/15 transition-all"
             >
               <X size={18} />
             </button>
@@ -81,7 +81,7 @@ export function PaymentModal({ total, onClose, onComplete }: PaymentModalProps) 
                     className={`relative flex flex-col items-center gap-2 p-3 md:p-4 rounded-2xl border-2 transition-all duration-200 ${
                       isActive
                         ? 'border-secondary bg-secondary text-white shadow-lg -translate-y-0.5'
-                        : 'border-gray-100 bg-gray-50 text-secondary hover:border-gray-200'
+                        : 'border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-secondary hover:border-gray-200 dark:hover:border-white/15'
                     }`}
                   >
                     <m.icon size={22} />
@@ -107,7 +107,7 @@ export function PaymentModal({ total, onClose, onComplete }: PaymentModalProps) 
               <input
                 inputMode="numeric"
                 pattern="[0-9]*"
-                className="w-full pl-14 pr-5 py-5 bg-background border-2 border-transparent rounded-2xl text-2xl font-black text-secondary outline-none focus:bg-white focus:border-primary/20 transition-all"
+                className="w-full pl-14 pr-5 py-5 bg-background border-2 border-transparent rounded-2xl text-2xl font-black text-secondary outline-none focus:bg-white dark:focus:bg-surface focus:border-primary/20 transition-all"
                 value={receivedAmount}
                 onChange={(e) => setReceivedAmount(e.target.value.replace(/\D/g, ''))}
               />
@@ -153,13 +153,13 @@ export function PaymentModal({ total, onClose, onComplete }: PaymentModalProps) 
         </div>
 
         {/* Footer - Confirm Button */}
-        <div className="p-5 border-t border-gray-50">
+        <div className="p-5 border-t border-gray-50 dark:border-white/5">
           <button
             onClick={handlePayment}
             disabled={isProcessing || !canPay}
             className={`w-full py-5 rounded-2xl text-xs font-black uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-3 ${
               isProcessing || !canPay
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                ? 'bg-gray-100 dark:bg-white/10 text-gray-400 dark:text-white/40 cursor-not-allowed'
                 : 'bg-secondary text-white shadow-xl shadow-secondary/20 hover:scale-[1.01] active:scale-[0.99]'
             }`}
           >

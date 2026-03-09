@@ -63,7 +63,7 @@ export function ReportsPage() {
   }
 
   return (
-    <div className="p-8 space-y-8 bg-[#F4F7FE] min-h-screen">
+    <div className="p-8 space-y-8 bg-background min-h-screen">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/50 backdrop-blur-md p-6 rounded-[32px] border border-white shadow-xl">
         <div>
@@ -72,7 +72,7 @@ export function ReportsPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-3 bg-white p-2 rounded-2xl border border-gray-100 shadow-sm">
+          <div className="flex items-center gap-3 bg-white dark:bg-surface p-2 rounded-2xl border border-gray-100 dark:border-white/10 shadow-sm">
             <div className="flex items-center gap-2 px-3">
               <Calendar size={16} className="text-primary" />
               <input
@@ -82,7 +82,7 @@ export function ReportsPage() {
                 onChange={(e) => setDateRange({ ...dateRange, from: e.target.value })}
               />
             </div>
-            <div className="w-px h-4 bg-gray-100" />
+            <div className="w-px h-4 bg-gray-100 dark:bg-white/10" />
             <div className="flex items-center gap-2 px-3">
               <input
                 type="date"
@@ -138,14 +138,14 @@ export function ReportsPage() {
       {/* Charts Main Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Sales Chart */}
-        <div className="lg:col-span-2 bg-white rounded-[40px] p-8 shadow-xl border border-white relative overflow-hidden">
+        <div className="lg:col-span-2 bg-white dark:bg-surface rounded-[40px] p-8 shadow-xl border border-white relative overflow-hidden">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h3 className="text-xl font-black text-secondary tracking-tight">Rendimiento de Ventas</h3>
               <p className="text-xs font-bold text-text-secondary uppercase tracking-widest mt-1">Ingresos vs Volumen</p>
             </div>
-            <button className="p-2 hover:bg-gray-50 rounded-xl transition-colors">
-              <MoreHorizontal size={20} className="text-gray-400" />
+            <button className="p-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl transition-colors">
+              <MoreHorizontal size={20} className="text-gray-400 dark:text-white/40" />
             </button>
           </div>
 
@@ -196,7 +196,7 @@ export function ReportsPage() {
         </div>
 
         {/* Payment Methods Chart */}
-        <div className="bg-white rounded-[40px] p-8 shadow-xl border border-white">
+        <div className="bg-white dark:bg-surface rounded-[40px] p-8 shadow-xl border border-white">
           <div className="mb-8">
             <h3 className="text-xl font-black text-secondary tracking-tight">Canales de Pago</h3>
             <p className="text-xs font-bold text-text-secondary uppercase tracking-widest mt-1">Distribución de Ingresos</p>
@@ -243,7 +243,7 @@ export function ReportsPage() {
       {/* Bottom Table Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Top Products */}
-        <div className="bg-white rounded-[40px] p-8 shadow-xl border border-white">
+        <div className="bg-white dark:bg-surface rounded-[40px] p-8 shadow-xl border border-white">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h3 className="text-xl font-black text-secondary tracking-tight">Top Ventas</h3>
@@ -254,7 +254,7 @@ export function ReportsPage() {
           <div className="space-y-6">
             {productsData?.data?.slice(0, 5).map((p: any, i: number) => (
               <div key={p.variantId} className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center font-black text-primary text-xs border border-gray-100 italic">
+                <div className="w-12 h-12 rounded-2xl bg-gray-50 dark:bg-white/5 flex items-center justify-center font-black text-primary text-xs border border-gray-100 dark:border-white/10 italic">
                   #{i + 1}
                 </div>
                 <div className="flex-1">
@@ -271,7 +271,7 @@ export function ReportsPage() {
         </div>
 
         {/* Kitchen Performance */}
-        <div className="bg-white rounded-[40px] p-8 shadow-xl border border-white">
+        <div className="bg-white dark:bg-surface rounded-[40px] p-8 shadow-xl border border-white">
           <div className="mb-8">
             <h3 className="text-xl font-black text-secondary tracking-tight">Eficacia Operativa</h3>
             <p className="text-xs font-bold text-text-secondary uppercase tracking-widest mt-1">Tiempos por Estación (KDS)</p>
@@ -307,11 +307,11 @@ export function ReportsPage() {
             <div className="flex justify-center gap-6 mt-4">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span className="text-[10px] font-black uppercase text-gray-400">Excelente (&lt;15m)</span>
+                <span className="text-[10px] font-black uppercase text-gray-400 dark:text-white/40">Excelente (&lt;15m)</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-rose-500" />
-                <span className="text-[10px] font-black uppercase text-gray-400">Crítico (&gt;15m)</span>
+                <span className="text-[10px] font-black uppercase text-gray-400 dark:text-white/40">Crítico (&gt;15m)</span>
               </div>
             </div>
           </div>
@@ -323,7 +323,7 @@ export function ReportsPage() {
 
 function KpiCard({ title, value, trend, positive, icon: Icon, color }: any) {
   return (
-    <div className="bg-white rounded-[32px] p-6 shadow-xl border border-white hover:-translate-y-1 transition-all duration-300 group">
+    <div className="bg-white dark:bg-surface rounded-[32px] p-6 shadow-xl border border-white hover:-translate-y-1 transition-all duration-300 group">
       <div className="flex items-center justify-between mb-4">
         <div className={`w-14 h-14 rounded-2xl ${color} flex items-center justify-center text-white shadow-lg shadow-black/5 group-hover:scale-110 transition-transform`}>
           <Icon size={24} />

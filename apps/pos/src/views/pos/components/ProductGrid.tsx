@@ -47,7 +47,7 @@ export function ProductGrid({ products }: { products: Product[] }) {
   if (products.length === 0) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-text-secondary opacity-50 space-y-4">
-        <div className="w-20 h-20 bg-white rounded-[30px] flex items-center justify-center border-4 border-dashed border-gray-100">
+        <div className="w-20 h-20 bg-white dark:bg-surface rounded-[30px] flex items-center justify-center border-4 border-dashed border-gray-100 dark:border-white/10">
           <Plus size={30} />
         </div>
         <p className="font-bold tracking-tight">No hay productos disponibles</p>
@@ -71,12 +71,12 @@ export function ProductGrid({ products }: { products: Product[] }) {
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
             ) : (
-              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 text-text-secondary/30 italic font-medium">
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-white/5 dark:to-white/10 text-text-secondary/30 italic font-medium">
                 Sin Imagen
               </div>
             )}
             <div className="absolute top-4 right-4 opacity-100 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 translate-y-0 md:translate-y-2 transition-all duration-300">
-              <div className="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-primary shadow-lg active:scale-90">
+              <div className="w-10 h-10 bg-white dark:bg-surface rounded-2xl flex items-center justify-center text-primary shadow-lg active:scale-90">
                 <Plus size={20} />
               </div>
             </div>
@@ -94,7 +94,7 @@ export function ProductGrid({ products }: { products: Product[] }) {
               )}
             </div>
 
-            <div className="mt-4 pt-4 border-t border-gray-50 flex items-end justify-between">
+            <div className="mt-4 pt-4 border-t border-gray-50 dark:border-white/5 flex items-end justify-between">
               {product.variants.length === 1 ? (
                 <p className="text-primary font-black text-xl mb-[-4px]">
                   {formatCurrency(product.variants[0].price)}

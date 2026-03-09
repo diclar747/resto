@@ -49,7 +49,7 @@ export function DeliveryDetailPage() {
   if (!delivery) {
     return (
       <div className="flex flex-col items-center justify-center min-h-full p-6 text-center">
-        <Package className="text-gray-200 mb-3" size={48} />
+        <Package className="text-gray-200 dark:text-white/15 mb-3" size={48} />
         <p className="text-text-secondary font-medium">Entrega no encontrada</p>
         <button onClick={() => navigate('/delivery')} className="mt-4 text-purple-600 font-bold text-sm">Volver</button>
       </div>
@@ -95,7 +95,7 @@ export function DeliveryDetailPage() {
       <div className="flex items-center gap-4">
         <button
           onClick={() => navigate('/delivery')}
-          className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-gray-400 hover:text-secondary transition-colors"
+          className="w-10 h-10 rounded-xl bg-white dark:bg-surface shadow-sm flex items-center justify-center text-gray-400 dark:text-white/40 hover:text-secondary transition-colors"
         >
           <ArrowLeft size={18} />
         </button>
@@ -108,12 +108,12 @@ export function DeliveryDetailPage() {
       </div>
 
       {/* Status Timeline */}
-      <div className="bg-white rounded-[32px] p-6 shadow-card">
+      <div className="bg-white dark:bg-surface rounded-[32px] p-6 shadow-card">
         <h3 className="text-sm font-black text-secondary uppercase tracking-widest mb-6">Estado de Entrega</h3>
 
         <div className="flex items-center justify-between relative">
           {/* Progress Line */}
-          <div className="absolute top-5 left-0 right-0 h-1 bg-gray-100 mx-10">
+          <div className="absolute top-5 left-0 right-0 h-1 bg-gray-100 dark:bg-white/10 mx-10">
             <div
               className="h-1 bg-purple-600 transition-all duration-500"
               style={{ width: `${Math.max(0, (currentStepIndex / (steps.length - 1)) * 100)}%` }}
@@ -129,11 +129,11 @@ export function DeliveryDetailPage() {
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
                   isCompleted
                     ? 'bg-purple-600 text-white shadow-lg shadow-purple-200'
-                    : 'bg-gray-100 text-gray-400'
+                    : 'bg-gray-100 dark:bg-white/10 text-gray-400 dark:text-white/40'
                 } ${isCurrent ? 'ring-4 ring-purple-100 scale-110' : ''}`}>
                   <Icon size={18} />
                 </div>
-                <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-wide md:tracking-widest mt-2 ${isCompleted ? 'text-purple-600' : 'text-gray-400'}`}>
+                <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-wide md:tracking-widest mt-2 ${isCompleted ? 'text-purple-600' : 'text-gray-400 dark:text-white/40'}`}>
                   {step.label}
                 </p>
               </div>
@@ -143,10 +143,10 @@ export function DeliveryDetailPage() {
       </div>
 
       {/* Customer Info */}
-      <div className="bg-white rounded-[32px] p-6 shadow-card space-y-4">
+      <div className="bg-white dark:bg-surface rounded-[32px] p-6 shadow-card space-y-4">
         <h3 className="text-sm font-black text-secondary uppercase tracking-widest">Información del Cliente</h3>
 
-        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl">
+        <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-white/5 rounded-2xl">
           <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600">
             <User size={18} />
           </div>
@@ -157,7 +157,7 @@ export function DeliveryDetailPage() {
         </div>
 
         {delivery.customerPhone && (
-          <a href={`tel:${delivery.customerPhone}`} className="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
+          <a href={`tel:${delivery.customerPhone}`} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-white/5 rounded-2xl hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
             <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
               <Phone size={18} />
             </div>
@@ -169,7 +169,7 @@ export function DeliveryDetailPage() {
         )}
 
         {delivery.deliveryAddress && (
-          <div className="p-3 bg-gray-50 rounded-2xl">
+          <div className="p-3 bg-gray-50 dark:bg-white/5 rounded-2xl">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
                 <MapPin size={18} />
@@ -193,7 +193,7 @@ export function DeliveryDetailPage() {
       </div>
 
       {/* Order Items */}
-      <div className="bg-white rounded-[32px] p-6 shadow-card">
+      <div className="bg-white dark:bg-surface rounded-[32px] p-6 shadow-card">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600">
             <Receipt size={18} />
@@ -203,7 +203,7 @@ export function DeliveryDetailPage() {
 
         <div className="space-y-3">
           {delivery.order?.items?.map((item: any) => (
-            <div key={item.id} className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 transition-colors">
+            <div key={item.id} className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
               <div>
                 <p className="text-sm font-bold text-secondary">
                   {item.quantity}x {item.productVariant?.product?.name || 'Producto'}
@@ -223,7 +223,7 @@ export function DeliveryDetailPage() {
         </div>
 
         {delivery.order?.total && (
-          <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+          <div className="mt-4 pt-4 border-t border-gray-100 dark:border-white/10 flex items-center justify-between">
             <span className="text-sm font-black text-secondary uppercase tracking-widest">Total</span>
             <span className="text-xl font-black text-primary">{formatCurrency(delivery.order.total)}</span>
           </div>
@@ -231,7 +231,7 @@ export function DeliveryDetailPage() {
       </div>
 
       {/* Timestamps */}
-      <div className="bg-white rounded-[32px] p-6 shadow-card">
+      <div className="bg-white dark:bg-surface rounded-[32px] p-6 shadow-card">
         <h3 className="text-sm font-black text-secondary uppercase tracking-widest mb-4">Tiempos</h3>
         <div className="space-y-2">
           {delivery.assignedAt && (

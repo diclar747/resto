@@ -52,7 +52,7 @@ export function AuditLogPage() {
   };
 
   return (
-    <div className="p-8 space-y-8 bg-[#F4F7FE] min-h-full">
+    <div className="p-8 space-y-8 bg-background min-h-full">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-black text-secondary tracking-tight">Auditoría</h1>
@@ -68,15 +68,15 @@ export function AuditLogPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar por usuario, acción o entidad..."
-            className="w-full pl-12 pr-4 py-3 bg-white border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 focus:border-indigo-600/20 transition-all text-sm font-medium"
+            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-surface border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-600/10 focus:border-indigo-600/20 transition-all text-sm font-medium"
           />
         </div>
         <div className="flex items-center gap-2">
-          <Filter size={16} className="text-gray-400" />
+          <Filter size={16} className="text-gray-400 dark:text-white/40" />
           <select
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value)}
-            className="px-4 py-3 bg-white border border-gray-100 rounded-2xl text-xs font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/10"
+            className="px-4 py-3 bg-white dark:bg-surface border border-gray-100 dark:border-white/10 rounded-2xl text-xs font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/10"
           >
             <option value="all">Todas las acciones</option>
             <option value="CREATE">Creaciones</option>
@@ -87,20 +87,20 @@ export function AuditLogPage() {
       </div>
 
       {/* Audit Log List */}
-      <div className="bg-white rounded-[32px] shadow-card overflow-hidden">
-        <div className="divide-y divide-gray-50">
+      <div className="bg-white dark:bg-surface rounded-[32px] shadow-card overflow-hidden">
+        <div className="divide-y divide-gray-50 dark:divide-white/5">
           {filtered.map((log) => (
-            <div key={log.id} className="hover:bg-gray-50/50 transition-colors">
+            <div key={log.id} className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors">
               <button
                 onClick={() => setExpandedId(expandedId === log.id ? null : log.id)}
                 className="w-full flex items-center gap-4 px-8 py-5 text-left"
               >
                 {expandedId === log.id
-                  ? <ChevronDown size={16} className="text-gray-400 shrink-0" />
-                  : <ChevronRight size={16} className="text-gray-400 shrink-0" />
+                  ? <ChevronDown size={16} className="text-gray-400 dark:text-white/40 shrink-0" />
+                  : <ChevronRight size={16} className="text-gray-400 dark:text-white/40 shrink-0" />
                 }
                 <div className="flex-1 min-w-0 flex items-center gap-4">
-                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shrink-0 ${actionColors[log.action] || 'bg-gray-100 text-gray-600'}`}>
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shrink-0 ${actionColors[log.action] || 'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-white/60'}`}>
                     {actionLabels[log.action] || log.action}
                   </span>
                   <span className="text-sm font-bold text-secondary truncate">{log.description}</span>
@@ -115,7 +115,7 @@ export function AuditLogPage() {
 
               {expandedId === log.id && (
                 <div className="px-16 pb-5 space-y-2">
-                  <div className="bg-gray-50 rounded-2xl p-4 text-xs space-y-2">
+                  <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-4 text-xs space-y-2">
                     <div className="flex gap-8">
                       <div>
                         <span className="font-black text-text-secondary uppercase tracking-widest">Entidad</span>
@@ -142,7 +142,7 @@ export function AuditLogPage() {
 
           {filtered.length === 0 && (
             <div className="flex flex-col items-center justify-center py-16 text-center space-y-3">
-              <FileText className="text-gray-200" size={48} />
+              <FileText className="text-gray-200 dark:text-white/15" size={48} />
               <p className="text-sm font-medium text-text-secondary">No se encontraron registros</p>
             </div>
           )}

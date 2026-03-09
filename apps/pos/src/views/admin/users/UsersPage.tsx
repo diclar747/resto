@@ -275,7 +275,7 @@ export function UsersPage() {
   const activeUsers = users?.filter((u: any) => u.isActive !== false).length || 0;
 
   return (
-    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-[#F4F7FE] min-h-screen">
+    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-background min-h-screen">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
@@ -290,11 +290,11 @@ export function UsersPage() {
         <div className="flex items-center gap-3 flex-wrap">
           {/* Search */}
           <div className="relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={16} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/40 group-focus-within:text-primary transition-colors" size={16} />
             <input
               type="text"
               placeholder="Buscar..."
-              className="pl-11 pr-4 py-2.5 bg-white border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all w-full sm:w-52 shadow-sm font-medium"
+              className="pl-11 pr-4 py-2.5 bg-white dark:bg-surface border border-gray-100 dark:border-white/10 rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all w-full sm:w-52 shadow-sm font-medium"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -305,14 +305,14 @@ export function UsersPage() {
             <select
               value={filterRole}
               onChange={(e) => setFilterRole(e.target.value)}
-              className="px-4 py-2.5 bg-white border border-gray-100 rounded-2xl text-xs font-bold shadow-sm appearance-none pr-8 outline-none"
+              className="px-4 py-2.5 bg-white dark:bg-surface border border-gray-100 dark:border-white/10 rounded-2xl text-xs font-bold shadow-sm appearance-none pr-8 outline-none"
             >
               <option value="all">Todos los roles</option>
               {roles?.map((r: any) => (
                 <option key={r.id} value={r.name}>{roleLabels[r.name] || r.name}</option>
               ))}
             </select>
-            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/40 pointer-events-none" />
           </div>
 
           {/* Status Filter */}
@@ -320,13 +320,13 @@ export function UsersPage() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as any)}
-              className="px-4 py-2.5 bg-white border border-gray-100 rounded-2xl text-xs font-bold shadow-sm appearance-none pr-8 outline-none"
+              className="px-4 py-2.5 bg-white dark:bg-surface border border-gray-100 dark:border-white/10 rounded-2xl text-xs font-bold shadow-sm appearance-none pr-8 outline-none"
             >
               <option value="all">Todos</option>
               <option value="active">Activos</option>
               <option value="inactive">Inactivos</option>
             </select>
-            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/40 pointer-events-none" />
           </div>
 
           {/* Add Button */}
@@ -348,7 +348,7 @@ export function UsersPage() {
         </div>
       ) : filteredUsers?.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-          <div className="w-20 h-20 bg-gray-100 rounded-[28px] flex items-center justify-center">
+          <div className="w-20 h-20 bg-gray-100 dark:bg-white/10 rounded-[28px] flex items-center justify-center">
             <Search size={32} className="text-gray-300" />
           </div>
           <p className="text-sm font-bold text-text-secondary">No se encontraron miembros</p>
@@ -364,7 +364,7 @@ export function UsersPage() {
             return (
               <div
                 key={user.id}
-                className={`bg-white rounded-[32px] p-6 shadow-card border-2 hover:-translate-y-1 transition-all group overflow-hidden relative ${
+                className={`bg-white dark:bg-surface rounded-[32px] p-6 shadow-card border-2 hover:-translate-y-1 transition-all group overflow-hidden relative ${
                   isActive ? 'border-transparent hover:border-primary/10' : 'border-transparent opacity-60'
                 }`}
               >
@@ -409,7 +409,7 @@ export function UsersPage() {
                     </div>
                   )}
                   {branchName && (
-                    <p className="text-[9px] font-black text-text-secondary mt-2 uppercase tracking-widest bg-gray-50 inline-block px-2 py-0.5 rounded-md">
+                    <p className="text-[9px] font-black text-text-secondary mt-2 uppercase tracking-widest bg-gray-50 dark:bg-white/5 inline-block px-2 py-0.5 rounded-md">
                       {branchName}
                     </p>
                   )}
@@ -417,15 +417,15 @@ export function UsersPage() {
 
                 {/* Meta: PIN + Status */}
                 <div className="grid grid-cols-2 gap-2 mb-5">
-                  <div className="bg-[#F4F7FE] p-2.5 rounded-xl">
-                    <p className="text-[8px] font-black uppercase text-gray-400 mb-0.5 tracking-wider">PIN</p>
+                  <div className="bg-background p-2.5 rounded-xl">
+                    <p className="text-[8px] font-black uppercase text-gray-400 dark:text-white/40 mb-0.5 tracking-wider">PIN</p>
                     <p className="text-xs font-black text-secondary flex items-center gap-1">
-                      <KeyRound size={10} className="text-gray-400" />
+                      <KeyRound size={10} className="text-gray-400 dark:text-white/40" />
                       {user.pin ? '••••' : '—'}
                     </p>
                   </div>
-                  <div className="bg-[#F4F7FE] p-2.5 rounded-xl">
-                    <p className="text-[8px] font-black uppercase text-gray-400 mb-0.5 tracking-wider">Estado</p>
+                  <div className="bg-background p-2.5 rounded-xl">
+                    <p className="text-[8px] font-black uppercase text-gray-400 dark:text-white/40 mb-0.5 tracking-wider">Estado</p>
                     <div className="flex items-center gap-1">
                       {isActive ? (
                         <CheckCircle size={12} className="text-emerald-500" />
@@ -443,13 +443,13 @@ export function UsersPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => openEdit(user)}
-                    className="flex-1 py-2.5 bg-gray-50 hover:bg-primary/5 hover:text-primary rounded-xl text-[10px] font-black uppercase tracking-widest text-secondary transition-all flex items-center justify-center gap-1.5"
+                    className="flex-1 py-2.5 bg-gray-50 dark:bg-white/5 hover:bg-primary/5 hover:text-primary rounded-xl text-[10px] font-black uppercase tracking-widest text-secondary transition-all flex items-center justify-center gap-1.5"
                   >
                     <Edit3 size={12} /> Editar
                   </button>
                   <button
                     onClick={() => openPermissions(user)}
-                    className="flex-1 py-2.5 bg-gray-50 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest text-secondary transition-all flex items-center justify-center gap-1.5"
+                    className="flex-1 py-2.5 bg-gray-50 dark:bg-white/5 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest text-secondary transition-all flex items-center justify-center gap-1.5"
                   >
                     <Shield size={12} /> Permisos
                   </button>
@@ -472,9 +472,9 @@ export function UsersPage() {
       {/* =================== CREATE / EDIT MODAL =================== */}
       {(modalMode === 'create' || modalMode === 'edit') && (
         <div className="fixed inset-0 bg-secondary/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4" onClick={closeModal}>
-          <div className="bg-white rounded-[32px] p-4 md:p-8 w-full max-w-lg shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white dark:bg-surface rounded-[32px] p-4 md:p-8 w-full max-w-lg shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             {/* Close */}
-            <button onClick={closeModal} className="absolute top-6 right-6 w-8 h-8 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors">
+            <button onClick={closeModal} className="absolute top-6 right-6 w-8 h-8 rounded-xl bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/15 flex items-center justify-center text-gray-500 dark:text-white/40 transition-colors">
               <X size={16} />
             </button>
 
@@ -492,16 +492,16 @@ export function UsersPage() {
               {/* Name */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="relative group">
-                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={16} />
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/40 group-focus-within:text-primary transition-colors" size={16} />
                   <input
-                    className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 outline-none placeholder:text-gray-400 font-bold"
+                    className="w-full pl-10 pr-4 py-3.5 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 outline-none placeholder:text-gray-400 dark:placeholder:text-white/40 font-bold"
                     placeholder="Nombre"
                     value={form.firstName}
                     onChange={(e) => setForm({ ...form, firstName: e.target.value })}
                   />
                 </div>
                 <input
-                  className="w-full px-4 py-3.5 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 outline-none placeholder:text-gray-400 font-bold"
+                  className="w-full px-4 py-3.5 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 outline-none placeholder:text-gray-400 dark:placeholder:text-white/40 font-bold"
                   placeholder="Apellido"
                   value={form.lastName}
                   onChange={(e) => setForm({ ...form, lastName: e.target.value })}
@@ -510,9 +510,9 @@ export function UsersPage() {
 
               {/* Email */}
               <div className="relative group">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={16} />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/40 group-focus-within:text-primary transition-colors" size={16} />
                 <input
-                  className={`w-full pl-10 pr-4 py-3.5 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 outline-none placeholder:text-gray-400 font-bold ${modalMode === 'edit' ? 'opacity-60' : ''}`}
+                  className={`w-full pl-10 pr-4 py-3.5 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 outline-none placeholder:text-gray-400 dark:placeholder:text-white/40 font-bold ${modalMode === 'edit' ? 'opacity-60' : ''}`}
                   placeholder="Correo electrónico"
                   type="email"
                   value={form.email}
@@ -523,9 +523,9 @@ export function UsersPage() {
 
               {/* Phone */}
               <div className="relative group">
-                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={16} />
+                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/40 group-focus-within:text-primary transition-colors" size={16} />
                 <input
-                  className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 outline-none placeholder:text-gray-400 font-bold"
+                  className="w-full pl-10 pr-4 py-3.5 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 outline-none placeholder:text-gray-400 dark:placeholder:text-white/40 font-bold"
                   placeholder="Teléfono (opcional)"
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
@@ -535,9 +535,9 @@ export function UsersPage() {
               {/* Password + PIN */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="relative group">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={16} />
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/40 group-focus-within:text-primary transition-colors" size={16} />
                   <input
-                    className="w-full pl-10 pr-10 py-3.5 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 outline-none placeholder:text-gray-400 font-bold"
+                    className="w-full pl-10 pr-10 py-3.5 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 outline-none placeholder:text-gray-400 dark:placeholder:text-white/40 font-bold"
                     placeholder={modalMode === 'edit' ? 'Nueva contraseña' : 'Contraseña'}
                     type={showPassword ? 'text' : 'password'}
                     value={form.password}
@@ -546,15 +546,15 @@ export function UsersPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/40 hover:text-gray-600 dark:hover:text-white/60"
                   >
                     {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
                 </div>
                 <div className="relative group">
-                  <Hash className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={16} />
+                  <Hash className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/40 group-focus-within:text-primary transition-colors" size={16} />
                   <input
-                    className="w-full pl-10 pr-10 py-3.5 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 outline-none placeholder:text-gray-400 font-bold"
+                    className="w-full pl-10 pr-10 py-3.5 bg-gray-50 dark:bg-white/5 border-none rounded-2xl text-sm focus:ring-2 focus:ring-primary/20 outline-none placeholder:text-gray-400 dark:placeholder:text-white/40 font-bold"
                     placeholder="PIN (4 dígitos)"
                     maxLength={4}
                     type={showPin ? 'text' : 'password'}
@@ -565,7 +565,7 @@ export function UsersPage() {
                   <button
                     type="button"
                     onClick={() => setShowPin(!showPin)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/40 hover:text-gray-600 dark:hover:text-white/60"
                   >
                     {showPin ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
@@ -583,7 +583,7 @@ export function UsersPage() {
                       className={`p-3 rounded-2xl text-left transition-all border-2 ${
                         form.roleId === r.id
                           ? 'border-primary bg-primary/5 shadow-md'
-                          : 'border-transparent bg-gray-50 hover:bg-gray-100'
+                          : 'border-transparent bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10'
                       }`}
                     >
                       <div className="flex items-center gap-2">
@@ -603,7 +603,7 @@ export function UsersPage() {
             {/* Actions */}
             <div className="flex gap-3 mt-8">
               <button
-                className="flex-1 py-3.5 bg-gray-100 hover:bg-gray-200 text-secondary rounded-2xl text-xs font-black uppercase tracking-widest transition-all"
+                className="flex-1 py-3.5 bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/15 text-secondary rounded-2xl text-xs font-black uppercase tracking-widest transition-all"
                 onClick={closeModal}
               >
                 Cancelar
@@ -637,9 +637,9 @@ export function UsersPage() {
       {/* =================== PERMISSIONS MODAL =================== */}
       {modalMode === 'permissions' && selectedUser && (
         <div className="fixed inset-0 bg-secondary/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4" onClick={closeModal}>
-          <div className="bg-white rounded-[32px] p-4 md:p-8 w-full max-w-2xl shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white dark:bg-surface rounded-[32px] p-4 md:p-8 w-full max-w-2xl shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             {/* Close */}
-            <button onClick={closeModal} className="absolute top-6 right-6 w-8 h-8 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors">
+            <button onClick={closeModal} className="absolute top-6 right-6 w-8 h-8 rounded-xl bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/15 flex items-center justify-center text-gray-500 dark:text-white/40 transition-colors">
               <X size={16} />
             </button>
 
@@ -680,7 +680,7 @@ export function UsersPage() {
                       className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
                         current
                           ? `${roleColors[r.name] || 'bg-gray-500'} text-white shadow-lg`
-                          : 'bg-gray-50 text-secondary hover:bg-gray-100'
+                          : 'bg-gray-50 dark:bg-white/5 text-secondary hover:bg-gray-100 dark:hover:bg-white/10'
                       }`}
                     >
                       {roleLabels[r.name] || r.name}
@@ -693,7 +693,7 @@ export function UsersPage() {
             {/* Permissions Grid */}
             <div className="space-y-4">
               {Object.entries(permissionGroups).map(([key, group]) => (
-                <div key={key} className="bg-gray-50 rounded-2xl p-4">
+                <div key={key} className="bg-gray-50 dark:bg-white/5 rounded-2xl p-4">
                   <h4 className="text-xs font-black text-secondary uppercase tracking-widest mb-3">{group.label}</h4>
                   <div className="flex flex-wrap gap-2">
                     {group.permissions.map((perm) => {
@@ -704,7 +704,7 @@ export function UsersPage() {
                           className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${
                             has
                               ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
-                              : 'bg-white text-gray-400 border border-gray-100'
+                              : 'bg-white dark:bg-surface text-gray-400 dark:text-white/40 border border-gray-100 dark:border-white/10'
                           }`}
                         >
                           <span className="flex items-center gap-1">

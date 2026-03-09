@@ -92,7 +92,7 @@ export function WaiterDashboard() {
   ];
 
   return (
-    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-[#F4F7FE] min-h-full">
+    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-background min-h-full">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -114,7 +114,7 @@ export function WaiterDashboard() {
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.label} className="bg-white rounded-[32px] p-3 md:p-5 shadow-card relative overflow-hidden group hover:scale-[1.02] transition-transform">
+            <div key={stat.label} className="bg-white dark:bg-surface rounded-[32px] p-3 md:p-5 shadow-card relative overflow-hidden group hover:scale-[1.02] transition-transform">
               <div className="flex items-center gap-3">
                 <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} text-white shadow-lg`}>
                   <Icon size={20} />
@@ -147,7 +147,7 @@ export function WaiterDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
         {/* Tables Overview */}
-        <div className="bg-white rounded-[32px] p-4 md:p-8 shadow-card">
+        <div className="bg-white dark:bg-surface rounded-[32px] p-4 md:p-8 shadow-card">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-600">
               <Grid3X3 size={20} />
@@ -179,7 +179,7 @@ export function WaiterDashboard() {
         </div>
 
         {/* Active Orders */}
-        <div className="lg:col-span-2 bg-white rounded-[32px] p-4 md:p-8 shadow-card">
+        <div className="lg:col-span-2 bg-white dark:bg-surface rounded-[32px] p-4 md:p-8 shadow-card">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
               <ShoppingCart size={20} />
@@ -192,7 +192,7 @@ export function WaiterDashboard() {
               const config = statusConfig[order.status] || statusConfig.open;
               const Icon = config.icon;
               return (
-                <div key={order.id} className="bg-gray-50 rounded-2xl p-5 hover:bg-gray-100/50 transition-colors">
+                <div key={order.id} className="bg-gray-50 dark:bg-white/5 rounded-2xl p-5 hover:bg-gray-100/50 dark:hover:bg-white/10 transition-colors">
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <span className="text-lg font-black text-secondary">#{order.orderNumber}</span>
@@ -213,7 +213,7 @@ export function WaiterDashboard() {
                           {item.quantity}x {item.productVariant?.product?.name}
                           <span className="text-text-secondary ml-1 text-xs">({item.productVariant?.name})</span>
                         </span>
-                        <span className={`text-xs font-bold ${item.status === 'ready' ? 'text-green-600' : item.status === 'preparing' ? 'text-orange-600' : 'text-gray-400'}`}>
+                        <span className={`text-xs font-bold ${item.status === 'ready' ? 'text-green-600' : item.status === 'preparing' ? 'text-orange-600' : 'text-gray-400 dark:text-white/40'}`}>
                           {item.status === 'ready' ? 'Listo' : item.status === 'preparing' ? 'Preparando' : ''}
                         </span>
                       </div>
@@ -223,7 +223,7 @@ export function WaiterDashboard() {
                     )}
                   </div>
 
-                  <div className="mt-3 pt-3 border-t border-gray-200/50 flex items-center justify-between">
+                  <div className="mt-3 pt-3 border-t border-gray-200/50 dark:border-white/15 flex items-center justify-between">
                     <span className="text-xs font-bold text-text-secondary flex items-center gap-1">
                       <Clock size={12} />
                       {new Date(order.createdAt).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
@@ -236,7 +236,7 @@ export function WaiterDashboard() {
 
             {activeOrders.length === 0 && !isLoading && (
               <div className="col-span-full flex flex-col items-center justify-center py-12 text-center space-y-3">
-                <ShoppingCart className="text-gray-200" size={48} />
+                <ShoppingCart className="text-gray-200 dark:text-white/15" size={48} />
                 <p className="text-sm font-medium text-text-secondary">No hay pedidos activos</p>
               </div>
             )}

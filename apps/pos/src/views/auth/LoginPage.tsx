@@ -32,12 +32,12 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F7FE] flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
       {/* Decorative Blobs */}
       <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px]" />
       <div className="absolute bottom-[-10%] left-[-5%] w-[300px] h-[300px] bg-accent/10 rounded-full blur-[80px]" />
 
-      <div className="bg-white/70 backdrop-blur-xl border border-white/40 rounded-[40px] shadow-2xl w-full max-w-md p-6 md:p-10 relative z-10">
+      <div className="bg-white/70 dark:bg-surface/70 backdrop-blur-xl border border-white/40 rounded-[40px] shadow-2xl w-full max-w-md p-6 md:p-10 relative z-10">
         <div className="text-center mb-10">
           <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-6 rotate-3">
             <Utensils className="text-white" size={32} />
@@ -57,7 +57,7 @@ export function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm font-medium"
+                className="w-full pl-12 pr-4 py-4 bg-white dark:bg-surface border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm font-medium"
                 placeholder="usuario@restaurante.com"
                 required
               />
@@ -75,7 +75,7 @@ export function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm font-medium"
+                className="w-full pl-12 pr-4 py-4 bg-white dark:bg-surface border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm font-medium"
                 placeholder="••••••••"
                 required
               />
@@ -98,7 +98,7 @@ export function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-10 pt-8 border-t border-gray-100 flex flex-col gap-4">
+        <div className="mt-10 pt-8 border-t border-gray-100 dark:border-white/10 flex flex-col gap-4">
           <button
             onClick={() => navigate('/pin')}
             className="flex items-center justify-center gap-2 text-text-secondary hover:text-secondary font-bold text-xs transition-colors"

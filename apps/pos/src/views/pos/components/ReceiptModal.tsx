@@ -51,15 +51,15 @@ export function ReceiptModal({ data, onClose }: ReceiptModalProps) {
       <div className="relative w-full max-w-sm flex flex-col max-h-[95vh]">
         {/* Success badge */}
         <div className="flex justify-center mb-3 relative z-10">
-          <div className="w-14 h-14 bg-emerald-500 rounded-full flex items-center justify-center shadow-xl shadow-emerald-500/30 border-4 border-white">
+          <div className="w-14 h-14 bg-emerald-500 rounded-full flex items-center justify-center shadow-xl shadow-emerald-500/30 border-4 border-white dark:border-surface">
             <CheckCircle className="text-white" size={28} />
           </div>
         </div>
 
         {/* Receipt card */}
-        <div id="receipt-printable" className="bg-white rounded-[28px] shadow-2xl overflow-hidden flex flex-col max-h-[85dvh]">
+        <div id="receipt-printable" className="bg-white dark:bg-surface rounded-[28px] shadow-2xl overflow-hidden flex flex-col max-h-[85dvh]">
           {/* Header */}
-          <div className="p-6 pb-4 text-center border-b-2 border-dashed border-gray-200">
+          <div className="p-6 pb-4 text-center border-b-2 border-dashed border-gray-200 dark:border-white/15">
             <div className="flex items-center justify-center gap-2 mb-2">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <UtensilsCrossed className="text-white" size={16} />
@@ -72,7 +72,7 @@ export function ReceiptModal({ data, onClose }: ReceiptModalProps) {
           </div>
 
           {/* Order Info */}
-          <div className="px-4 md:px-6 py-4 border-b border-dashed border-gray-200">
+          <div className="px-4 md:px-6 py-4 border-b border-dashed border-gray-200 dark:border-white/15">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] font-black text-text-secondary uppercase tracking-widest">
                 {data.orderNumber ? `Orden #${data.orderNumber}` : 'Orden'}
@@ -112,19 +112,19 @@ export function ReceiptModal({ data, onClose }: ReceiptModalProps) {
           </div>
 
           {/* Totals */}
-          <div className="px-4 md:px-6 py-4 border-t-2 border-dashed border-gray-200 space-y-2">
+          <div className="px-4 md:px-6 py-4 border-t-2 border-dashed border-gray-200 dark:border-white/15 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-text-secondary">Subtotal</span>
               <span className="text-sm font-bold text-secondary">{formatCurrency(data.subtotal)}</span>
             </div>
-            <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+            <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-white/10">
               <span className="text-sm font-black text-secondary uppercase tracking-widest">Total</span>
               <span className="text-2xl font-black text-primary">{formatCurrency(data.total)}</span>
             </div>
           </div>
 
           {/* Payment Info */}
-          <div className="px-4 md:px-6 py-4 bg-background border-t border-dashed border-gray-200 space-y-2">
+          <div className="px-4 md:px-6 py-4 bg-background border-t border-dashed border-gray-200 dark:border-white/15 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-black text-text-secondary uppercase tracking-widest">Método</span>
               <span className="text-xs font-black text-secondary">{methodLabels[data.paymentMethod] || data.paymentMethod}</span>
@@ -146,7 +146,7 @@ export function ReceiptModal({ data, onClose }: ReceiptModalProps) {
           </div>
 
           {/* Footer */}
-          <div className="p-4 text-center border-t border-dashed border-gray-200">
+          <div className="p-4 text-center border-t border-dashed border-gray-200 dark:border-white/15">
             <p className="text-[10px] font-bold text-text-secondary">Gracias por su compra</p>
           </div>
         </div>
@@ -155,7 +155,7 @@ export function ReceiptModal({ data, onClose }: ReceiptModalProps) {
         <div className="flex gap-3 mt-4 print:hidden">
           <button
             onClick={handlePrint}
-            className="flex-1 py-3.5 bg-white text-secondary rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
+            className="flex-1 py-3.5 bg-white dark:bg-surface text-secondary rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-all flex items-center justify-center gap-2"
           >
             <Printer size={16} /> Imprimir
           </button>

@@ -17,9 +17,9 @@ export function CashierLayout() {
   const navigate = useNavigate();
 
   return (
-    <div className="h-screen flex bg-[#F4F7FE] overflow-hidden">
+    <div className="h-screen flex bg-background overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-[260px] bg-white border-r border-gray-100 flex flex-col z-20 shadow-[20px_0_40px_rgba(0,0,0,0.02)]">
+      <aside className="w-[260px] bg-white dark:bg-surface border-r border-gray-100 dark:border-white/10 flex flex-col z-20 shadow-[20px_0_40px_rgba(0,0,0,0.02)]">
         <div className="p-8">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/30 rotate-3">
@@ -32,7 +32,7 @@ export function CashierLayout() {
           </div>
         </div>
 
-        <div className="border-t border-gray-50 mx-6 mb-6 opacity-50" />
+        <div className="border-t border-gray-50 dark:border-white/5 mx-6 mb-6 opacity-50" />
 
         <nav className="flex-1 px-4 space-y-2 overflow-y-auto custom-scrollbar">
           {navItems.map(({ to, icon: Icon, label, end }) => (
@@ -43,7 +43,7 @@ export function CashierLayout() {
               className={({ isActive }) =>
                 `flex items-center gap-4 px-6 py-4 rounded-2xl text-[13px] font-black tracking-wide transition-all duration-300 group ${isActive
                   ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-[1.02]'
-                  : 'text-text-secondary hover:text-secondary hover:bg-gray-50'
+                  : 'text-text-secondary hover:text-secondary hover:bg-gray-50 dark:hover:bg-white/5'
                 }`
               }
             >
@@ -54,10 +54,10 @@ export function CashierLayout() {
         </nav>
 
         <div className="p-6">
-          <div className="bg-gray-50 rounded-[32px] p-5 space-y-3">
+          <div className="bg-gray-50 dark:bg-white/5 rounded-[32px] p-5 space-y-3">
             <button
               onClick={() => navigate('/pos')}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-black text-secondary hover:bg-white hover:shadow-sm transition-all uppercase tracking-widest"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-black text-secondary hover:bg-white dark:hover:bg-white/10 hover:shadow-sm transition-all uppercase tracking-widest"
             >
               <ArrowLeft size={16} /> Ir al POS
             </button>
@@ -70,7 +70,7 @@ export function CashierLayout() {
           </div>
           <div className="mt-6 flex items-center gap-3 px-4">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 border-2 border-white shadow-sm flex items-center justify-center overflow-hidden">
-              <User className="text-gray-500" size={20} />
+              <User className="text-gray-500 dark:text-white/40" size={20} />
             </div>
             <div className="flex-1 overflow-hidden">
               <p className="text-xs font-black text-secondary truncate uppercase">{user?.firstName || 'Cajero'} {user?.lastName}</p>

@@ -48,7 +48,7 @@ export function GlobalReportsPage() {
   const avgTicket = totalOrders > 0 ? Math.floor(totalRevenue / totalOrders) : 0;
 
   return (
-    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-[#F4F7FE] min-h-full">
+    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-background min-h-full">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -59,14 +59,14 @@ export function GlobalReportsPage() {
           <select
             value={selectedBranch}
             onChange={(e) => setSelectedBranch(e.target.value)}
-            className="px-4 py-2.5 bg-white border border-gray-100 rounded-xl text-xs font-bold shadow-sm"
+            className="px-4 py-2.5 bg-white dark:bg-surface border border-gray-100 dark:border-white/10 rounded-xl text-xs font-bold shadow-sm"
           >
             <option value="all">Todas las Sucursales</option>
             {activeBranches.map((b: any) => (
               <option key={b.id} value={b.id}>{b.name}</option>
             ))}
           </select>
-          <div className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-100 rounded-xl shadow-sm">
+          <div className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-surface border border-gray-100 dark:border-white/10 rounded-xl shadow-sm">
             <Calendar size={14} className="text-indigo-600" />
             <input type="date" value={dateRange.from} onChange={(e) => setDateRange({ ...dateRange, from: e.target.value })} className="text-xs font-bold border-none outline-none bg-transparent" />
             <span className="text-gray-300">—</span>
@@ -84,7 +84,7 @@ export function GlobalReportsPage() {
         ].map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.label} className="bg-white rounded-[32px] p-6 shadow-card relative overflow-hidden group hover:scale-[1.02] transition-transform">
+            <div key={stat.label} className="bg-white dark:bg-surface rounded-[32px] p-6 shadow-card relative overflow-hidden group hover:scale-[1.02] transition-transform">
               <div className="flex items-center gap-4">
                 <div className={`p-4 rounded-2xl bg-gradient-to-br ${stat.color} text-white shadow-lg`}>
                   <Icon size={24} />
@@ -100,7 +100,7 @@ export function GlobalReportsPage() {
       </div>
 
       {/* Revenue Comparison Chart */}
-      <div className="bg-white rounded-[32px] p-4 md:p-8 shadow-card">
+      <div className="bg-white dark:bg-surface rounded-[32px] p-4 md:p-8 shadow-card">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600">
             <BarChart3 size={20} />
@@ -133,14 +133,14 @@ export function GlobalReportsPage() {
           </ResponsiveContainer>
         ) : (
           <div className="flex flex-col items-center justify-center py-16 text-center space-y-3">
-            <Building2 className="text-gray-200" size={48} />
+            <Building2 className="text-gray-200 dark:text-white/15" size={48} />
             <p className="text-sm font-medium text-text-secondary">No hay sucursales para comparar</p>
           </div>
         )}
       </div>
 
       {/* Branch Performance Table */}
-      <div className="bg-white rounded-[32px] p-4 md:p-8 shadow-card">
+      <div className="bg-white dark:bg-surface rounded-[32px] p-4 md:p-8 shadow-card">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600">
             <TrendingUp size={20} />
@@ -151,7 +151,7 @@ export function GlobalReportsPage() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-100">
+              <tr className="border-b border-gray-100 dark:border-white/10">
                 <th className="text-left py-4 px-4 text-[10px] font-black text-text-secondary uppercase tracking-widest">#</th>
                 <th className="text-left py-4 px-4 text-[10px] font-black text-text-secondary uppercase tracking-widest">Sucursal</th>
                 <th className="text-right py-4 px-4 text-[10px] font-black text-text-secondary uppercase tracking-widest">Ingresos</th>
@@ -162,9 +162,9 @@ export function GlobalReportsPage() {
             </thead>
             <tbody>
               {branchPerformance.map((branch: any, i: number) => (
-                <tr key={branch.name} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                <tr key={branch.name} className="border-b border-gray-50 dark:border-white/5 hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors">
                   <td className="py-4 px-4">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black ${i === 0 ? 'bg-yellow-100 text-yellow-700' : i === 1 ? 'bg-gray-100 text-gray-600' : i === 2 ? 'bg-orange-100 text-orange-700' : 'bg-gray-50 text-gray-400'}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black ${i === 0 ? 'bg-yellow-100 text-yellow-700' : i === 1 ? 'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-white/60' : i === 2 ? 'bg-orange-100 text-orange-700' : 'bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-white/40'}`}>
                       {i + 1}
                     </div>
                   </td>

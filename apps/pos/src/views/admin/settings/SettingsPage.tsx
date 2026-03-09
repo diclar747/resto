@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../../api/client';
 import { useAuthStore } from '../../../stores/auth.store';
+import { useThemeStore } from '../../../stores/theme.store';
 import toast from 'react-hot-toast';
 import {
   User, Lock, Bell, Shield, Camera, Save, Eye, EyeOff,
   Mail, Phone, Key, Settings, Palette, Store, ChevronRight,
+  Sun, Moon, Monitor,
 } from 'lucide-react';
 
 type Tab = 'profile' | 'security' | 'notifications' | 'system';
@@ -28,7 +30,7 @@ export function SettingsPage() {
   ];
 
   return (
-    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-[#F4F7FE] min-h-full">
+    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-background min-h-full">
       {/* Header */}
       <div>
         <h1 className="text-xl md:text-3xl font-black text-secondary tracking-tight">Configuración</h1>
@@ -45,7 +47,7 @@ export function SettingsPage() {
               className={`flex items-center gap-3 px-4 py-3 md:px-5 md:py-4 rounded-2xl text-left whitespace-nowrap lg:whitespace-normal transition-all duration-200 min-w-fit lg:min-w-0 ${
                 activeTab === tab.id
                   ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                  : 'bg-white text-text-secondary hover:bg-gray-50'
+                  : 'bg-white dark:bg-surface text-text-secondary hover:bg-gray-50 dark:hover:bg-white/5'
               }`}
             >
               <tab.icon size={18} />
@@ -119,7 +121,7 @@ function ProfileSection({ profile, queryClient }: { profile: any; queryClient: a
   return (
     <form onSubmit={handleSave} className="space-y-4 md:space-y-6">
       {/* Avatar card */}
-      <div className="bg-white rounded-[28px] p-5 md:p-8 shadow-card">
+      <div className="bg-white dark:bg-surface rounded-[28px] p-5 md:p-8 shadow-card">
         <h2 className="text-sm font-black text-secondary uppercase tracking-widest mb-6 flex items-center gap-2">
           <Camera size={16} className="text-primary" /> Foto de Perfil
         </h2>
@@ -140,7 +142,7 @@ function ProfileSection({ profile, queryClient }: { profile: any; queryClient: a
               value={form.avatarUrl}
               onChange={(e) => setForm({ ...form, avatarUrl: e.target.value })}
               placeholder="https://ejemplo.com/mi-foto.jpg"
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 text-sm font-medium"
+              className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 text-sm font-medium"
             />
             <p className="text-[10px] text-text-secondary mt-1.5">Pega la URL de tu foto de perfil</p>
           </div>
@@ -148,7 +150,7 @@ function ProfileSection({ profile, queryClient }: { profile: any; queryClient: a
       </div>
 
       {/* Personal info */}
-      <div className="bg-white rounded-[28px] p-5 md:p-8 shadow-card">
+      <div className="bg-white dark:bg-surface rounded-[28px] p-5 md:p-8 shadow-card">
         <h2 className="text-sm font-black text-secondary uppercase tracking-widest mb-6 flex items-center gap-2">
           <User size={16} className="text-primary" /> Información Personal
         </h2>
@@ -160,7 +162,7 @@ function ProfileSection({ profile, queryClient }: { profile: any; queryClient: a
                 type="text"
                 value={form.firstName}
                 onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 text-sm font-medium"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 text-sm font-medium"
                 required
               />
             </div>
@@ -170,7 +172,7 @@ function ProfileSection({ profile, queryClient }: { profile: any; queryClient: a
                 type="text"
                 value={form.lastName}
                 onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 text-sm font-medium"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 text-sm font-medium"
                 required
               />
             </div>
@@ -184,7 +186,7 @@ function ProfileSection({ profile, queryClient }: { profile: any; queryClient: a
               type="email"
               value={profile?.email || ''}
               disabled
-              className="w-full px-4 py-3 bg-gray-100 border border-gray-100 rounded-2xl text-sm font-medium text-gray-400 cursor-not-allowed"
+              className="w-full px-4 py-3 bg-gray-100 dark:bg-white/10 border border-gray-100 dark:border-white/10 rounded-2xl text-sm font-medium text-gray-400 dark:text-white/40 cursor-not-allowed"
             />
             <p className="text-[10px] text-text-secondary">El email no se puede cambiar</p>
           </div>
@@ -199,7 +201,7 @@ function ProfileSection({ profile, queryClient }: { profile: any; queryClient: a
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
                 placeholder="+595 981 555 123"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 text-sm font-medium"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 text-sm font-medium"
               />
             </div>
             <div className="space-y-2">
@@ -216,7 +218,7 @@ function ProfileSection({ profile, queryClient }: { profile: any; queryClient: a
                 placeholder="Dejar vacío para no cambiar"
                 inputMode="numeric"
                 maxLength={4}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 text-sm font-medium"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 text-sm font-medium"
               />
             </div>
           </div>
@@ -224,13 +226,13 @@ function ProfileSection({ profile, queryClient }: { profile: any; queryClient: a
       </div>
 
       {/* Role info (read-only) */}
-      <div className="bg-white rounded-[28px] p-5 md:p-8 shadow-card">
+      <div className="bg-white dark:bg-surface rounded-[28px] p-5 md:p-8 shadow-card">
         <h2 className="text-sm font-black text-secondary uppercase tracking-widest mb-4 flex items-center gap-2">
           <Shield size={16} className="text-primary" /> Rol y Sucursal
         </h2>
         <div className="space-y-3">
           {profile?.branches?.map((ub: any) => (
-            <div key={ub.id || ub.branchId} className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl">
+            <div key={ub.id || ub.branchId} className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-white/5 rounded-2xl">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white">
                 <Store size={18} />
               </div>
@@ -286,7 +288,7 @@ function SecuritySection() {
 
   return (
     <div className="space-y-4 md:space-y-6">
-      <div className="bg-white rounded-[28px] p-5 md:p-8 shadow-card">
+      <div className="bg-white dark:bg-surface rounded-[28px] p-5 md:p-8 shadow-card">
         <h2 className="text-sm font-black text-secondary uppercase tracking-widest mb-6 flex items-center gap-2">
           <Lock size={16} className="text-primary" /> Cambiar Contraseña
         </h2>
@@ -299,10 +301,10 @@ function SecuritySection() {
                 type={showCurrent ? 'text' : 'password'}
                 value={form.currentPassword}
                 onChange={(e) => setForm({ ...form, currentPassword: e.target.value })}
-                className="w-full px-4 py-3 pr-12 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 text-sm font-medium"
+                className="w-full px-4 py-3 pr-12 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 text-sm font-medium"
                 required
               />
-              <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-secondary">
+              <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/40 hover:text-secondary">
                 {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
@@ -316,11 +318,11 @@ function SecuritySection() {
                 value={form.newPassword}
                 onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
                 placeholder="Mínimo 6 caracteres"
-                className="w-full px-4 py-3 pr-12 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 text-sm font-medium"
+                className="w-full px-4 py-3 pr-12 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 text-sm font-medium"
                 required
                 minLength={6}
               />
-              <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-secondary">
+              <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/40 hover:text-secondary">
                 {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
@@ -332,7 +334,7 @@ function SecuritySection() {
               type="password"
               value={form.confirmPassword}
               onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 text-sm font-medium"
+              className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 text-sm font-medium"
               required
               minLength={6}
             />
@@ -350,15 +352,15 @@ function SecuritySection() {
       </div>
 
       {/* Security tips */}
-      <div className="bg-amber-50 border border-amber-200 rounded-[28px] p-5 md:p-8">
-        <h3 className="text-sm font-black text-amber-800 uppercase tracking-widest mb-3 flex items-center gap-2">
+      <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-[28px] p-5 md:p-8">
+        <h3 className="text-sm font-black text-amber-800 dark:text-amber-400 uppercase tracking-widest mb-3 flex items-center gap-2">
           <Shield size={16} /> Consejos de Seguridad
         </h3>
-        <ul className="text-xs text-amber-700 space-y-2">
-          <li>• Usa una contraseña de al menos 8 caracteres con letras y números</li>
-          <li>• No compartas tu contraseña ni tu PIN con nadie</li>
-          <li>• Cambia tu contraseña regularmente</li>
-          <li>• Cierra sesión cuando no uses el sistema</li>
+        <ul className="text-xs text-amber-700 dark:text-amber-300/80 space-y-2">
+          <li>Usa una contraseña de al menos 8 caracteres con letras y números</li>
+          <li>No compartas tu contraseña ni tu PIN con nadie</li>
+          <li>Cambia tu contraseña regularmente</li>
+          <li>Cierra sesión cuando no uses el sistema</li>
         </ul>
       </div>
     </div>
@@ -404,13 +406,13 @@ function NotificationsSection() {
   return (
     <div className="space-y-4 md:space-y-6">
       {notifGroups.map((group) => (
-        <div key={group.title} className="bg-white rounded-[28px] p-5 md:p-8 shadow-card">
+        <div key={group.title} className="bg-white dark:bg-surface rounded-[28px] p-5 md:p-8 shadow-card">
           <h2 className="text-sm font-black text-secondary uppercase tracking-widest mb-5 flex items-center gap-2">
             <Bell size={16} className="text-primary" /> {group.title}
           </h2>
           <div className="space-y-1">
             {group.items.map((item) => (
-              <div key={item.key} className="flex items-center justify-between p-3 md:p-4 rounded-2xl hover:bg-gray-50 transition-colors">
+              <div key={item.key} className="flex items-center justify-between p-3 md:p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
                 <div className="flex-1 min-w-0 mr-4">
                   <p className="text-sm font-bold text-secondary">{item.label}</p>
                   <p className="text-[11px] text-text-secondary">{item.desc}</p>
@@ -418,7 +420,7 @@ function NotificationsSection() {
                 <button
                   onClick={() => togglePref(item.key)}
                   className={`relative w-12 h-7 rounded-full transition-colors duration-200 ${
-                    prefs[item.key] ? 'bg-primary' : 'bg-gray-200'
+                    prefs[item.key] ? 'bg-primary' : 'bg-gray-200 dark:bg-white/15'
                   }`}
                 >
                   <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200 ${
@@ -432,7 +434,7 @@ function NotificationsSection() {
       ))}
 
       {/* Sound & Vibration */}
-      <div className="bg-white rounded-[28px] p-5 md:p-8 shadow-card">
+      <div className="bg-white dark:bg-surface rounded-[28px] p-5 md:p-8 shadow-card">
         <h2 className="text-sm font-black text-secondary uppercase tracking-widest mb-5 flex items-center gap-2">
           <Settings size={16} className="text-primary" /> Preferencias
         </h2>
@@ -441,7 +443,7 @@ function NotificationsSection() {
             { key: 'soundEnabled' as const, label: 'Sonido', desc: 'Reproducir sonido en alertas' },
             { key: 'vibrationEnabled' as const, label: 'Vibración', desc: 'Vibrar en dispositivos móviles' },
           ].map((item) => (
-            <div key={item.key} className="flex items-center justify-between p-3 md:p-4 rounded-2xl hover:bg-gray-50 transition-colors">
+            <div key={item.key} className="flex items-center justify-between p-3 md:p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
               <div>
                 <p className="text-sm font-bold text-secondary">{item.label}</p>
                 <p className="text-[11px] text-text-secondary">{item.desc}</p>
@@ -449,7 +451,7 @@ function NotificationsSection() {
               <button
                 onClick={() => togglePref(item.key)}
                 className={`relative w-12 h-7 rounded-full transition-colors duration-200 ${
-                  prefs[item.key] ? 'bg-primary' : 'bg-gray-200'
+                  prefs[item.key] ? 'bg-primary' : 'bg-gray-200 dark:bg-white/15'
                 }`}
               >
                 <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200 ${
@@ -472,11 +474,42 @@ function NotificationsSection() {
 function SystemSection({ profile }: { profile: any }) {
   const branch = profile?.branches?.[0]?.branch;
   const role = profile?.branches?.[0]?.role;
+  const { mode: themeMode, setMode } = useThemeStore();
+
+  const themeOptions = [
+    { mode: 'light' as const, icon: Sun, label: 'Claro' },
+    { mode: 'dark' as const, icon: Moon, label: 'Oscuro' },
+    { mode: 'system' as const, icon: Monitor, label: 'Sistema' },
+  ];
 
   return (
     <div className="space-y-4 md:space-y-6">
+      {/* Theme selector */}
+      <div className="bg-white dark:bg-surface rounded-[28px] p-5 md:p-8 shadow-card">
+        <h2 className="text-sm font-black text-secondary uppercase tracking-widest mb-5 flex items-center gap-2">
+          <Palette size={16} className="text-primary" /> Apariencia
+        </h2>
+        <p className="text-xs text-text-secondary mb-4">Selecciona el tema visual de la aplicación</p>
+        <div className="flex gap-3">
+          {themeOptions.map(({ mode: m, icon: Icon, label }) => (
+            <button
+              key={m}
+              onClick={() => setMode(m)}
+              className={`flex-1 flex flex-col items-center gap-2 px-4 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-200 ${
+                themeMode === m
+                  ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-105'
+                  : 'bg-gray-50 dark:bg-white/5 text-text-secondary hover:bg-gray-100 dark:hover:bg-white/10'
+              }`}
+            >
+              <Icon size={22} />
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Branch info */}
-      <div className="bg-white rounded-[28px] p-5 md:p-8 shadow-card">
+      <div className="bg-white dark:bg-surface rounded-[28px] p-5 md:p-8 shadow-card">
         <h2 className="text-sm font-black text-secondary uppercase tracking-widest mb-5 flex items-center gap-2">
           <Store size={16} className="text-primary" /> Sucursal Actual
         </h2>
@@ -497,7 +530,7 @@ function SystemSection({ profile }: { profile: any }) {
       </div>
 
       {/* Account info */}
-      <div className="bg-white rounded-[28px] p-5 md:p-8 shadow-card">
+      <div className="bg-white dark:bg-surface rounded-[28px] p-5 md:p-8 shadow-card">
         <h2 className="text-sm font-black text-secondary uppercase tracking-widest mb-5 flex items-center gap-2">
           <Shield size={16} className="text-primary" /> Información de Cuenta
         </h2>
@@ -510,13 +543,13 @@ function SystemSection({ profile }: { profile: any }) {
       </div>
 
       {/* App info */}
-      <div className="bg-white rounded-[28px] p-5 md:p-8 shadow-card">
+      <div className="bg-white dark:bg-surface rounded-[28px] p-5 md:p-8 shadow-card">
         <h2 className="text-sm font-black text-secondary uppercase tracking-widest mb-5 flex items-center gap-2">
-          <Palette size={16} className="text-primary" /> Aplicación
+          <Settings size={16} className="text-primary" /> Aplicación
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <InfoField label="Versión" value="1.0.0" />
-          <InfoField label="Tema" value="Claro (por defecto)" />
+          <InfoField label="Plataforma" value="Web (PWA)" />
         </div>
       </div>
     </div>
@@ -525,7 +558,7 @@ function SystemSection({ profile }: { profile: any }) {
 
 function InfoField({ label, value }: { label: string; value?: string }) {
   return (
-    <div className="p-3 bg-gray-50 rounded-xl">
+    <div className="p-3 bg-gray-50 dark:bg-white/5 rounded-xl">
       <p className="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-1">{label}</p>
       <p className="text-sm font-medium text-secondary truncate">{value || '—'}</p>
     </div>

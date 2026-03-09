@@ -42,16 +42,16 @@ export function PinLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F7FE] flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
       {/* Decorative Blobs */}
       <div className="absolute top-[-10%] left-[-5%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px]" />
       <div className="absolute bottom-[-10%] right-[-5%] w-[300px] h-[300px] bg-accent/10 rounded-full blur-[80px]" />
 
-      <div className="bg-white/70 backdrop-blur-xl border border-white/40 rounded-[48px] shadow-2xl w-full max-w-sm p-10 relative z-10">
+      <div className="bg-white/70 dark:bg-surface/70 backdrop-blur-xl border border-white/40 rounded-[48px] shadow-2xl w-full max-w-sm p-10 relative z-10">
         <div className="flex items-center gap-4 mb-10">
           <button
             onClick={() => navigate('/login')}
-            className="w-10 h-10 bg-gray-50 flex items-center justify-center rounded-xl text-gray-400 hover:text-primary hover:bg-white transition-all shadow-sm border border-transparent hover:border-primary/20"
+            className="w-10 h-10 bg-gray-50 dark:bg-white/5 flex items-center justify-center rounded-xl text-gray-400 dark:text-white/40 hover:text-primary hover:bg-white dark:hover:bg-surface transition-all shadow-sm border border-transparent hover:border-primary/20"
           >
             <ArrowLeft size={18} />
           </button>
@@ -68,7 +68,7 @@ export function PinLoginPage() {
               key={i}
               className={`w-4 h-4 rounded-full transition-all duration-300 ${i < pin.length
                   ? 'bg-primary scale-125 shadow-lg shadow-primary/40'
-                  : 'bg-gray-200'
+                  : 'bg-gray-200 dark:bg-white/15'
                 }`}
             />
           ))}
@@ -83,7 +83,7 @@ export function PinLoginPage() {
                 <button
                   key="del"
                   onClick={handleDelete}
-                  className="h-20 rounded-[28px] bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-rose-500 hover:bg-rose-50 hover:border-rose-100 transition-all shadow-sm group active:scale-95"
+                  className="h-20 rounded-[28px] bg-white dark:bg-surface border border-gray-100 dark:border-white/10 flex items-center justify-center text-gray-400 dark:text-white/40 hover:text-rose-500 hover:bg-rose-50 hover:border-rose-100 transition-all shadow-sm group active:scale-95"
                 >
                   <Delete size={24} className="group-hover:scale-110 transition-transform" />
                 </button>
@@ -94,7 +94,7 @@ export function PinLoginPage() {
                 key={key}
                 onClick={() => handleDigit(key)}
                 disabled={loading}
-                className="h-20 rounded-[28px] bg-white border border-gray-100 flex items-center justify-center text-2xl font-black text-secondary hover:text-primary hover:bg-primary/5 hover:border-primary/20 transition-all shadow-sm active:scale-95 disabled:opacity-50"
+                className="h-20 rounded-[28px] bg-white dark:bg-surface border border-gray-100 dark:border-white/10 flex items-center justify-center text-2xl font-black text-secondary hover:text-primary hover:bg-primary/5 hover:border-primary/20 transition-all shadow-sm active:scale-95 disabled:opacity-50"
               >
                 {key}
               </button>

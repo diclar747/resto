@@ -94,7 +94,7 @@ export function Cart({ onOrderSent }: { onOrderSent?: () => void } = {}) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white/40 backdrop-blur-md border-l border-white/20 font-outfit">
+    <div className="flex flex-col h-full bg-white/40 dark:bg-white/5 backdrop-blur-md border-l border-white/20 font-outfit">
       {/* Header */}
       <div className="p-6">
         <div className="flex items-center justify-between bg-secondary p-4 rounded-[24px] shadow-lg">
@@ -120,18 +120,18 @@ export function Cart({ onOrderSent }: { onOrderSent?: () => void } = {}) {
       <div className="flex-1 overflow-auto px-6 space-y-4 no-scrollbar">
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-text-secondary opacity-30 space-y-4">
-            <div className="w-20 h-20 bg-white rounded-[30px] flex items-center justify-center border-4 border-dashed border-gray-100">
+            <div className="w-20 h-20 bg-white dark:bg-surface rounded-[30px] flex items-center justify-center border-4 border-dashed border-gray-100 dark:border-white/10">
               <ShoppingBag size={30} />
             </div>
             <p className="font-black uppercase tracking-widest text-[10px]">Sin productos</p>
           </div>
         ) : (
           items.map((item) => (
-            <div key={item.id} className="group flex flex-col gap-3 p-5 bg-white rounded-[28px] shadow-sm border border-gray-50 transition-all hover:bg-white hover:shadow-xl hover:scale-[1.02]">
+            <div key={item.id} className="group flex flex-col gap-3 p-5 bg-white dark:bg-surface rounded-[28px] shadow-sm border border-gray-50 dark:border-white/5 transition-all hover:bg-white dark:hover:bg-surface hover:shadow-xl hover:scale-[1.02]">
               <div className="flex justify-between items-start gap-3">
                 <div className="min-w-0">
                   <p className="font-black text-secondary text-sm leading-tight italic">{item.productName}</p>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-0.5">{item.variantName}</p>
+                  <p className="text-[9px] font-black text-gray-400 dark:text-white/40 uppercase tracking-widest mt-0.5">{item.variantName}</p>
                 </div>
                 <button
                   onClick={() => removeItem(item.id)}
@@ -142,17 +142,17 @@ export function Cart({ onOrderSent }: { onOrderSent?: () => void } = {}) {
               </div>
 
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 bg-[#F4F7FE] p-1 rounded-2xl">
+                <div className="flex items-center gap-2 bg-background p-1 rounded-2xl">
                   <button
                     onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                    className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-secondary active:scale-90 transition-transform"
+                    className="w-8 h-8 rounded-xl bg-white dark:bg-surface shadow-sm flex items-center justify-center text-secondary active:scale-90 transition-transform"
                   >
                     <Minus size={14} />
                   </button>
                   <span className="w-6 text-center text-xs font-black">{item.quantity}</span>
                   <button
                     onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                    className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-secondary active:scale-90 transition-transform"
+                    className="w-8 h-8 rounded-xl bg-white dark:bg-surface shadow-sm flex items-center justify-center text-secondary active:scale-90 transition-transform"
                   >
                     <Plus size={14} />
                   </button>
@@ -167,7 +167,7 @@ export function Cart({ onOrderSent }: { onOrderSent?: () => void } = {}) {
       </div>
 
       {/* Footer */}
-      <div className="p-6 space-y-4 bg-white/80 backdrop-blur-xl border-t border-gray-50">
+      <div className="p-6 space-y-4 bg-white/80 dark:bg-white/5 backdrop-blur-xl border-t border-gray-50 dark:border-white/5">
         <div className="space-y-2">
           <p className="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em] ml-2">Nota Rápida</p>
           <input
@@ -175,7 +175,7 @@ export function Cart({ onOrderSent }: { onOrderSent?: () => void } = {}) {
             placeholder="Alergias, preferencias..."
             value={notes}
             onChange={(e) => setOrderNotes(e.target.value)}
-            className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-[20px] focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all text-sm font-bold placeholder:text-gray-300 outline-none"
+            className="w-full px-5 py-3.5 bg-gray-50 dark:bg-white/5 border-none rounded-[20px] focus:bg-white dark:focus:bg-surface focus:ring-4 focus:ring-primary/5 transition-all text-sm font-bold placeholder:text-gray-300 outline-none"
           />
         </div>
 

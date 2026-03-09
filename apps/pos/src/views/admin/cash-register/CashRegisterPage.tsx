@@ -92,7 +92,7 @@ export function CashRegisterPage() {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowMovementForm(true)}
-                className="flex items-center gap-2 px-5 py-3 bg-white text-[var(--primary)] border border-blue-100 rounded-2xl font-bold hover:bg-blue-50 transition-all shadow-sm"
+                className="flex items-center gap-2 px-5 py-3 bg-white dark:bg-surface text-[var(--primary)] border border-blue-100 dark:border-white/10 rounded-2xl font-bold hover:bg-blue-50 transition-all shadow-sm"
               >
                 <Plus size={20} />
                 <span>Movimiento</span>
@@ -101,7 +101,7 @@ export function CashRegisterPage() {
                 onClick={() => {
                   if (confirm('¿Cerrar caja?')) closeRegister.mutate(activeRegister.id);
                 }}
-                className="flex items-center gap-2 px-5 py-3 bg-white text-[var(--error)] border border-red-50 rounded-2xl font-bold hover:bg-red-50 transition-all shadow-sm"
+                className="flex items-center gap-2 px-5 py-3 bg-white dark:bg-surface text-[var(--error)] border border-red-50 dark:border-white/5 rounded-2xl font-bold hover:bg-red-50 transition-all shadow-sm"
               >
                 <Lock size={20} />
                 <span>Cerrar Caja</span>
@@ -183,16 +183,16 @@ export function CashRegisterPage() {
           <div className="glass-card overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50/50 text-left border-b border-white/20">
+                <tr className="bg-gray-50/50 dark:bg-white/[0.03] text-left border-b border-white/20">
                   <th className="px-6 py-4 text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest">Hora</th>
                   <th className="px-6 py-4 text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest">Tipo</th>
                   <th className="px-6 py-4 text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest">Concepto</th>
                   <th className="px-6 py-4 text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest text-right">Monto</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100/30">
+              <tbody className="divide-y divide-gray-100/30 dark:divide-white/10">
                 {movements?.map((m: any) => (
-                  <tr key={m.id} className="hover:bg-blue-50/30 transition-colors group">
+                  <tr key={m.id} className="hover:bg-blue-50/30 dark:hover:bg-white/5 transition-colors group">
                     <td className="px-6 py-4 text-sm font-bold text-[var(--text-main)]">
                       {new Date(m.createdAt).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
                     </td>
@@ -244,7 +244,7 @@ export function CashRegisterPage() {
 
           <div className="space-y-3">
             {registers?.filter((r: any) => r.status === 'closed').slice(0, 5).map((r: any) => (
-              <div key={r.id} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm hover:shadow-md transition-all group">
+              <div key={r.id} className="bg-white dark:bg-surface rounded-2xl border border-gray-100 dark:border-white/10 p-4 shadow-sm hover:shadow-md transition-all group">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex flex-col">
                     <span className="text-sm font-black text-[var(--text-main)]">
@@ -254,7 +254,7 @@ export function CashRegisterPage() {
                       Cerrado {new Date(r.closedAt).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                  <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-black rounded-md uppercase tracking-tighter">Cerrada</span>
+                  <span className="px-2 py-0.5 bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-white/60 text-[10px] font-black rounded-md uppercase tracking-tighter">Cerrada</span>
                 </div>
 
                 <div className="flex justify-between items-end mt-4">
@@ -277,26 +277,26 @@ export function CashRegisterPage() {
       {/* Movement Form Modal - Glassmorphism style */}
       {showMovementForm && (
         <div className="fixed inset-0 bg-[var(--text-main)]/40 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl p-8 w-full max-w-lg shadow-2xl relative overflow-hidden">
+          <div className="bg-white dark:bg-surface rounded-3xl p-8 w-full max-w-lg shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[var(--primary)] to-[var(--accent)]" />
 
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-2xl font-black text-[var(--text-main)]">Registrar Movimiento</h3>
               <button
                 onClick={() => setShowMovementForm(false)}
-                className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-xl transition-colors"
               >
                 <X size={24} className="text-[var(--text-muted)]" />
               </button>
             </div>
 
             <div className="space-y-6">
-              <div className="flex p-1.5 bg-gray-100 rounded-2xl gap-1.5">
+              <div className="flex p-1.5 bg-gray-100 dark:bg-white/10 rounded-2xl gap-1.5">
                 <button
                   onClick={() => setMovementForm({ ...movementForm, type: 'cash_in' })}
                   className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all ${movementForm.type === 'cash_in'
-                      ? 'bg-white text-green-600 shadow-sm'
-                      : 'text-gray-500 hover:bg-gray-200'
+                      ? 'bg-white dark:bg-surface text-green-600 shadow-sm'
+                      : 'text-gray-500 dark:text-white/40 hover:bg-gray-200 dark:hover:bg-white/15'
                     }`}
                 >
                   <ArrowUpCircle size={18} />
@@ -305,8 +305,8 @@ export function CashRegisterPage() {
                 <button
                   onClick={() => setMovementForm({ ...movementForm, type: 'cash_out' })}
                   className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all ${movementForm.type === 'cash_out'
-                      ? 'bg-white text-red-600 shadow-sm'
-                      : 'text-gray-500 hover:bg-gray-200'
+                      ? 'bg-white dark:bg-surface text-red-600 shadow-sm'
+                      : 'text-gray-500 dark:text-white/40 hover:bg-gray-200 dark:hover:bg-white/15'
                     }`}
                 >
                   <ArrowDownCircle size={18} />
@@ -320,7 +320,7 @@ export function CashRegisterPage() {
                   <div className="relative">
                     <div className="absolute left-5 top-1/2 -translate-y-1/2 text-xl font-bold text-[var(--text-muted)]">₲</div>
                     <input
-                      className="w-full pl-12 pr-6 py-4 bg-gray-50 border-2 border-transparent focus:border-[var(--primary)] focus:bg-white rounded-2xl text-2xl font-black outline-none transition-all placeholder:text-gray-300"
+                      className="w-full pl-12 pr-6 py-4 bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-[var(--primary)] focus:bg-white dark:focus:bg-surface rounded-2xl text-2xl font-black outline-none transition-all placeholder:text-gray-300 dark:placeholder:text-white/20"
                       placeholder="0"
                       inputMode="numeric"
                       value={movementForm.amount}
@@ -332,7 +332,7 @@ export function CashRegisterPage() {
                 <div className="space-y-1.5">
                   <label className="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest px-1">Concepto / Descripción</label>
                   <textarea
-                    className="w-full px-6 py-4 bg-gray-50 border-2 border-transparent focus:border-[var(--primary)] focus:bg-white rounded-2xl text-base font-bold outline-none transition-all placeholder:text-gray-300 min-h-[100px] resize-none"
+                    className="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-[var(--primary)] focus:bg-white dark:focus:bg-surface rounded-2xl text-base font-bold outline-none transition-all placeholder:text-gray-300 dark:placeholder:text-white/20 min-h-[100px] resize-none"
                     placeholder="Eje: Pago a proveedor, Venta manual, etc."
                     value={movementForm.description}
                     onChange={(e) => setMovementForm({ ...movementForm, description: e.target.value })}
@@ -343,7 +343,7 @@ export function CashRegisterPage() {
 
             <div className="flex gap-4 mt-8">
               <button
-                className="flex-1 py-4 bg-gray-100 text-[var(--text-muted)] rounded-2xl font-bold hover:bg-gray-200 transition-all"
+                className="flex-1 py-4 bg-gray-100 dark:bg-white/10 text-[var(--text-muted)] rounded-2xl font-bold hover:bg-gray-200 dark:hover:bg-white/15 transition-all"
                 onClick={() => setShowMovementForm(false)}
               >
                 Cancelar

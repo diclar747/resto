@@ -39,7 +39,7 @@ export function PosPage() {
           {/* Top Actions & Filters */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-4">
             {/* Order type selector */}
-            <div className="flex p-1 md:p-1.5 bg-white/50 backdrop-blur-sm rounded-xl md:rounded-2xl border border-white">
+            <div className="flex p-1 md:p-1.5 bg-white/50 dark:bg-white/5 backdrop-blur-sm rounded-xl md:rounded-2xl border border-white dark:border-white/10">
               {[
                 { type: 'dine_in' as const, icon: Utensils, label: 'Mesa' },
                 { type: 'takeaway' as const, icon: ShoppingBag, label: 'Llevar' },
@@ -50,7 +50,7 @@ export function PosPage() {
                   onClick={() => setOrderType(type)}
                   className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 md:gap-2 px-3 md:px-6 py-2 md:py-2.5 rounded-lg md:rounded-xl text-[10px] md:text-xs font-black uppercase tracking-wider transition-all duration-300 ${orderType === type
                       ? 'bg-secondary text-white shadow-lg scale-[1.05]'
-                      : 'text-text-secondary hover:bg-white hover:text-primary'
+                      : 'text-text-secondary hover:bg-white dark:hover:bg-white/5 hover:text-primary'
                     }`}
                 >
                   <Icon size={14} /> {label}
@@ -63,7 +63,7 @@ export function PosPage() {
               <input
                 type="text"
                 placeholder="¿Qué estás buscando?"
-                className="w-full pl-11 md:pl-14 pr-4 md:pr-6 py-3 md:py-4 bg-white/50 border border-white rounded-xl md:rounded-[24px] focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all font-medium text-sm"
+                className="w-full pl-11 md:pl-14 pr-4 md:pr-6 py-3 md:py-4 bg-white/50 dark:bg-white/5 border border-white dark:border-white/10 rounded-xl md:rounded-[24px] focus:bg-white dark:focus:bg-surface focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all font-medium text-sm"
               />
             </div>
           </div>
@@ -74,7 +74,7 @@ export function PosPage() {
               onClick={() => setSelectedCategory(null)}
               className={`px-4 md:px-8 py-2.5 md:py-3 rounded-2xl md:rounded-[20px] text-[10px] md:text-xs font-black uppercase tracking-widest transition-all duration-300 whitespace-nowrap ${!selectedCategory
                   ? 'bg-primary text-white shadow-[0px_8px_16px_rgba(0,74,173,0.2)]'
-                  : 'bg-white text-text-secondary hover:text-primary border border-transparent hover:border-primary/20 shadow-sm'
+                  : 'bg-white dark:bg-surface text-text-secondary hover:text-primary border border-transparent hover:border-primary/20 shadow-sm'
                 }`}
             >
               Todos
@@ -85,7 +85,7 @@ export function PosPage() {
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-4 md:px-8 py-2.5 md:py-3 rounded-2xl md:rounded-[20px] text-[10px] md:text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300 ${selectedCategory === cat.id
                     ? 'bg-primary text-white shadow-[0px_8px_16px_rgba(0,74,173,0.2)]'
-                    : 'bg-white text-text-secondary hover:text-primary border border-transparent hover:border-primary/20 shadow-sm'
+                    : 'bg-white dark:bg-surface text-text-secondary hover:text-primary border border-transparent hover:border-primary/20 shadow-sm'
                   }`}
               >
                 {cat.name}
@@ -124,10 +124,10 @@ export function PosPage() {
       {cartOpen && (
         <div className="xl:hidden fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setCartOpen(false)} />
-          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-[32px] max-h-[85vh] flex flex-col animate-in slide-in-from-bottom duration-300">
+          <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-surface rounded-t-[32px] max-h-[85vh] flex flex-col animate-in slide-in-from-bottom duration-300">
             <div className="flex items-center justify-between px-5 pt-5 pb-3">
               <h2 className="text-lg font-black text-secondary">Tu Pedido</h2>
-              <button onClick={() => setCartOpen(false)} className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400">
+              <button onClick={() => setCartOpen(false)} className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-white/10 flex items-center justify-center text-gray-400 dark:text-white/40">
                 <X size={18} />
               </button>
             </div>

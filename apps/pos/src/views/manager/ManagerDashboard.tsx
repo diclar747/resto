@@ -69,7 +69,7 @@ export function ManagerDashboard() {
   ];
 
   return (
-    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-[#F4F7FE] min-h-full">
+    <div className="p-4 md:p-8 space-y-4 md:space-y-8 bg-background min-h-full">
       {/* Header */}
       <div>
         <h1 className="text-xl md:text-3xl font-black text-secondary tracking-tight">Dashboard Gerente</h1>
@@ -83,7 +83,7 @@ export function ManagerDashboard() {
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.label} className="bg-white rounded-[32px] p-6 shadow-card relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
+            <div key={stat.label} className="bg-white dark:bg-surface rounded-[32px] p-6 shadow-card relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
               <div className="flex items-center justify-between relative z-10">
                 <div className={`p-4 rounded-2xl bg-gradient-to-br ${stat.color} text-white shadow-lg`}>
                   <Icon size={24} />
@@ -124,7 +124,7 @@ export function ManagerDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
         {/* Top Products */}
-        <div className="bg-white rounded-[32px] p-4 md:p-8 shadow-card">
+        <div className="bg-white dark:bg-surface rounded-[32px] p-4 md:p-8 shadow-card">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
               <ChefHat size={20} />
@@ -135,9 +135,9 @@ export function ManagerDashboard() {
           <div className="space-y-4">
             {summary?.topProducts && summary.topProducts.length > 0 ? (
               summary.topProducts.slice(0, 5).map((p: any, i: number) => (
-                <div key={p.productVariantId} className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 transition-colors">
+                <div key={p.productVariantId} className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-black text-text-secondary">
+                    <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center text-[10px] font-black text-text-secondary">
                       0{i + 1}
                     </div>
                     <div>
@@ -150,7 +150,7 @@ export function ManagerDashboard() {
               ))
             ) : (
               <div className="flex flex-col items-center justify-center py-10 text-center space-y-3">
-                <Clock className="text-gray-200" size={48} />
+                <Clock className="text-gray-200 dark:text-white/15" size={48} />
                 <p className="text-sm font-medium text-text-secondary">Sin datos de ventas</p>
               </div>
             )}
@@ -158,7 +158,7 @@ export function ManagerDashboard() {
         </div>
 
         {/* Recent Orders */}
-        <div className="bg-white rounded-[32px] p-4 md:p-8 shadow-card">
+        <div className="bg-white dark:bg-surface rounded-[32px] p-4 md:p-8 shadow-card">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
               <ShoppingCart size={20} />
@@ -173,7 +173,7 @@ export function ManagerDashboard() {
                   open: 'bg-blue-100 text-blue-700',
                   in_progress: 'bg-orange-100 text-orange-700',
                   ready: 'bg-green-100 text-green-700',
-                  closed: 'bg-gray-100 text-gray-600',
+                  closed: 'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-white/60',
                 };
                 const statusLabels: Record<string, string> = {
                   open: 'Abierto',
@@ -182,7 +182,7 @@ export function ManagerDashboard() {
                   closed: 'Cerrado',
                 };
                 return (
-                  <div key={order.id} className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 transition-colors">
+                  <div key={order.id} className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
                     <div>
                       <p className="text-sm font-black text-secondary">#{order.orderNumber}</p>
                       <p className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">
@@ -190,7 +190,7 @@ export function ManagerDashboard() {
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${statusColors[order.status] || 'bg-gray-100 text-gray-600'}`}>
+                      <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${statusColors[order.status] || 'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-white/60'}`}>
                         {statusLabels[order.status] || order.status}
                       </span>
                       <p className="text-sm font-black text-secondary">{formatCurrency(order.total)}</p>
@@ -200,7 +200,7 @@ export function ManagerDashboard() {
               })
             ) : (
               <div className="flex flex-col items-center justify-center py-10 text-center space-y-3">
-                <Clock className="text-gray-200" size={48} />
+                <Clock className="text-gray-200 dark:text-white/15" size={48} />
                 <p className="text-sm font-medium text-text-secondary">Sin pedidos recientes</p>
               </div>
             )}

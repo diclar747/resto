@@ -17,7 +17,7 @@ export function PosLayout() {
     <div className="h-screen flex flex-col bg-background">
       {/* Top bar — hidden on mobile, shown on md+ */}
       <header className="hidden md:block sticky top-0 z-50 px-4 pt-3 pb-2">
-        <div className="bg-white/80 backdrop-blur-xl border border-gray-100 shadow-lg rounded-2xl flex items-center justify-between py-2.5 px-5">
+        <div className="bg-white/80 dark:bg-surface backdrop-blur-xl border border-gray-100 dark:border-white/10 shadow-lg rounded-2xl flex items-center justify-between py-2.5 px-5">
           <div className="flex items-center gap-6">
             {/* Logo */}
             <div className="flex items-center gap-2.5">
@@ -46,7 +46,7 @@ export function PosLayout() {
               <Bell size={18} />
             </button>
 
-            <div className="flex items-center gap-2.5 pl-3 border-l border-gray-100">
+            <div className="flex items-center gap-2.5 pl-3 border-l border-gray-100 dark:border-white/10">
               <div className="w-9 h-9 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center text-white font-black text-xs shadow-md shadow-primary/20">
                 {user?.firstName?.[0]?.toUpperCase() || 'U'}
               </div>
@@ -68,7 +68,7 @@ export function PosLayout() {
 
       {/* Mobile top bar — shown only on mobile */}
       <header className="md:hidden sticky top-0 z-50 px-3 pt-2 pb-1.5">
-        <div className="bg-white/80 backdrop-blur-xl border border-gray-100 shadow-lg rounded-2xl flex items-center justify-between py-2 px-4">
+        <div className="bg-white/80 dark:bg-surface backdrop-blur-xl border border-gray-100 dark:border-white/10 shadow-lg rounded-2xl flex items-center justify-between py-2 px-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-md shadow-primary/30">
               <UtensilsCrossed className="text-white" size={16} />
@@ -94,7 +94,7 @@ export function PosLayout() {
       </main>
 
       {/* Mobile bottom navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-t border-gray-100 px-2 pb-[env(safe-area-inset-bottom)]">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-surface backdrop-blur-xl border-t border-gray-100 dark:border-white/10 px-2 pb-[env(safe-area-inset-bottom)]">
         <div className="flex items-center justify-around py-1.5">
           <BottomNavItem to="/pos" icon={<ShoppingCart size={20} />} label="Venta" end />
           <BottomNavItem to="/pos/tables" icon={<Grid3X3 size={20} />} label="Mesas" />
@@ -137,7 +137,7 @@ function BottomNavItem({ to, icon, label, end = false }: { to: string, icon: Rea
         `flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all ${
           isActive
             ? 'text-primary'
-            : 'text-gray-400'
+            : 'text-gray-400 dark:text-white/40'
         }`
       }
     >
