@@ -13,6 +13,8 @@ export class MarketplaceService {
                 name: true,
                 address: true,
                 phone: true,
+                whatsapp: true,
+                bannerUrl: true,
                 settings: true,
                 categories: {
                     where: { isActive: true, parentId: null },

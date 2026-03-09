@@ -18,6 +18,7 @@ const navItems = [
   { to: '/admin/reports', icon: BarChart3, label: 'Estadísticas' },
   { to: '/admin/users', icon: Users, label: 'Staff' },
   { to: '/admin/settings', icon: Settings, label: 'Configuración' },
+  { to: '/admin/restaurants', icon: Store, label: 'Restaurantes' },
 ];
 
 export function AdminLayout() {
@@ -79,7 +80,10 @@ export function AdminLayout() {
         <div className="border-t border-gray-50 dark:border-white/5 mx-6 mb-6 opacity-50" />
 
         <nav className="flex-1 px-4 space-y-2 overflow-y-auto custom-scrollbar">
-          {navItems.map(({ to, icon: Icon, label, end }) => (
+          {navItems.filter(item => {
+            if (item.to === '/admin/restaurants') return user?.role === 'admin' || user?.role === 'superadmin';
+            return true;
+          }).map(({ to, icon: Icon, label, end }) => (
             <NavLink
               key={to}
               to={to}
@@ -102,13 +106,13 @@ export function AdminLayout() {
           <div className="bg-gray-50 dark:bg-white/5 rounded-[32px] p-4 md:p-5 space-y-3">
             <button
               onClick={() => { navigate('/pos'); setSidebarOpen(false); }}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-black text-secondary hover:bg-white dark:hover:bg-surface hover:shadow-sm transition-all uppercase tracking-widest"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-black text-secondary dark:text-white hover:bg-white dark:hover:bg-white/10 hover:shadow-sm transition-all uppercase tracking-widest"
             >
               <ArrowLeft size={16} /> Volver al POS
             </button>
             <button
               onClick={() => { logout(); navigate('/login'); }}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-black text-rose-500 hover:bg-rose-50 transition-all uppercase tracking-widest"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-black text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all uppercase tracking-widest"
             >
               <LogOut size={16} /> Cerrar Sesión
             </button>

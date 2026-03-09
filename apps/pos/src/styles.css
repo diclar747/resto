@@ -30,11 +30,11 @@
 [data-theme="dark"] {
   --color-primary: #3B82F6;
   --color-primary-light: #1E3A5F;
-  --color-secondary: #1E293B;
+  --color-secondary: #F1F5F9;
   --color-accent: #22D3EE;
   --color-background: #0F172A;
   --color-surface: #1E293B;
-  --color-text-main: #F1F5F9;
+  --color-text-main: #E2E8F0;
   --color-text-secondary: #94A3B8;
   --color-success: #34D399;
   --color-error: #F87171;

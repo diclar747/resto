@@ -100,7 +100,7 @@ export function MarketplacePage({ isDarkMode }: { isDarkMode: boolean }) {
                                     {/* Header Image */}
                                     <div className="h-40 w-full relative overflow-hidden">
                                         <img
-                                            src={settings.headerUrl || 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&q=80'}
+                                            src={branch.bannerUrl || settings.headerUrl || 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&q=80'}
                                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                             alt={branch.name}
                                         />
@@ -155,9 +155,9 @@ export function MarketplacePage({ isDarkMode }: { isDarkMode: boolean }) {
                                             {branch.reviewCount || 0} Calificaciones
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            {branch.phone && (
+                                            {(branch.whatsapp || branch.phone) && (
                                                 <a
-                                                    href={`https://wa.me/${branch.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${branch.name}, vengo del Marketplace de RestoPOS y me gustaría hacer un pedido.`)}`}
+                                                    href={`https://wa.me/${(branch.whatsapp || branch.phone).replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${branch.name}, vengo del Marketplace de RestoPOS y me gustaría hacer un pedido.`)}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className={`p-3 rounded-2xl transition-all ${isDarkMode ? 'bg-white/5 text-emerald-400 hover:bg-white/10' : 'bg-success/10 text-success hover:bg-success/20'}`}

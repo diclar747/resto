@@ -127,11 +127,11 @@ export function MenuManagementPage() {
                 onClick={() => setExpandedCategory(isExpanded ? null : category.id)}
               >
                 <div className="flex items-center gap-6">
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-lg shadow-inner ${isExpanded ? 'bg-primary text-white' : 'bg-background text-secondary border border-white dark:border-white/10'}`}>
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-lg shadow-inner ${isExpanded ? 'bg-primary text-white' : 'bg-background text-secondary dark:text-white border border-white dark:border-white/10'}`}>
                     {category.name[0]}
                   </div>
                   <div>
-                    <h3 className="text-xl font-black text-secondary tracking-tight uppercase tracking-widest">{category.name}</h3>
+                    <h3 className="text-xl font-black text-secondary dark:text-white tracking-tight uppercase tracking-widest">{category.name}</h3>
                     <p className="text-xs font-bold text-text-secondary uppercase">{catProducts.length} Ítems registrados</p>
                   </div>
                 </div>

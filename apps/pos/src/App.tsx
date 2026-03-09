@@ -34,6 +34,7 @@ import { UsersPage } from './views/admin/users/UsersPage';
 import { CashRegisterPage } from './views/admin/cash-register/CashRegisterPage';
 import { SettingsPage } from './views/admin/settings/SettingsPage';
 import { AdminTablesPage } from './views/admin/tables/AdminTablesPage';
+import { AdminRestaurantsPage } from './views/admin/restaurants/AdminRestaurantsPage';
 
 // Super Admin
 import { SuperAdminDashboard } from './views/superadmin/SuperAdminDashboard';
@@ -102,7 +103,7 @@ export default function App() {
           path="/admin"
           element={
             <ProtectedRoute>
-              <RoleGuard allowedRoles={['admin', 'manager']}>
+              <RoleGuard allowedRoles={['admin', 'manager', 'superadmin']}>
                 <AdminLayout />
               </RoleGuard>
             </ProtectedRoute>
@@ -116,6 +117,7 @@ export default function App() {
           <Route path="cash-register" element={<CashRegisterPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="tables" element={<AdminTablesPage />} />
+          <Route path="restaurants" element={<AdminRestaurantsPage />} />
         </Route>
 
         {/* Cashier */}

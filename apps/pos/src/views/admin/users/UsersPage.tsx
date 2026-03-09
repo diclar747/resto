@@ -364,9 +364,8 @@ export function UsersPage() {
             return (
               <div
                 key={user.id}
-                className={`bg-white dark:bg-surface rounded-[32px] p-6 shadow-card border-2 hover:-translate-y-1 transition-all group overflow-hidden relative ${
-                  isActive ? 'border-transparent hover:border-primary/10' : 'border-transparent opacity-60'
-                }`}
+                className={`bg-white dark:bg-surface rounded-[32px] p-6 shadow-card border-2 hover:-translate-y-1 transition-all group overflow-hidden relative ${isActive ? 'border-transparent hover:border-primary/10' : 'border-transparent opacity-60'
+                  }`}
               >
                 {/* Role glow */}
                 <div className={`absolute top-0 right-0 w-40 h-40 -mr-20 -mt-20 rounded-full blur-3xl opacity-[0.06] group-hover:opacity-[0.12] transition-opacity ${roleColors[roleName] || 'bg-gray-500'}`} />
@@ -580,17 +579,16 @@ export function UsersPage() {
                     <button
                       key={r.id}
                       onClick={() => setForm({ ...form, roleId: r.id })}
-                      className={`p-3 rounded-2xl text-left transition-all border-2 ${
-                        form.roleId === r.id
+                      className={`p-3 rounded-2xl text-left transition-all border-2 ${form.roleId === r.id
                           ? 'border-primary bg-primary/5 shadow-md'
                           : 'border-transparent bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-2">
                         <div className={`w-6 h-6 rounded-lg flex items-center justify-center text-white text-[8px] font-black ${roleColors[r.name] || 'bg-gray-400'}`}>
                           {r.name.slice(0, 2).toUpperCase()}
                         </div>
-                        <span className="text-xs font-black text-secondary uppercase tracking-wider">
+                        <span className="text-xs font-black text-secondary dark:text-white uppercase tracking-wider">
                           {roleLabels[r.name] || r.name}
                         </span>
                       </div>
@@ -603,7 +601,7 @@ export function UsersPage() {
             {/* Actions */}
             <div className="flex gap-3 mt-8">
               <button
-                className="flex-1 py-3.5 bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/15 text-secondary rounded-2xl text-xs font-black uppercase tracking-widest transition-all"
+                className="flex-1 py-3.5 bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/15 text-secondary dark:text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all"
                 onClick={closeModal}
               >
                 Cancelar
@@ -677,11 +675,10 @@ export function UsersPage() {
                           setEditPermissions(r.permissions || []);
                         }
                       }}
-                      className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                        current
+                      className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${current
                           ? `${roleColors[r.name] || 'bg-gray-500'} text-white shadow-lg`
-                          : 'bg-gray-50 dark:bg-white/5 text-secondary hover:bg-gray-100 dark:hover:bg-white/10'
-                      }`}
+                          : 'bg-gray-50 dark:bg-white/5 text-secondary dark:text-white hover:bg-gray-100 dark:hover:bg-white/10'
+                        }`}
                     >
                       {roleLabels[r.name] || r.name}
                     </button>
@@ -701,11 +698,10 @@ export function UsersPage() {
                       return (
                         <div
                           key={perm}
-                          className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${
-                            has
+                          className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${has
                               ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
                               : 'bg-white dark:bg-surface text-gray-400 dark:text-white/40 border border-gray-100 dark:border-white/10'
-                          }`}
+                            }`}
                         >
                           <span className="flex items-center gap-1">
                             {has ? <CheckCircle size={10} /> : <XCircle size={10} />}
