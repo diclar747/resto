@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, Mail, Phone, Lock, User, UserPlus, LogIn, Utensils, Delete, ArrowLeft, Key } from 'lucide-react';
 import api from '../api';
 import { useClientAuthStore } from '../stores/clientAuth.store';
@@ -8,13 +9,15 @@ interface ClientAuthModalsProps {
     onClose: () => void;
     initialMode?: 'login' | 'register' | 'pin';
     isDarkMode: boolean;
+    redirectTo?: string | null;
 }
 
-export function ClientAuthModals({ isOpen, onClose, initialMode = 'login', isDarkMode }: ClientAuthModalsProps) {
+export function ClientAuthModals({ isOpen, onClose, initialMode = 'login', isDarkMode, redirectTo = '/marketplace/dashboard' }: ClientAuthModalsProps) {
     const [mode, setMode] = useState<'login' | 'register' | 'pin'>(initialMode);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const setClientAuth = useClientAuthStore((state) => state.setClientAuth);
+    const navigate = useNavigate();
 
     // Form states
     const [formData, setFormData] = useState({
@@ -51,6 +54,7 @@ export function ClientAuthModals({ isOpen, onClose, initialMode = 'login', isDar
             });
             setClientAuth(data.client, data.token);
             onClose();
+            if (redirectTo) navigate(redirectTo);
         } catch (err: any) {
             setError(err.response?.data?.message || 'PIN inválido');
             setFormData(prev => ({ ...prev, pin: '' }));
@@ -74,10 +78,12 @@ export function ClientAuthModals({ isOpen, onClose, initialMode = 'login', isDar
                 });
                 setClientAuth(data.client, data.token);
                 onClose();
+                if (redirectTo) navigate(redirectTo);
             } else {
                 const { data } = await api.post('/marketplace/auth/register', formData);
                 setClientAuth(data.client, data.token);
                 onClose();
+                if (redirectTo) navigate(redirectTo);
             }
         } catch (err: any) {
             setError(err.response?.data?.message || 'Ha ocurrido un error. Intenta nuevamente.');

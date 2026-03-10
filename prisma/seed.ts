@@ -168,6 +168,7 @@ async function main() {
       phone: '+5491145678900',
       timezone: 'America/Argentina/Buenos_Aires',
       currency: 'ARS',
+      bannerUrl: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=1200&q=80',
       settings: {
         taxRate: 21,
         logoUrl: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=200&h=200&fit=crop',
@@ -187,6 +188,7 @@ async function main() {
       phone: '+5491100001111',
       timezone: 'America/Argentina/Buenos_Aires',
       currency: 'ARS',
+      bannerUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1200&q=80',
       settings: {
         taxRate: 21,
         logoUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=200&h=200&fit=crop',
@@ -206,6 +208,7 @@ async function main() {
       phone: '+5491122223333',
       timezone: 'America/Argentina/Buenos_Aires',
       currency: 'ARS',
+      bannerUrl: 'https://images.unsplash.com/photo-1571091718767-18b5c1457add?w=1200&q=80',
       settings: {
         taxRate: 21,
         logoUrl: 'https://images.unsplash.com/photo-1571091718767-18b5c1457add?w=200&h=200&fit=crop',
@@ -225,11 +228,32 @@ async function main() {
       phone: '+5491144445555',
       timezone: 'America/Argentina/Buenos_Aires',
       currency: 'ARS',
+      bannerUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=1200&q=80',
       settings: {
         taxRate: 21,
         logoUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=200&h=200&fit=crop',
         headerUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=1200&h=400&fit=crop',
         description: 'Café de especialidad y pastelería artesanal.',
+      },
+    },
+  });
+
+  const branchSushi = await prisma.branch.upsert({
+    where: { id: 'branch-sushi' },
+    update: {},
+    create: {
+      id: 'branch-sushi',
+      name: 'Sakura Sushi Bar',
+      address: 'Calle Florida 500, Buenos Aires',
+      phone: '+5491199998888',
+      timezone: 'America/Argentina/Buenos_Aires',
+      currency: 'ARS',
+      bannerUrl: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=1200&q=80',
+      settings: {
+        taxRate: 21,
+        logoUrl: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=200&h=200&fit=crop',
+        headerUrl: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=1200&h=400&fit=crop',
+        description: 'Lo mejor de la cocina japonesa tradicional y fusión.',
       },
     },
   });
@@ -448,28 +472,28 @@ async function main() {
 
   // 5. Create categories and products
   const bebidas = await prisma.category.create({
-    data: { branchId: branch.id, name: 'Bebidas', sortOrder: 1 },
+    data: { branchId: branch.id, name: 'Bebidas', sortOrder: 1, imageUrl: 'https://images.unsplash.com/photo-1544145945-f904253d0c7e?w=800&q=80' },
   });
   const entradas = await prisma.category.create({
-    data: { branchId: branch.id, name: 'Entradas', sortOrder: 2 },
+    data: { branchId: branch.id, name: 'Entradas', sortOrder: 2, imageUrl: 'https://images.unsplash.com/photo-1541014741259-df549fa9ba1c?w=800&q=80' },
   });
   const principales = await prisma.category.create({
-    data: { branchId: branch.id, name: 'Platos Principales', sortOrder: 3 },
+    data: { branchId: branch.id, name: 'Platos Principales', sortOrder: 3, imageUrl: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80' },
   });
   const pizzas = await prisma.category.create({
-    data: { branchId: branch.id, name: 'Pizzas', sortOrder: 4 },
+    data: { branchId: branch.id, name: 'Pizzas', sortOrder: 4, imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&q=80' },
   });
   const pastas = await prisma.category.create({
-    data: { branchId: branch.id, name: 'Pastas', sortOrder: 5 },
+    data: { branchId: branch.id, name: 'Pastas', sortOrder: 5, imageUrl: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800&q=80' },
   });
   const sopas = await prisma.category.create({
-    data: { branchId: branch.id, name: 'Sopas y Cremas', sortOrder: 6 },
+    data: { branchId: branch.id, name: 'Sopas y Cremas', sortOrder: 6, imageUrl: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&q=80' },
   });
   const hamburguesas = await prisma.category.create({
-    data: { branchId: branch.id, name: 'Hamburguesas', sortOrder: 7 },
+    data: { branchId: branch.id, name: 'Hamburguesas', sortOrder: 7, imageUrl: 'https://images.unsplash.com/photo-1571091718767-18b5c1457add?w=800&q=80' },
   });
   const postres = await prisma.category.create({
-    data: { branchId: branch.id, name: 'Postres', sortOrder: 8 },
+    data: { branchId: branch.id, name: 'Postres', sortOrder: 8, imageUrl: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=800&q=80' },
   });
 
   // --- Bebidas ---
@@ -479,6 +503,7 @@ async function main() {
       name: 'Vino Malbec Premium',
       kitchenStationId: barStation.id,
       description: 'Vino tinto reserva de Mendoza, notas de ciruela y vainilla.',
+      imageUrl: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&q=80',
       variants: {
         create: [
           { name: 'Copa', price: 2500, isDefault: true },
@@ -495,6 +520,7 @@ async function main() {
       name: 'Limonada con Menta y Jengibre',
       kitchenStationId: barStation.id,
       description: 'Refrescante limonada natural con menta fresca y jengibre.',
+      imageUrl: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800&q=80',
       variants: {
         create: [{ name: 'Jarra 1L', price: 2800, isDefault: true }],
       },
@@ -507,6 +533,7 @@ async function main() {
       categoryId: bebidas.id,
       name: 'Coca Cola Original',
       kitchenStationId: barStation.id,
+      imageUrl: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=800&q=80',
       variants: {
         create: [
           { name: '500ml', price: 1500, isDefault: true },
@@ -523,6 +550,7 @@ async function main() {
       categoryId: entradas.id,
       name: 'Empanadas Salteñas',
       kitchenStationId: grillStation.id,
+      imageUrl: 'https://images.unsplash.com/photo-1628815418296-41e988229bca?w=800&q=80',
       prepTime: 10,
       variants: {
         create: [
@@ -541,6 +569,7 @@ async function main() {
       name: 'Provoleta a la Parrilla',
       kitchenStationId: grillStation.id,
       description: 'Queso provolone fundido con orégano y un toque de oliva.',
+      imageUrl: 'https://images.unsplash.com/photo-1559561853-08451507c73a?w=800&q=80',
       prepTime: 8,
       variants: {
         create: [{ name: 'Porción', price: 3800, isDefault: true }],
@@ -556,6 +585,7 @@ async function main() {
       name: 'Milanesa Napolitana RestoPOS',
       kitchenStationId: grillStation.id,
       description: 'Milanesa de ternera con salsa pomodoro, jamón y mozzarella.',
+      imageUrl: 'https://images.unsplash.com/photo-1606149059549-6042addafc5a?w=800&q=80',
       prepTime: 15,
       variants: {
         create: [
@@ -574,6 +604,7 @@ async function main() {
       name: 'Ojo de Bife 400g',
       kitchenStationId: grillStation.id,
       description: 'Corte premium a la parrilla en su punto justo.',
+      imageUrl: 'https://images.unsplash.com/photo-1546241072-48010ad28c2c?w=800&q=80',
       prepTime: 20,
       variants: {
         create: [
@@ -592,6 +623,7 @@ async function main() {
       name: 'Pizza Cuatro Quesos',
       kitchenStationId: grillStation.id,
       description: 'Mozzarella, Roquefort, Parmesano y Provolone sobre masa artesanal.',
+      imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&q=80',
       prepTime: 15,
       variants: {
         create: [
@@ -609,6 +641,7 @@ async function main() {
       name: 'Pizza Especial de la Casa',
       kitchenStationId: grillStation.id,
       description: 'Mozzarella, jamón cocido, morrones asados y aceitunas negras.',
+      imageUrl: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80',
       prepTime: 12,
       variants: {
         create: [{ name: 'Grande', price: 9200, isDefault: true }],
@@ -624,6 +657,7 @@ async function main() {
       name: 'Crema de Zapallo y Jengibre',
       kitchenStationId: coldStation.id,
       description: 'Sopa cremosa servida con croutons aromatizados y crema.',
+      imageUrl: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&q=80',
       prepTime: 10,
       variants: {
         create: [{ name: 'Tazón', price: 3400, isDefault: true }],
@@ -638,6 +672,7 @@ async function main() {
       name: 'Sopa de Cebolla Tradicional',
       kitchenStationId: coldStation.id,
       description: 'Sopa de cebolla caramelizada gratinada con queso parmesano.',
+      imageUrl: 'https://images.unsplash.com/photo-1511910849309-0dffb8785146?w=800&q=80',
       prepTime: 12,
       variants: {
         create: [{ name: 'Tazón', price: 3600, isDefault: true }],
@@ -653,6 +688,7 @@ async function main() {
       name: 'Sorrentinos de Calabaza',
       kitchenStationId: grillStation.id,
       description: 'Pasta artesanal de calabaza y mozzarella con nueces.',
+      imageUrl: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800&q=80',
       prepTime: 12,
       variants: {
         create: [
@@ -671,6 +707,7 @@ async function main() {
       name: 'Hamburguesa Premium Resto',
       kitchenStationId: grillStation.id,
       description: 'Blend de carne seleccionada, queso cheddar, bacon crocante y cebolla al malbec.',
+      imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80',
       prepTime: 12,
       variants: {
         create: [
@@ -689,12 +726,85 @@ async function main() {
       name: 'Volcán de Chocolate',
       kitchenStationId: dessertStation.id,
       description: 'Bizcocho tibio de chocolate con corazón fundido y helado de crema.',
+      imageUrl: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=800&q=80',
       prepTime: 15,
       variants: {
         create: [{ name: 'Individual', price: 4200, isDefault: true }],
       },
       branches: { create: { branchId: branch.id } },
     },
+  });
+
+  // --- SEED MENU FOR DEMO BRANCHES ---
+
+  // PIZZA BRANCH MENU
+  const catPizzaOnly = await prisma.category.create({
+    data: { branchId: branchPizza.id, name: 'Pizzas Artesanales', imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&q=80' }
+  });
+  await prisma.product.create({
+    data: {
+      categoryId: catPizzaOnly.id,
+      name: 'Pizza Margherita Napoli',
+      description: 'Tomate San Marzano, mozzarella di bufala, albahaca fresca y aceite de oliva.',
+      imageUrl: 'https://images.unsplash.com/photo-1574071318508-1cdbad80ad38?w=800&q=80',
+      variants: { create: [{ name: 'Grande', price: 9500, isDefault: true }] },
+      branches: { create: { branchId: branchPizza.id } }
+    }
+  });
+  await prisma.product.create({
+    data: {
+      categoryId: catPizzaOnly.id,
+      name: 'Pizza Diávola',
+      description: 'Para los amantes del picante: salame picante, mozzarella y peperoncino.',
+      imageUrl: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=800&q=80',
+      variants: { create: [{ name: 'Grande', price: 10500, isDefault: true }] },
+      branches: { create: { branchId: branchPizza.id } }
+    }
+  });
+
+  // BURGER BRANCH MENU
+  const catBurgerOnly = await prisma.category.create({
+    data: { branchId: branchBurger.id, name: 'Burgers Gourmet', imageUrl: 'https://images.unsplash.com/photo-1571091718767-18b5c1457add?w=800&q=80' }
+  });
+  await prisma.product.create({
+    data: {
+      categoryId: catBurgerOnly.id,
+      name: 'Truffle Burger',
+      description: '200g de carne, mayonesa de trufa, hongos salteados y queso suizo.',
+      imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80',
+      variants: { create: [{ name: 'Con Papas', price: 8500, isDefault: true }] },
+      branches: { create: { branchId: branchBurger.id } }
+    }
+  });
+
+  // CAFE BRANCH MENU
+  const catCafeOnly = await prisma.category.create({
+    data: { branchId: branchCafe.id, name: 'Specialty Coffee', imageUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80' }
+  });
+  await prisma.product.create({
+    data: {
+      categoryId: catCafeOnly.id,
+      name: 'Flat White Lab',
+      description: 'Doble shot de espresso con leche microespumada.',
+      imageUrl: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80',
+      variants: { create: [{ name: 'Normal', price: 3200, isDefault: true }] },
+      branches: { create: { branchId: branchCafe.id } }
+    }
+  });
+
+  // SUSHI BRANCH MENU
+  const catSushiOnly = await prisma.category.create({
+    data: { branchId: branchSushi.id, name: 'Asian Fusion', imageUrl: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&q=80' }
+  });
+  await prisma.product.create({
+    data: {
+      categoryId: catSushiOnly.id,
+      name: 'Combo Omakase (15 pzs)',
+      description: 'Selección del chef con los pescados más frescos del día.',
+      imageUrl: 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=800&q=80',
+      variants: { create: [{ name: 'Combo', price: 15500, isDefault: true }] },
+      branches: { create: { branchId: branchSushi.id } }
+    }
   });
 
   // 6. Create tables

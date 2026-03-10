@@ -8,6 +8,7 @@ import { useSearchParams } from 'react-router-dom';
 import api from './api';
 import { useMarketplaceCartStore } from './stores/marketplaceCart.store';
 import { useTableSelectorStore } from './stores/tableSelector.store';
+import { ClientAuthModals } from './components/ClientAuthModals';
 
 export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
     const { id } = useParams();
@@ -34,6 +35,7 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
     const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
     const [alertMessage, setAlertMessage] = useState<string | null>(null);
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -697,14 +699,22 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
                             {alertMessage}
                         </p>
                         <button
-                            onClick={() => setAlertMessage(null)}
+                            onClick={() => { setAlertMessage(null); setShowAuthModal(true); }}
                             className="w-full py-4 bg-primary text-white font-black rounded-2xl shadow-lg hover:shadow-primary/30 transition-all hover:-translate-y-1"
                         >
-                            Aceptar
+                            Iniciar Sesión
                         </button>
                     </div>
                 </div>
             )}
+
+            {/* Auth Modal (from alert) */}
+            <ClientAuthModals
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                isDarkMode={isDarkMode}
+                redirectTo={null}
+            />
         </div>
     );
 }
