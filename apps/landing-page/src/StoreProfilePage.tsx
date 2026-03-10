@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
     MapPin, ArrowLeft, Star, Phone, Instagram, Facebook, Globe, Clock, Utensils,
-    Search, ShoppingBag, Plus, Minus, X, MessageSquare, AlertTriangle
+    Search, ShoppingBag, Plus, Minus, X, MessageSquare, AlertTriangle, Home, Truck, Users, CheckCircle2
 } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import api from './api';
 import { useMarketplaceCartStore } from './stores/marketplaceCart.store';
+import { useTableSelectorStore } from './stores/tableSelector.store';
 
 export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
     const { id } = useParams();
+    const [searchParams] = useSearchParams();
     const [branch, setBranch] = useState<any>(null);
     const [menu, setMenu] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -16,6 +19,11 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
     const cart = useMarketplaceCartStore();
+    const {
+        orderType, tableId, tableNumber, deliveryAddress, customerName, customerPhone,
+        setOrderType, setTable, setDeliveryDetails
+    } = useTableSelectorStore();
+
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
     const [orderSuccess, setOrderSuccess] = useState(false);
@@ -30,7 +38,15 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
     useEffect(() => {
         window.scrollTo(0, 0);
         fetchStoreData();
-    }, [id]);
+
+        // Detect table from QR
+        const tId = searchParams.get('tableId');
+        const tNum = searchParams.get('tableNumber');
+        if (tId || tNum) {
+            setTable(tId, tNum ? parseInt(tNum) : null);
+            setOrderType('dine_in');
+        }
+    }, [id, searchParams]);
 
     const fetchStoreData = async () => {
         try {
@@ -74,7 +90,12 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
             setIsCheckingOut(true);
             await api.post('/marketplace/orders', {
                 branchId: branch.id,
-                type: 'delivery',
+                type: orderType,
+                tableId,
+                tableNumber,
+                deliveryAddress,
+                customerName,
+                customerPhone,
                 items: cart.items.map(i => ({
                     productVariantId: i.variantId,
                     quantity: i.quantity
@@ -490,7 +511,93 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
                         </div>
 
                         {/* Cart Items */}
-                        <div className="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar">
+                        <div className="flex-1 overflow-y-auto p-6 space-y-6 no-scrollbar">
+                            {/* Order Type Selection */}
+                            <div className={`p-2 rounded-2xl flex gap-1 ${isDarkMode ? 'bg-black/20' : 'bg-gray-100'}`}>
+                                {[
+                                    { id: 'dine_in', label: 'En Mesa', icon: Utensils },
+                                    { id: 'takeout', label: 'Llevar', icon: Home },
+                                    { id: 'delivery', label: 'Envío', icon: Truck },
+                                ].map((type) => (
+                                    <button
+                                        key={type.id}
+                                        onClick={() => setOrderType(type.id as any)}
+                                        className={`flex-1 flex flex-col items-center gap-1 py-3 rounded-xl transition-all ${orderType === type.id
+                                            ? 'bg-primary text-white shadow-lg'
+                                            : isDarkMode ? 'text-white/40 hover:text-white' : 'text-gray-400 hover:text-secondary'
+                                            }`}
+                                    >
+                                        <type.icon size={18} />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">{type.label}</span>
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Order Type Details */}
+                            {orderType === 'dine_in' && (
+                                <div className={`p-4 rounded-2xl border flex items-center justify-between ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-amber-50 border-amber-100'}`}>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-amber-400/10 rounded-full flex items-center justify-center text-amber-500">
+                                            <Users size={20} />
+                                        </div>
+                                        <div>
+                                            <p className={`text-xs font-bold uppercase tracking-widest ${isDarkMode ? 'text-white/40' : 'text-amber-600'}`}>Mesa Seleccionada</p>
+                                            <p className={`text-sm font-black ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
+                                                {tableNumber ? `Mesa número ${tableNumber}` : 'Escanea un QR en mesa'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {!tableNumber && (
+                                        <p className="text-[10px] font-bold text-red-500 animate-pulse">Requerido</p>
+                                    )}
+                                </div>
+                            )}
+
+                            {orderType === 'delivery' && (
+                                <div className="space-y-4">
+                                    <div className="grid grid-cols-1 gap-4">
+                                        <div>
+                                            <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>Dirección de Entrega</label>
+                                            <div className="relative">
+                                                <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-primary" />
+                                                <input
+                                                    type="text"
+                                                    value={deliveryAddress}
+                                                    onChange={(e) => setDeliveryDetails({ address: e.target.value })}
+                                                    placeholder="Calle, ciudad, referencias..."
+                                                    className={`w-full pl-10 pr-4 py-3 rounded-xl text-sm font-bold border outline-none focus:ring-2 focus:ring-primary/40 transition-all ${isDarkMode ? 'bg-black/20 border-white/5 text-white placeholder-white/20' : 'bg-white border-gray-100 text-secondary'}`}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>Nombre</label>
+                                            <input
+                                                type="text"
+                                                value={customerName}
+                                                onChange={(e) => setDeliveryDetails({ name: e.target.value })}
+                                                placeholder="Tu nombre"
+                                                className={`w-full px-4 py-3 rounded-xl text-sm font-bold border outline-none focus:ring-2 focus:ring-primary/40 transition-all ${isDarkMode ? 'bg-black/20 border-white/5 text-white placeholder-white/20' : 'bg-white border-gray-100 text-secondary'}`}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className={`block text-[10px] font-black uppercase tracking-widest mb-1.5 ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>Teléfono</label>
+                                            <input
+                                                type="text"
+                                                value={customerPhone}
+                                                onChange={(e) => setDeliveryDetails({ phone: e.target.value })}
+                                                placeholder="0981..."
+                                                className={`w-full px-4 py-3 rounded-xl text-sm font-bold border outline-none focus:ring-2 focus:ring-primary/40 transition-all ${isDarkMode ? 'bg-black/20 border-white/5 text-white placeholder-white/20' : 'bg-white border-gray-100 text-secondary'}`}
+                                            />
+                                        </div>
+                                    </div>
+                                    {(!deliveryAddress || !customerPhone) && (
+                                        <p className="text-[10px] font-bold text-red-500 animate-pulse text-center">Datos de envío requeridos</p>
+                                    )}
+                                </div>
+                            )}
+
                             {cart.items.length === 0 ? (
                                 <div className="text-center py-20 opacity-50">
                                     <ShoppingBag size={48} className="mx-auto mb-4" />
@@ -526,17 +633,35 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
                         {/* Checkout Footer */}
                         {cart.items.length > 0 && (
                             <div className={`p-6 border-t ${isDarkMode ? 'bg-surface border-white/10' : 'bg-white border-gray-100'}`}>
-                                <div className="flex justify-between items-center mb-6">
-                                    <span className={`text-sm font-bold opacity-60 ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Total a Pagar</span>
-                                    <span className="text-2xl font-black text-primary">Gs. {cart.total.toLocaleString()}</span>
+                                <div className="space-y-2 mb-6">
+                                    <div className="flex justify-between items-center opacity-60">
+                                        <span className={`text-xs font-bold ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Subtotal</span>
+                                        <span className="text-sm font-black">Gs. {cart.total.toLocaleString()}</span>
+                                    </div>
+                                    {orderType === 'delivery' && (
+                                        <div className="flex justify-between items-center text-primary">
+                                            <span className="text-xs font-bold uppercase tracking-widest">Costo de Envío</span>
+                                            <span className="text-sm font-black">Gs. {Number(settings.deliveryFee || 0).toLocaleString()}</span>
+                                        </div>
+                                    )}
+                                    <div className="flex justify-between items-center pt-2 border-t dark:border-white/5">
+                                        <span className={`text-sm font-bold opacity-60 ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Total a Pagar</span>
+                                        <span className="text-2xl font-black text-primary">
+                                            Gs. {(cart.total + (orderType === 'delivery' ? Number(settings.deliveryFee || 0) : 0)).toLocaleString()}
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <button
                                     onClick={handleCheckout}
-                                    disabled={isCheckingOut}
+                                    disabled={
+                                        isCheckingOut ||
+                                        (orderType === 'dine_in' && !tableNumber) ||
+                                        (orderType === 'delivery' && (!deliveryAddress || !customerPhone))
+                                    }
                                     className="w-full flex items-center justify-center gap-2 py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
                                 >
-                                    {isCheckingOut ? 'Procesando...' : <><MapPin size={18} /> Confirmar Pedido</>}
+                                    {isCheckingOut ? 'Procesando...' : <><CheckCircle2 size={18} /> Confirmar Pedido</>}
                                 </button>
                             </div>
                         )}

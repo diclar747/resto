@@ -4,7 +4,7 @@ import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class OrdersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async findAll(branchId: string, filters?: {
     status?: string;
@@ -94,7 +94,13 @@ export class OrdersService {
     clientId?: string;
     guestCount?: number;
     notes?: string;
+    deliveryData?: {
+      customerName: string;
+      customerPhone: string;
+      deliveryAddress: string;
+    };
   }) {
+    const { deliveryData, ...orderData } = data;
     // Get next order number for today
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -113,7 +119,7 @@ export class OrdersService {
 
     const order = await this.prisma.order.create({
       data: {
-        ...data,
+        ...orderData,
         orderNumber,
       },
       include: {
@@ -123,10 +129,32 @@ export class OrdersService {
     });
 
     // Update table status if dine-in
-    if (data.tableId) {
+    if (orderData.tableId) {
       await this.prisma.table.update({
-        where: { id: data.tableId },
+        where: { id: orderData.tableId },
         data: { status: 'occupied' },
+      });
+    }
+
+    // Create delivery record if type is delivery
+    if (orderData.type === 'delivery' && deliveryData) {
+      // Get delivery fee from branch settings if possible
+      const branch = await this.prisma.branch.findUnique({
+        where: { id: orderData.branchId },
+        select: { settings: true },
+      });
+      const settings = (branch?.settings as any) || {};
+      const deliveryFee = settings.deliveryFee || 0;
+
+      await this.prisma.delivery.create({
+        data: {
+          orderId: order.id,
+          customerName: deliveryData.customerName,
+          customerPhone: deliveryData.customerPhone,
+          deliveryAddress: deliveryData.deliveryAddress,
+          deliveryFee,
+          status: 'pending',
+        },
       });
     }
 
@@ -182,11 +210,11 @@ export class OrdersService {
           courseNumber: item.courseNumber ?? 1,
           modifiers: item.modifierIds
             ? {
-                create: item.modifierIds.map((modifierId) => {
-                  const mod = modifiersTotal; // simplified
-                  return { modifierId, priceAdjustment: 0 };
-                }),
-              }
+              create: item.modifierIds.map((modifierId) => {
+                const mod = modifiersTotal; // simplified
+                return { modifierId, priceAdjustment: 0 };
+              }),
+            }
             : undefined,
         },
         include: {

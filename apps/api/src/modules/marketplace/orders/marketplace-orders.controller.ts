@@ -17,7 +17,13 @@ export class MarketplaceOrdersController {
             branchId,
             type: type || 'delivery',
             clientId,
+            tableId: type === 'dine_in' ? data.tableId : undefined,
             notes: notes || 'Pedido desde Marketplace',
+            deliveryData: type === 'delivery' ? {
+                customerName: data.customerName,
+                customerPhone: data.customerPhone,
+                deliveryAddress: data.deliveryAddress,
+            } : undefined
         });
 
         // 2. Add the items

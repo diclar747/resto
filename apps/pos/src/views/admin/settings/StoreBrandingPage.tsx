@@ -21,22 +21,54 @@ export function StoreBrandingPage() {
     });
 
     const [form, setForm] = useState({
-        name: '', bannerUrl: '', whatsappNumber: '', logoUrl: '', description: ''
+        name: '',
+        bannerUrl: '',
+        whatsapp: '',
+        logoUrl: '',
+        description: '',
+        deliveryFee: 0
     });
 
     // Sync state with branch data when it loads
-    if (branch && !form.name) {
-        setForm({
-            name: branch.name || '',
-            bannerUrl: branch.bannerUrl || '',
-            whatsappNumber: branch.whatsappNumber || '',
-            logoUrl: branch.logoUrl || '',
-            description: branch.description || ''
-        });
-    }
+    useState(() => {
+        if (branch) {
+            setForm({
+                name: branch.name || '',
+                bannerUrl: branch.bannerUrl || '',
+                whatsapp: branch.whatsapp || '',
+                logoUrl: branch.settings?.logoUrl || '',
+                description: branch.settings?.description || '',
+                deliveryFee: branch.settings?.deliveryFee || 0
+            });
+        }
+    });
+
+    // Effect to update form when branch data is fetched
+    React.useEffect(() => {
+        if (branch) {
+            setForm({
+                name: branch.name || '',
+                bannerUrl: branch.bannerUrl || '',
+                whatsapp: branch.whatsapp || '',
+                logoUrl: branch.settings?.logoUrl || '',
+                description: branch.settings?.description || '',
+                deliveryFee: branch.settings?.deliveryFee || 0
+            });
+        }
+    }, [branch]);
 
     const updateBranch = useMutation({
-        mutationFn: (data: any) => api.put(`/branches/${branchId}`, data),
+        mutationFn: (data: any) => api.patch(`/branches/${branchId}`, {
+            name: data.name,
+            bannerUrl: data.bannerUrl,
+            whatsapp: data.whatsapp,
+            settings: {
+                ...branch?.settings,
+                logoUrl: data.logoUrl,
+                description: data.description,
+                deliveryFee: parseFloat(data.deliveryFee) || 0
+            }
+        }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['branch'] });
             toast.success('Configuración de marca actualizada');
@@ -101,8 +133,8 @@ export function StoreBrandingPage() {
                                             <input
                                                 className="w-full pl-14 pr-6 py-4 bg-[#F4F7FE] border-none rounded-[24px] text-sm font-bold outline-none focus:ring-4 focus:ring-primary/5 transition-all"
                                                 placeholder="+595 9xx xxx xxx"
-                                                value={form.whatsappNumber}
-                                                onChange={(e) => setForm({ ...form, whatsappNumber: e.target.value })}
+                                                value={form.whatsapp}
+                                                onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
                                             />
                                         </div>
                                     </div>
@@ -156,6 +188,30 @@ export function StoreBrandingPage() {
                                 <div className="px-5 py-2 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center gap-2">
                                     <div className="w-2 h-2 bg-emerald-500 rounded-full animate-ping" />
                                     <span className="text-[10px] font-black uppercase tracking-widest">En Línea</span>
+                                </div>
+                            </div>
+
+                            {/* Delivery Fee Setting */}
+                            <div className="p-8 bg-[#F4F7FE] rounded-[32px] border-2 border-dashed border-primary/20">
+                                <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 bg-white dark:bg-surface rounded-2xl flex items-center justify-center shadow-sm">
+                                            <Truck className="text-primary" size={24} />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-black text-secondary uppercase">Costo de Envío (Delivery)</h4>
+                                            <p className="text-[10px] font-medium text-gray-400 dark:text-white/40 mt-1">Este monto se sumará automáticamente al total del pedido.</p>
+                                        </div>
+                                    </div>
+                                    <div className="relative w-full md:w-48">
+                                        <span className="absolute left-6 top-1/2 -translate-y-1/2 text-primary font-black text-sm">Gs.</span>
+                                        <input
+                                            type="number"
+                                            className="w-full pl-14 pr-6 py-4 bg-white dark:bg-surface border-none rounded-[20px] text-sm font-black outline-none shadow-sm focus:ring-4 focus:ring-primary/10 transition-all"
+                                            value={form.deliveryFee}
+                                            onChange={(e) => setForm({ ...form, deliveryFee: e.target.value })}
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
@@ -307,6 +363,10 @@ export function StoreBrandingPage() {
         </div>
     );
 }
+
+const Truck = ({ size, className }: { size: number, className?: string }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-truck ${className}`}><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" /><path d="M15 18H9" /><path d="M19 18h2a1 1 0 0 0 1-1v-5l-4-4h-3v10" /><circle cx="7" cy="18" r="2" /><circle cx="17" cy="18" r="2" /></svg>
+);
 
 const ChevronRight = ({ size }: { size: number }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6" /></svg>
