@@ -246,6 +246,33 @@ async function main() {
     await prisma.branchReview.create({ data: review });
   }
 
+  // 2.2 Create demo clients for marketplace
+  const clientsData = [
+    { firstName: 'Juan', lastName: 'Pérez', email: 'juan@gmail.com', phone: '+595981111111', password: 'cliente123', pin: '1234' },
+    { firstName: 'María', lastName: 'González', email: 'maria@gmail.com', phone: '+595982222222', password: 'cliente123', pin: '5678' },
+    { firstName: 'Carlos', lastName: 'López', email: 'carlos@gmail.com', phone: '+595983333333', password: 'cliente123', pin: '4321' },
+    { firstName: 'Ana', lastName: 'Martínez', email: 'ana@gmail.com', phone: '+595984444444', password: 'cliente123', pin: '8765' },
+    { firstName: 'Roberto', lastName: 'Fernández', email: 'roberto@gmail.com', phone: '+595985555555', password: 'cliente123', pin: '1122' },
+  ];
+
+  for (const c of clientsData) {
+    const clientHash = await bcrypt.hash(c.password, 10);
+    await prisma.client.upsert({
+      where: { email: c.email },
+      update: {},
+      create: {
+        firstName: c.firstName,
+        lastName: c.lastName,
+        email: c.email,
+        phone: c.phone,
+        passwordHash: clientHash,
+        pin: c.pin,
+        loyaltyPoints: Math.floor(Math.random() * 500),
+        visitCount: Math.floor(Math.random() * 20),
+      },
+    });
+  }
+
   // 3. Create users
 
   // Create waiter user
@@ -708,20 +735,32 @@ async function main() {
     ],
   });
 
-  console.log('=== SEED COMPLETADO CONÉXITO ===');
+  console.log('=== SEED COMPLETADO CON ÉXITO ===');
   console.log('');
-  console.log('USUARIOS DEMO ACTUALIZADOS:');
+  console.log('USUARIOS STAFF:');
   console.log('┌─────────────────────────────────┬──────────────┬──────┬────────────┐');
   console.log('│ Email                           │ Password     │ PIN  │ Rol        │');
   console.log('├─────────────────────────────────┼──────────────┼──────┼────────────┤');
-  console.log('│ superadmin@restaurante.com       │ super123     │ 9999 │ admin      │');
+  console.log('│ superadmin@restaurante.com       │ super123     │ 9999 │ superadmin │');
   console.log('│ admin@restaurante.com            │ admin123     │ 0000 │ admin      │');
   console.log('│ gerente@restaurante.com          │ manager123   │ 4444 │ manager    │');
   console.log('│ cajero@restaurante.com           │ cajero123    │ 2222 │ cashier    │');
   console.log('│ camarero@restaurante.com         │ waiter123    │ 1111 │ waiter     │');
+  console.log('│ camarero2@restaurante.com        │ waiter123    │ 6666 │ waiter     │');
   console.log('│ cocina@restaurante.com           │ cocina123    │ 3333 │ kitchen    │');
   console.log('│ delivery@restaurante.com         │ driver123    │ 5555 │ driver     │');
   console.log('└─────────────────────────────────┴──────────────┴──────┴────────────┘');
+  console.log('');
+  console.log('CLIENTES MARKETPLACE:');
+  console.log('┌──────────────────────┬──────────────┬──────┬───────────────────┐');
+  console.log('│ Email                │ Password     │ PIN  │ Teléfono          │');
+  console.log('├──────────────────────┼──────────────┼──────┼───────────────────┤');
+  console.log('│ juan@gmail.com       │ cliente123   │ 1234 │ +595981111111     │');
+  console.log('│ maria@gmail.com      │ cliente123   │ 5678 │ +595982222222     │');
+  console.log('│ carlos@gmail.com     │ cliente123   │ 4321 │ +595983333333     │');
+  console.log('│ ana@gmail.com        │ cliente123   │ 8765 │ +595984444444     │');
+  console.log('│ roberto@gmail.com    │ cliente123   │ 1122 │ +595985555555     │');
+  console.log('└──────────────────────┴──────────────┴──────┴───────────────────┘');
 }
 
 main()
