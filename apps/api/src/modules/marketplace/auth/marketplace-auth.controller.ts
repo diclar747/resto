@@ -14,4 +14,9 @@ export class MarketplaceAuthController {
     async login(@Body() body: any) {
         return this.authService.login(body);
     }
+
+    @Post('login-pin')
+    async loginPin(@Body('pin') pin: string) {
+        return this.authService.loginByPin(pin);
+    }
 }

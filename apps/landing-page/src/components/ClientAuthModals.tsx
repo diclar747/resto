@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Mail, Phone, Lock, User, UserPlus, LogIn, Utensils } from 'lucide-react';
 import api from '../api';
 import { useClientAuthStore } from '../stores/clientAuth.store';
@@ -6,12 +6,12 @@ import { useClientAuthStore } from '../stores/clientAuth.store';
 interface ClientAuthModalsProps {
     isOpen: boolean;
     onClose: () => void;
-    initialMode?: 'login' | 'register';
+    initialMode?: 'login' | 'register' | 'pin';
     isDarkMode: boolean;
 }
 
 export function ClientAuthModals({ isOpen, onClose, initialMode = 'login', isDarkMode }: ClientAuthModalsProps) {
-    const [mode, setMode] = useState<'login' | 'register'>(initialMode);
+    const [mode, setMode] = useState<'login' | 'register' | 'pin'>(initialMode);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const setClientAuth = useClientAuthStore((state) => state.setClientAuth);
@@ -22,7 +22,8 @@ export function ClientAuthModals({ isOpen, onClose, initialMode = 'login', isDar
         lastName: '',
         email: '',
         phone: '',
-        password: ''
+        password: '',
+        pin: ''
     });
 
     if (!isOpen) return null;
@@ -37,6 +38,12 @@ export function ClientAuthModals({ isOpen, onClose, initialMode = 'login', isDar
                 const { data } = await api.post('/marketplace/auth/login', {
                     identifier: formData.email || formData.phone,
                     password: formData.password
+                });
+                setClientAuth(data.client, data.token);
+                onClose();
+            } else if (mode === 'pin') {
+                const { data } = await api.post('/marketplace/auth/login-pin', {
+                    pin: formData.pin
                 });
                 setClientAuth(data.client, data.token);
                 onClose();
@@ -67,10 +74,10 @@ export function ClientAuthModals({ isOpen, onClose, initialMode = 'login', isDar
                         <Utensils className="text-white" size={28} />
                     </div>
                     <h2 className={`text-3xl font-black tracking-tight ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
-                        {mode === 'login' ? 'Bienvenido de vuelta.' : 'Únete a RestoPOS.'}
+                        {mode === 'login' ? 'Bienvenido de vuelta.' : mode === 'pin' ? 'Ingreso con PIN' : 'Únete a RestoPOS.'}
                     </h2>
                     <p className={`text-sm font-medium ${isDarkMode ? 'text-white/60' : 'text-text-secondary'}`}>
-                        {mode === 'login' ? 'Ingresa para gestionar tus pedidos favoritos.' : 'Crea tu cuenta global para pedir en cualquier sucursal.'}
+                        {mode === 'login' ? 'Ingresa para gestionar tus pedidos favoritos.' : mode === 'pin' ? 'Ingresa tu PIN personal de 4 dígitos.' : 'Crea tu cuenta global para pedir en cualquier sucursal.'}
                     </p>
                 </div>
 
@@ -111,74 +118,105 @@ export function ClientAuthModals({ isOpen, onClose, initialMode = 'login', isDar
                         </div>
                     )}
 
-                    <div className="space-y-2">
-                        <label className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>
-                            {mode === 'login' ? 'Email o Teléfono' : 'Email'}
-                        </label>
-                        <div className="relative">
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                            <input
-                                type={mode === 'login' ? 'text' : 'email'}
-                                required
-                                className={`w-full pl-12 pr-4 py-3 rounded-2xl font-medium focus:ring-2 focus:ring-primary outline-none transition-all ${isDarkMode ? 'bg-white/5 text-white border border-white/10' : 'bg-gray-50 border border-gray-100'}`}
-                                value={formData.email}
-                                onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                placeholder={mode === 'login' ? 'tucorreo@ejemplo.com' : 'tucorreo@ejemplo.com'}
-                            />
-                        </div>
-                    </div>
-
-                    {mode === 'register' && (
+                    {mode === 'pin' ? (
                         <div className="space-y-2">
-                            <label className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>Teléfono (Opcional)</label>
+                            <label className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>PIN de Acceso</label>
                             <div className="relative">
-                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                                 <input
-                                    type="tel"
-                                    className={`w-full pl-12 pr-4 py-3 rounded-2xl font-medium focus:ring-2 focus:ring-primary outline-none transition-all ${isDarkMode ? 'bg-white/5 text-white border border-white/10' : 'bg-gray-50 border border-gray-100'}`}
-                                    value={formData.phone}
-                                    onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                    placeholder="+123456789"
+                                    type="password"
+                                    required
+                                    maxLength={4}
+                                    className={`w-full pl-12 pr-4 py-3 rounded-2xl font-medium focus:ring-2 focus:ring-primary outline-none transition-all text-center text-2xl tracking-[1em] ${isDarkMode ? 'bg-white/5 text-white border border-white/10' : 'bg-gray-50 border border-gray-100'}`}
+                                    value={formData.pin}
+                                    onChange={e => setFormData({ ...formData, pin: e.target.value.replace(/\D/g, '') })}
+                                    placeholder="••••"
                                 />
                             </div>
                         </div>
-                    )}
+                    ) : (
+                        <>
+                            <div className="space-y-2">
+                                <label className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>
+                                    {mode === 'login' ? 'Email o Teléfono' : 'Email'}
+                                </label>
+                                <div className="relative">
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                    <input
+                                        type={mode === 'login' ? 'text' : 'email'}
+                                        required
+                                        className={`w-full pl-12 pr-4 py-3 rounded-2xl font-medium focus:ring-2 focus:ring-primary outline-none transition-all ${isDarkMode ? 'bg-white/5 text-white border border-white/10' : 'bg-gray-50 border border-gray-100'}`}
+                                        value={formData.email}
+                                        onChange={e => setFormData({ ...formData, email: e.target.value })}
+                                        placeholder={mode === 'login' ? 'tucorreo@ejemplo.com' : 'tucorreo@ejemplo.com'}
+                                    />
+                                </div>
+                            </div>
 
-                    <div className="space-y-2">
-                        <label className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>Contraseña</label>
-                        <div className="relative">
-                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                            <input
-                                type="password"
-                                required
-                                minLength={6}
-                                className={`w-full pl-12 pr-4 py-3 rounded-2xl font-medium focus:ring-2 focus:ring-primary outline-none transition-all ${isDarkMode ? 'bg-white/5 text-white border border-white/10' : 'bg-gray-50 border border-gray-100'}`}
-                                value={formData.password}
-                                onChange={e => setFormData({ ...formData, password: e.target.value })}
-                                placeholder="••••••••"
-                            />
-                        </div>
-                    </div>
+                            {mode === 'register' && (
+                                <div className="space-y-2">
+                                    <label className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>Teléfono (Opcional)</label>
+                                    <div className="relative">
+                                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                        <input
+                                            type="tel"
+                                            className={`w-full pl-12 pr-4 py-3 rounded-2xl font-medium focus:ring-2 focus:ring-primary outline-none transition-all ${isDarkMode ? 'bg-white/5 text-white border border-white/10' : 'bg-gray-50 border border-gray-100'}`}
+                                            value={formData.phone}
+                                            onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                            placeholder="+123456789"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="space-y-2">
+                                <label className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>Contraseña</label>
+                                <div className="relative">
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                    <input
+                                        type="password"
+                                        required
+                                        minLength={6}
+                                        className={`w-full pl-12 pr-4 py-3 rounded-2xl font-medium focus:ring-2 focus:ring-primary outline-none transition-all ${isDarkMode ? 'bg-white/5 text-white border border-white/10' : 'bg-gray-50 border border-gray-100'}`}
+                                        value={formData.password}
+                                        onChange={e => setFormData({ ...formData, password: e.target.value })}
+                                        placeholder="••••••••"
+                                    />
+                                </div>
+                            </div>
+                        </>
+                    )}
 
                     <button
                         type="submit"
                         disabled={loading}
                         className="w-full flex items-center justify-center gap-2 py-4 mt-6 bg-primary text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all active:scale-[0.98] disabled:opacity-50"
                     >
-                        {loading ? 'Procesando...' : (mode === 'login' ? <><LogIn size={18} /> Iniciar Sesión</> : <><UserPlus size={18} /> Crear Cuenta</>)}
+                        {loading ? 'Procesando...' : (mode === 'login' ? <><LogIn size={18} /> Iniciar Sesión</> : mode === 'pin' ? <><Lock size={18} /> Acceder con PIN</> : <><UserPlus size={18} /> Crear Cuenta</>)}
                     </button>
                 </form>
 
-                <div className="mt-8 text-center">
+                <div className="mt-8 flex flex-col items-center gap-4">
                     <button
                         type="button"
                         onClick={() => {
-                            setMode(mode === 'login' ? 'register' : 'login');
+                            setMode(mode === 'pin' ? 'login' : 'pin');
+                            setError(null);
+                        }}
+                        className={`text-sm font-bold ${isDarkMode ? 'text-white/60 hover:text-white' : 'text-text-secondary hover:text-secondary'} transition-colors`}
+                    >
+                        {mode === 'pin' ? 'Usar Email y Contraseña' : '¿Prefieres usar tu PIN?'}
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setMode(mode === 'login' || mode === 'pin' ? 'register' : 'login');
                             setError(null);
                         }}
                         className={`text-sm font-bold ${isDarkMode ? 'text-white/60 hover:text-white' : 'text-text-secondary hover:text-secondary'} transition-colors underline decoration-2 underline-offset-4 decoration-primary/30 hover:decoration-primary`}
                     >
-                        {mode === 'login' ? '¿No tienes cuenta? Regístrate aquí' : '¿Ya tienes cuenta? Inicia sesión'}
+                        {mode === 'login' || mode === 'pin' ? '¿No tienes cuenta? Regístrate aquí' : '¿Ya tienes cuenta? Inicia sesión'}
                     </button>
                 </div>
             </div>

@@ -70,6 +70,18 @@ export class MarketplaceAuthService {
         return this.generateToken(client);
     }
 
+    async loginByPin(pin: string) {
+        const client = await this.prisma.client.findFirst({
+            where: { pin, isActive: true }
+        });
+
+        if (!client) {
+            throw new UnauthorizedException('PIN inválido');
+        }
+
+        return this.generateToken(client);
+    }
+
     private generateToken(client: any) {
         const payload = {
             sub: client.id,
