@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/auth.store';
 import {
   LayoutDashboard, ShoppingCart, Grid3X3, DollarSign,
-  ArrowLeft, LogOut, User, Maximize2, Minimize2
+  ArrowLeft, LogOut, User, Maximize2, Minimize2, Menu, X
 } from 'lucide-react';
 import { useFullscreen } from '../hooks/useFullscreen';
 
@@ -17,12 +18,26 @@ export function CashierLayout() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const { isFullscreen, toggleFullscreen } = useFullscreen();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="h-screen flex bg-background overflow-hidden">
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-[260px] bg-white dark:bg-surface border-r border-gray-100 dark:border-white/10 flex flex-col z-20 shadow-[20px_0_40px_rgba(0,0,0,0.02)]">
-        <div className="p-8">
+      <aside className={`
+        fixed inset-y-0 left-0 z-50 w-[280px] bg-white dark:bg-surface border-r border-gray-100 dark:border-white/10 flex flex-col shadow-[20px_0_40px_rgba(0,0,0,0.02)]
+        transform transition-transform duration-300 ease-in-out
+        md:relative md:translate-x-0
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        <div className="p-6 md:p-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/30 rotate-3">
               <span className="text-white font-black text-xl italic">R</span>
@@ -32,6 +47,12 @@ export function CashierLayout() {
               <p className="text-[10px] font-black text-text-secondary uppercase tracking-widest mt-0.5">Cajero</p>
             </div>
           </div>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="md:hidden w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100 dark:hover:bg-white/10 text-text-secondary"
+          >
+            <X size={20} />
+          </button>
         </div>
 
         <div className="border-t border-gray-50 dark:border-white/5 mx-6 mb-6 opacity-50" />
@@ -42,6 +63,7 @@ export function CashierLayout() {
               key={to}
               to={to}
               end={end}
+              onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
                 `flex items-center gap-4 px-6 py-4 rounded-2xl text-[13px] font-black tracking-wide transition-all duration-300 group ${isActive
                   ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-[1.02]'
@@ -90,6 +112,23 @@ export function CashierLayout() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col relative overflow-hidden">
+        {/* Mobile header */}
+        <header className="h-16 bg-white/70 dark:bg-surface/70 backdrop-blur-xl border-b border-gray-100 dark:border-white/10 flex items-center px-4 gap-3 md:hidden">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-gray-100 dark:hover:bg-white/10 text-secondary"
+          >
+            <Menu size={22} />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-sm rotate-3">
+              <span className="text-white font-black text-sm italic">R</span>
+            </div>
+            <span className="font-black text-secondary text-lg tracking-tight">Resto<span className="text-primary italic">POS</span></span>
+          </div>
+          <span className="text-[10px] font-black text-text-secondary uppercase tracking-widest ml-1">Cajero</span>
+        </header>
+
         <main className="flex-1 overflow-y-auto custom-scrollbar relative z-0">
           <Outlet />
         </main>

@@ -43,10 +43,10 @@ export function MarketplacePage({ isDarkMode }: { isDarkMode: boolean }) {
 
     return (
         <div className={`min-h-screen pt-24 pb-20 px-4 md:px-8 transition-colors duration-500 ${isDarkMode ? 'bg-secondary' : 'bg-[#F4F7FE]'}`}>
-            <div className="max-w-7xl mx-auto space-y-12">
+            <div className="max-w-7xl mx-auto space-y-6 sm:space-y-12">
                 {/* Header */}
                 <div className="text-center space-y-4">
-                    <h1 className={`text-4xl md:text-6xl font-black tracking-tight ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
+                    <h1 className={`text-3xl sm:text-4xl md:text-6xl font-black tracking-tight ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
                         Explora el <span className="text-primary">Marketplace</span>
                     </h1>
                     <p className={`text-lg font-medium max-w-2xl mx-auto ${isDarkMode ? 'text-white/60' : 'text-text-secondary'}`}>
@@ -61,7 +61,7 @@ export function MarketplacePage({ isDarkMode }: { isDarkMode: boolean }) {
                             <button
                                 key={cat.name}
                                 onClick={() => setActiveCategory(cat.name)}
-                                className={`flex items-center gap-2 px-6 py-3 rounded-[24px] text-sm font-black transition-all whitespace-nowrap ${activeCategory === cat.name
+                                className={`flex items-center gap-2 px-4 py-2.5 sm:px-6 sm:py-3 rounded-[24px] text-sm font-black transition-all whitespace-nowrap ${activeCategory === cat.name
                                     ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105'
                                     : isDarkMode ? 'text-white/60 hover:text-white' : 'text-secondary/60 hover:text-secondary'
                                     }`}
@@ -86,17 +86,17 @@ export function MarketplacePage({ isDarkMode }: { isDarkMode: boolean }) {
 
                 {/* Results Grid */}
                 {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                         {[1, 2, 3, 4, 5, 6].map(i => (
-                            <div key={i} className="h-80 rounded-[48px] bg-white/5 animate-pulse" />
+                            <div key={i} className="h-80 rounded-3xl sm:rounded-[48px] bg-white/5 animate-pulse" />
                         ))}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                         {filteredBranches.map((branch) => {
                             const settings = branch.settings || {};
                             return (
-                                <div key={branch.id} className={`group relative rounded-[48px] border transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl overflow-hidden ${isDarkMode ? 'bg-white/5 border-white/10 hover:border-primary/30' : 'bg-white border-gray-100 hover:border-primary/10 shadow-sm'
+                                <div key={branch.id} className={`group relative rounded-3xl sm:rounded-[48px] border transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl overflow-hidden ${isDarkMode ? 'bg-white/5 border-white/10 hover:border-primary/30' : 'bg-white border-gray-100 hover:border-primary/10 shadow-sm'
                                     }`}>
                                     {/* Header Image */}
                                     <div className="h-40 w-full relative overflow-hidden">
@@ -120,7 +120,7 @@ export function MarketplacePage({ isDarkMode }: { isDarkMode: boolean }) {
                                         </div>
                                     </div>
 
-                                    <div className="p-8 space-y-4">
+                                    <div className="p-5 sm:p-8 space-y-4">
                                         <div className="flex justify-between items-start">
                                             <h3 className={`text-2xl font-black italic tracking-tight ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
                                                 {branch.name}
@@ -151,7 +151,7 @@ export function MarketplacePage({ isDarkMode }: { isDarkMode: boolean }) {
                                         </div>
                                     </div>
 
-                                    <div className="px-8 pb-8 pt-4 border-t border-white/5 flex items-center justify-between gap-4">
+                                    <div className="px-5 pb-5 sm:px-8 sm:pb-8 pt-4 border-t border-white/5 flex items-center justify-between gap-4">
                                         <div className="text-[10px] font-black uppercase tracking-widest opacity-40">
                                             {branch.reviewCount || 0} Calificaciones
                                         </div>

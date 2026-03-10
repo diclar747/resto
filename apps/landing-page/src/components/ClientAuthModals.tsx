@@ -88,7 +88,7 @@ export function ClientAuthModals({ isOpen, onClose, initialMode = 'login', isDar
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-secondary/80 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className={`relative w-full ${mode === 'pin' ? 'max-w-sm' : 'max-w-md'} p-8 md:p-10 rounded-[48px] shadow-2xl border ${isDarkMode ? 'bg-secondary border-white/10' : 'bg-white border-gray-100'} animate-in zoom-in-95 duration-300`}>
+            <div className={`relative w-full ${mode === 'pin' ? 'max-w-sm' : 'max-w-md'} p-5 sm:p-8 md:p-10 rounded-3xl sm:rounded-[48px] shadow-2xl border ${isDarkMode ? 'bg-secondary border-white/10' : 'bg-white border-gray-100'} animate-in zoom-in-95 duration-300`}>
 
                 {mode === 'pin' ? (
                     <div className="flex items-center gap-4 mb-10">
@@ -145,7 +145,7 @@ export function ClientAuthModals({ isOpen, onClose, initialMode = 'login', isDar
                 {mode === 'pin' ? (
                     <div className="space-y-8">
                         {/* PIN dots */}
-                        <div className="flex justify-center gap-6 mb-12">
+                        <div className="flex justify-center gap-4 sm:gap-6 mb-8 sm:mb-12">
                             {[0, 1, 2, 3].map((i) => (
                                 <div
                                     key={i}
@@ -158,16 +158,16 @@ export function ClientAuthModals({ isOpen, onClose, initialMode = 'login', isDar
                         </div>
 
                         {/* Number pad */}
-                        <div className="grid grid-cols-3 gap-6">
+                        <div className="grid grid-cols-3 gap-3 sm:gap-6">
                             {['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'del'].map((key) => {
-                                if (key === '') return <div key="empty" className="h-20" />;
+                                if (key === '') return <div key="empty" className="h-16 sm:h-20" />;
                                 if (key === 'del') {
                                     return (
                                         <button
                                             key="del"
                                             type="button"
                                             onClick={handleDelete}
-                                            className={`h-20 rounded-[28px] border flex items-center justify-center transition-all shadow-sm group active:scale-95 ${isDarkMode ? 'bg-white/5 border-white/10 text-white/40 hover:text-rose-500 hover:bg-rose-500/10 hover:border-rose-500/20' : 'bg-white border-gray-100 text-gray-400 hover:text-rose-500 hover:bg-rose-50 hover:border-rose-100'}`}
+                                            className={`h-16 sm:h-20 rounded-[28px] border flex items-center justify-center transition-all shadow-sm group active:scale-95 ${isDarkMode ? 'bg-white/5 border-white/10 text-white/40 hover:text-rose-500 hover:bg-rose-500/10 hover:border-rose-500/20' : 'bg-white border-gray-100 text-gray-400 hover:text-rose-500 hover:bg-rose-50 hover:border-rose-100'}`}
                                         >
                                             <Delete size={24} className="group-hover:scale-110 transition-transform" />
                                         </button>
@@ -179,7 +179,7 @@ export function ClientAuthModals({ isOpen, onClose, initialMode = 'login', isDar
                                         type="button"
                                         onClick={() => handleDigit(key)}
                                         disabled={loading}
-                                        className={`h-20 rounded-[28px] border flex items-center justify-center text-2xl font-black transition-all shadow-sm active:scale-95 disabled:opacity-50 ${isDarkMode ? 'bg-white/5 border-white/10 text-white hover:text-primary hover:bg-primary/5 hover:border-primary/20' : 'bg-white border-gray-100 text-secondary hover:text-primary hover:bg-primary/5 hover:border-primary/20'}`}
+                                        className={`h-16 sm:h-20 rounded-[28px] border flex items-center justify-center text-2xl font-black transition-all shadow-sm active:scale-95 disabled:opacity-50 ${isDarkMode ? 'bg-white/5 border-white/10 text-white hover:text-primary hover:bg-primary/5 hover:border-primary/20' : 'bg-white border-gray-100 text-secondary hover:text-primary hover:bg-primary/5 hover:border-primary/20'}`}
                                     >
                                         {key}
                                     </button>

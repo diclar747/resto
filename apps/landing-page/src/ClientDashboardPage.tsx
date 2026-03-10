@@ -107,10 +107,34 @@ export function ClientDashboardPage({ isDarkMode }: { isDarkMode: boolean }) {
     return (
         <div className={`min-h-screen pt-32 pb-20 px-4 md:px-8 transition-colors duration-500 ${isDarkMode ? 'bg-secondary' : 'bg-[#F4F7FE]'}`}>
             <div className="max-w-6xl mx-auto">
-                <div className="flex flex-col lg:flex-row gap-8">
+                <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
 
-                    {/* Sidebar */}
-                    <aside className="w-full lg:w-72 shrink-0">
+                    {/* Mobile horizontal tab bar */}
+                    <div className="lg:hidden overflow-x-auto no-scrollbar -mx-4 px-4 pb-4">
+                        <div className="flex gap-2 w-max">
+                            {tabs.map(tab => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setSearchParams({ tab: tab.id })}
+                                    className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all ${activeTab === tab.id
+                                            ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                                            : isDarkMode ? 'bg-white/5 text-white/60' : 'bg-white text-text-secondary shadow-sm'
+                                        }`}
+                                >
+                                    {tab.icon} {tab.name}
+                                </button>
+                            ))}
+                            <button
+                                onClick={() => { logout(); navigate('/marketplace'); }}
+                                className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold whitespace-nowrap text-rose-500 bg-rose-50 dark:bg-rose-500/10"
+                            >
+                                <LogOut size={16} /> Salir
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Sidebar (desktop only) */}
+                    <aside className="hidden lg:block w-72 shrink-0">
                         <div className={`p-6 rounded-[32px] border transition-all ${isDarkMode ? 'bg-surface border-white/5' : 'bg-white border-gray-100 shadow-xl shadow-gray-200/50'}`}>
                             <div className="flex items-center gap-4 mb-8 pb-8 border-b border-gray-100 dark:border-white/5">
                                 <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary overflow-hidden border-2 border-primary/20">
@@ -158,12 +182,12 @@ export function ClientDashboardPage({ isDarkMode }: { isDarkMode: boolean }) {
 
                     {/* Main Content */}
                     <main className="flex-1">
-                        <div className={`p-8 md:p-12 rounded-[48px] border transition-all h-full ${isDarkMode ? 'bg-surface border-white/5' : 'bg-white border-gray-100 shadow-2xl shadow-gray-200/50'}`}>
+                        <div className={`p-4 sm:p-6 md:p-8 lg:p-12 rounded-3xl sm:rounded-[48px] border transition-all h-full ${isDarkMode ? 'bg-surface border-white/5' : 'bg-white border-gray-100 shadow-2xl shadow-gray-200/50'}`}>
 
                             {activeTab === 'overview' && (
                                 <div className="space-y-12">
                                     <div>
-                                        <h2 className={`text-3xl font-black mb-2 ${isDarkMode ? 'text-white' : 'text-secondary'}`}>¡Hola, {profile?.firstName}! 👋</h2>
+                                        <h2 className={`text-2xl sm:text-3xl font-black mb-2 ${isDarkMode ? 'text-white' : 'text-secondary'}`}>¡Hola, {profile?.firstName}! 👋</h2>
                                         <p className="text-text-secondary font-medium">Gestiona tus pedidos y tu cuenta desde aquí.</p>
                                     </div>
 
@@ -231,7 +255,7 @@ export function ClientDashboardPage({ isDarkMode }: { isDarkMode: boolean }) {
 
                             {activeTab === 'orders' && (
                                 <div className="space-y-8">
-                                    <h2 className={`text-3xl font-black ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Historial de Pedidos</h2>
+                                    <h2 className={`text-2xl sm:text-3xl font-black ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Historial de Pedidos</h2>
                                     <div className="space-y-4">
                                         {orders.map(order => (
                                             <div key={order.id} className={`p-6 rounded-3xl border transition-all hover:-translate-y-1 ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-white border-gray-100 shadow-sm'}`}>
@@ -281,7 +305,7 @@ export function ClientDashboardPage({ isDarkMode }: { isDarkMode: boolean }) {
 
                             {activeTab === 'profile' && (
                                 <div className="space-y-12">
-                                    <h2 className={`text-3xl font-black ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Editar Perfil</h2>
+                                    <h2 className={`text-2xl sm:text-3xl font-black ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Editar Perfil</h2>
 
                                     <form onSubmit={handleUpdateProfile} className="space-y-8">
                                         <div className="flex flex-col md:flex-row items-center gap-8">
@@ -368,10 +392,10 @@ export function ClientDashboardPage({ isDarkMode }: { isDarkMode: boolean }) {
 
                             {activeTab === 'security' && (
                                 <div className="space-y-12">
-                                    <h2 className={`text-3xl font-black ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Seguridad</h2>
+                                    <h2 className={`text-2xl sm:text-3xl font-black ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Seguridad</h2>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                                        <form onSubmit={handleUpdateSecurity} className="space-y-6 p-8 rounded-3xl border border-dashed border-gray-200 dark:border-white/10">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
+                                        <form onSubmit={handleUpdateSecurity} className="space-y-6 p-4 sm:p-8 rounded-3xl border border-dashed border-gray-200 dark:border-white/10">
                                             <div className="flex items-center gap-3 mb-2">
                                                 <Lock className="text-primary" size={24} />
                                                 <h3 className={`text-xl font-black ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Cambiar Contraseña</h3>
@@ -396,7 +420,7 @@ export function ClientDashboardPage({ isDarkMode }: { isDarkMode: boolean }) {
                                             </button>
                                         </form>
 
-                                        <form onSubmit={handleUpdateSecurity} className="space-y-6 p-8 rounded-3xl border border-dashed border-gray-200 dark:border-white/10">
+                                        <form onSubmit={handleUpdateSecurity} className="space-y-6 p-4 sm:p-8 rounded-3xl border border-dashed border-gray-200 dark:border-white/10">
                                             <div className="flex items-center gap-3 mb-2">
                                                 <Smartphone className="text-secondary dark:text-white" size={24} />
                                                 <h3 className={`text-xl font-black ${isDarkMode ? 'text-white' : 'text-secondary'}`}>PIN de Acceso</h3>
@@ -427,7 +451,7 @@ export function ClientDashboardPage({ isDarkMode }: { isDarkMode: boolean }) {
 
                             {activeTab === 'notifications' && (
                                 <div className="space-y-12">
-                                    <h2 className={`text-3xl font-black ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Notificaciones</h2>
+                                    <h2 className={`text-2xl sm:text-3xl font-black ${isDarkMode ? 'text-white' : 'text-secondary'}`}>Notificaciones</h2>
 
                                     <div className="space-y-6">
                                         {[

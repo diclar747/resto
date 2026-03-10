@@ -47,8 +47,8 @@ export function PinLoginPage() {
       <div className="absolute top-[-10%] left-[-5%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px]" />
       <div className="absolute bottom-[-10%] right-[-5%] w-[300px] h-[300px] bg-accent/10 rounded-full blur-[80px]" />
 
-      <div className="bg-white/70 dark:bg-surface/70 backdrop-blur-xl border border-white/40 rounded-[48px] shadow-2xl w-full max-w-sm p-10 relative z-10">
-        <div className="flex items-center gap-4 mb-10">
+      <div className="bg-white/70 dark:bg-surface/70 backdrop-blur-xl border border-white/40 rounded-3xl sm:rounded-[48px] shadow-2xl w-full max-w-sm p-6 sm:p-10 relative z-10">
+        <div className="flex items-center gap-4 mb-6 sm:mb-10">
           <button
             onClick={() => navigate('/login')}
             className="w-10 h-10 bg-gray-50 dark:bg-white/5 flex items-center justify-center rounded-xl text-gray-400 dark:text-white/40 hover:text-primary hover:bg-white dark:hover:bg-surface transition-all shadow-sm border border-transparent hover:border-primary/20"
@@ -62,7 +62,7 @@ export function PinLoginPage() {
         </div>
 
         {/* PIN dots */}
-        <div className="flex justify-center gap-6 mb-12">
+        <div className="flex justify-center gap-4 sm:gap-6 mb-8 sm:mb-12">
           {[0, 1, 2, 3].map((i) => (
             <div
               key={i}
@@ -75,7 +75,7 @@ export function PinLoginPage() {
         </div>
 
         {/* Number pad */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-3 gap-3 sm:gap-6">
           {['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'del'].map((key, i) => {
             if (key === '') return <div key="empty" className="h-16" />;
             if (key === 'del') {
@@ -83,7 +83,7 @@ export function PinLoginPage() {
                 <button
                   key="del"
                   onClick={handleDelete}
-                  className="h-20 rounded-[28px] bg-white dark:bg-surface border border-gray-100 dark:border-white/10 flex items-center justify-center text-gray-400 dark:text-white/40 hover:text-rose-500 hover:bg-rose-50 hover:border-rose-100 transition-all shadow-sm group active:scale-95"
+                  className="h-16 sm:h-20 rounded-[28px] bg-white dark:bg-surface border border-gray-100 dark:border-white/10 flex items-center justify-center text-gray-400 dark:text-white/40 hover:text-rose-500 hover:bg-rose-50 hover:border-rose-100 transition-all shadow-sm group active:scale-95"
                 >
                   <Delete size={24} className="group-hover:scale-110 transition-transform" />
                 </button>
@@ -94,7 +94,7 @@ export function PinLoginPage() {
                 key={key}
                 onClick={() => handleDigit(key)}
                 disabled={loading}
-                className="h-20 rounded-[28px] bg-white dark:bg-surface border border-gray-100 dark:border-white/10 flex items-center justify-center text-2xl font-black text-secondary hover:text-primary hover:bg-primary/5 hover:border-primary/20 transition-all shadow-sm active:scale-95 disabled:opacity-50"
+                className="h-16 sm:h-20 rounded-[28px] bg-white dark:bg-surface border border-gray-100 dark:border-white/10 flex items-center justify-center text-2xl font-black text-secondary hover:text-primary hover:bg-primary/5 hover:border-primary/20 transition-all shadow-sm active:scale-95 disabled:opacity-50"
               >
                 {key}
               </button>

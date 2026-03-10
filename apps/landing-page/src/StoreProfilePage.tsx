@@ -177,7 +177,7 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
         <div className={`min-h-screen pb-20 transition-colors duration-500 ${isDarkMode ? 'bg-secondary' : 'bg-[#F4F7FE]'}`}>
 
             {/* Header Banner */}
-            <div className="w-full h-80 md:h-[450px] relative">
+            <div className="w-full h-52 sm:h-80 md:h-[450px] relative">
                 <img
                     src={branch.bannerUrl || settings.headerUrl || 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=1200&q=80'}
                     className="w-full h-full object-cover"
@@ -193,13 +193,13 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 md:px-8 -mt-24 md:-mt-32 relative z-20">
-                <div className={`rounded-[48px] p-8 md:p-12 shadow-2xl mb-12 border transition-all ${isDarkMode ? 'bg-surface border-white/5' : 'bg-white border-gray-100'}`}>
+            <div className="max-w-7xl mx-auto px-4 md:px-8 -mt-16 sm:-mt-24 md:-mt-32 relative z-20">
+                <div className={`rounded-3xl sm:rounded-[48px] p-4 sm:p-8 md:p-12 shadow-2xl mb-8 sm:mb-12 border transition-all ${isDarkMode ? 'bg-surface border-white/5' : 'bg-white border-gray-100'}`}>
 
                     {/* Store Identity */}
                     <div className="flex flex-col md:flex-row gap-8 items-start md:items-center justify-between border-b border-gray-100 dark:border-white/5 pb-8">
                         <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
-                            <div className="w-32 h-32 rounded-3xl border-4 border-white shadow-xl overflow-hidden bg-white shrink-0">
+                            <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-3xl border-4 border-white shadow-xl overflow-hidden bg-white shrink-0">
                                 <img
                                     src={settings.logoUrl || 'https://via.placeholder.com/200'}
                                     className="w-full h-full object-cover"
@@ -207,7 +207,7 @@ export function StoreProfilePage({ isDarkMode }: { isDarkMode: boolean }) {
                                 />
                             </div>
                             <div className="space-y-3 pt-2">
-                                <h1 className={`text-4xl md:text-5xl font-black tracking-tight ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
+                                <h1 className={`text-2xl sm:text-4xl md:text-5xl font-black tracking-tight ${isDarkMode ? 'text-white' : 'text-secondary'}`}>
                                     {branch.name}
                                 </h1>
                                 <p className={`text-sm md:text-base font-medium max-w-2xl ${isDarkMode ? 'text-white/60' : 'text-text-secondary'}`}>
