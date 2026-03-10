@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../../../stores/auth.store';
 import api from '../../../api/client';
 import toast from 'react-hot-toast';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Globe, Layout, Share2, MessageCircle, Save,
     Image as ImageIcon, Star, Settings, ExternalLink,
@@ -29,22 +29,9 @@ export function StoreBrandingPage() {
         deliveryFee: 0
     });
 
-    // Sync state with branch data when it loads
-    useState(() => {
-        if (branch) {
-            setForm({
-                name: branch.name || '',
-                bannerUrl: branch.bannerUrl || '',
-                whatsapp: branch.whatsapp || '',
-                logoUrl: branch.settings?.logoUrl || '',
-                description: branch.settings?.description || '',
-                deliveryFee: branch.settings?.deliveryFee || 0
-            });
-        }
-    });
 
     // Effect to update form when branch data is fetched
-    React.useEffect(() => {
+    useEffect(() => {
         if (branch) {
             setForm({
                 name: branch.name || '',
@@ -209,7 +196,7 @@ export function StoreBrandingPage() {
                                             type="number"
                                             className="w-full pl-14 pr-6 py-4 bg-white dark:bg-surface border-none rounded-[20px] text-sm font-black outline-none shadow-sm focus:ring-4 focus:ring-primary/10 transition-all"
                                             value={form.deliveryFee}
-                                            onChange={(e) => setForm({ ...form, deliveryFee: e.target.value })}
+                                            onChange={(e) => setForm({ ...form, deliveryFee: parseFloat(e.target.value) || 0 })}
                                         />
                                     </div>
                                 </div>
