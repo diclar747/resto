@@ -73,13 +73,18 @@ export class MarketplaceAuthService {
     }
 
     async loginByPin(pin: string) {
-        // First check marketplace clients
-        const client = await this.prisma.client.findFirst({
-            where: { pin, isActive: true }
-        });
+        // First check marketplace clients (wrapped in try/catch in case
+        // the pin column hasn't been migrated to the clients table yet)
+        try {
+            const client = await this.prisma.client.findFirst({
+                where: { pin, isActive: true }
+            });
 
-        if (client) {
-            return this.generateToken(client);
+            if (client) {
+                return this.generateToken(client);
+            }
+        } catch {
+            // pin column may not exist on clients table yet — skip to staff lookup
         }
 
         // Fallback: check staff users table
