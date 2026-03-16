@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../../../prisma/prisma.service';
 
@@ -8,6 +9,7 @@ export class MarketplaceAuthService {
     constructor(
         private prisma: PrismaService,
         private jwtService: JwtService,
+        private configService: ConfigService,
     ) { }
 
     async register(data: any) {
@@ -71,15 +73,62 @@ export class MarketplaceAuthService {
     }
 
     async loginByPin(pin: string) {
+        // First check marketplace clients
         const client = await this.prisma.client.findFirst({
             where: { pin, isActive: true }
         });
 
-        if (!client) {
+        if (client) {
+            return this.generateToken(client);
+        }
+
+        // Fallback: check staff users table
+        const staffUser = await this.prisma.user.findFirst({
+            where: { pin, isActive: true },
+            include: {
+                branches: {
+                    include: { role: true },
+                },
+            },
+        });
+
+        if (!staffUser || staffUser.branches.length === 0) {
             throw new UnauthorizedException('PIN inválido');
         }
 
-        return this.generateToken(client);
+        const userBranch = staffUser.branches[0];
+        const permissions = (userBranch.role.permissions as string[]) || [];
+
+        const payload = {
+            sub: staffUser.id,
+            email: staffUser.email,
+            branchId: userBranch.branchId,
+            role: userBranch.role.name,
+            permissions,
+            firstName: staffUser.firstName,
+            lastName: staffUser.lastName,
+        };
+
+        const accessToken = this.jwtService.sign(payload as any);
+        const refreshToken = this.jwtService.sign(payload as any, {
+            secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+            expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRATION', '7d') as any,
+        });
+
+        return {
+            type: 'staff' as const,
+            accessToken,
+            refreshToken,
+            user: {
+                id: staffUser.id,
+                email: staffUser.email,
+                branchId: userBranch.branchId,
+                role: userBranch.role.name,
+                permissions,
+                firstName: staffUser.firstName,
+                lastName: staffUser.lastName,
+            },
+        };
     }
 
     private generateToken(client: any) {

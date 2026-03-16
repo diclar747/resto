@@ -52,6 +52,25 @@ export function ClientAuthModals({ isOpen, onClose, initialMode = 'login', isDar
             const { data } = await api.post('/marketplace/auth/login-pin', {
                 pin: pinCode
             });
+
+            // Staff user detected - save auth for POS app and redirect
+            if (data.type === 'staff') {
+                const posAuth = {
+                    state: {
+                        user: data.user,
+                        accessToken: data.accessToken,
+                        refreshToken: data.refreshToken,
+                        isAuthenticated: true,
+                    },
+                    version: 0,
+                };
+                localStorage.setItem('auth-storage', JSON.stringify(posAuth));
+                onClose();
+                window.location.href = '/pos/';
+                return;
+            }
+
+            // Regular marketplace client
             setClientAuth(data.client, data.token);
             onClose();
             if (redirectTo) navigate(redirectTo);
