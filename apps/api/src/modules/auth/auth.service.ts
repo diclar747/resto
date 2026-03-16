@@ -66,12 +66,12 @@ export class AuthService {
     });
   }
 
-  async pinLogin(pin: string, branchId: string) {
+  async pinLogin(pin: string, branchId?: string) {
     const user = await this.prisma.user.findFirst({
       where: { pin, isActive: true },
       include: {
         branches: {
-          where: { branchId },
+          ...(branchId ? { where: { branchId } } : {}),
           include: { role: true },
         },
       },
