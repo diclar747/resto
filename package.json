@@ -23,7 +23,6 @@
     "prettier": "^3.4.0"
   },
   "prisma": {
-    "schema": "prisma/schema.prisma",
     "seed": "npx ts-node prisma/seed.ts"
   }
 }
