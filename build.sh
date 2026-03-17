@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 echo "--- Prisma Generate ---"
-npx prisma generate
+npx prisma generate --schema=prisma/schema.prisma
 
 echo "--- Compile NestJS API ---"
 cd apps/api && npx tsc -p tsconfig.json && cd ../..
