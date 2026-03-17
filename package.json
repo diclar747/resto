@@ -18,6 +18,7 @@
     "db:studio": "npx prisma studio"
   },
   "devDependencies": {
+    "prisma": "~6.19.0",
     "turbo": "^2.4.0",
     "typescript": "^5.7.0",
     "prettier": "^3.4.0"
