@@ -74,7 +74,7 @@ function AdminDashboardRouter() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/pos">
       <Routes>
         {/* Auth */}
         <Route path="/login" element={<LoginPage />} />

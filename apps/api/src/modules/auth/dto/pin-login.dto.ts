@@ -1,9 +1,10 @@
-import { IsString } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 
 export class PinLoginDto {
   @IsString()
   pin: string;
 
   @IsString()
-  branchId: string;
+  @IsOptional()
+  branchId?: string;
 }

@@ -12,8 +12,6 @@ export function PinLoginPage() {
   const setAuth = useAuthStore((s) => s.setAuth);
   const navigate = useNavigate();
 
-  const branchId = 'branch-main'; // TODO: branch selector
-
   const handleDigit = (digit: string) => {
     if (pin.length < 4) {
       const newPin = pin + digit;
@@ -29,7 +27,7 @@ export function PinLoginPage() {
   const handleLogin = async (pinCode: string) => {
     setLoading(true);
     try {
-      const { data } = await api.post('/auth/pin-login', { pin: pinCode, branchId });
+      const { data } = await api.post('/auth/pin-login', { pin: pinCode });
       setAuth(data.user, data.accessToken, data.refreshToken);
       toast.success('¡Acceso concedido!');
       navigate(getRoleDefaultPath(data.user.role));

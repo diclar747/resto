@@ -33,11 +33,11 @@ api.interceptors.response.use(
           return api(originalRequest);
         } catch {
           useAuthStore.getState().logout();
-          window.location.href = '/login';
+          window.location.href = '/pos/login';
         }
       } else {
         useAuthStore.getState().logout();
-        window.location.href = '/login';
+        window.location.href = '/pos/login';
       }
     }
 
