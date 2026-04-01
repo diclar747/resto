@@ -73,16 +73,22 @@ export class MarketplaceAuthService {
     }
 
     async loginByPin(pin: string) {
+        this.logger.log('=== LOGIN BY PIN SERVICE ===');
+        
         // Validar que el PIN no esté vacío
         if (!pin || pin.trim() === '') {
-            this.logger.warn('Intento de login con PIN vacío');
+            this.logger.warn('❌ Intento de login con PIN vacío');
             throw new BadRequestException('El PIN es requerido');
         }
 
         const trimmedPin = pin.trim();
-        this.logger.debug(`Buscando cliente con PIN: ${trimmedPin}`);
+        this.logger.log(`🔍 Buscando cliente con PIN: "${trimmedPin}"`);
 
         try {
+            // Primero ver cuántos clientes hay en total
+            const totalClients = await this.prisma.client.count();
+            this.logger.log(`📊 Total clientes en BD: ${totalClients}`);
+
             const client = await this.prisma.client.findFirst({
                 where: { 
                     pin: trimmedPin, 
@@ -91,18 +97,26 @@ export class MarketplaceAuthService {
             });
 
             if (!client) {
-                this.logger.warn(`Cliente no encontrado con PIN: ${trimmedPin}`);
+                this.logger.warn(`❌ Cliente NO encontrado con PIN: "${trimmedPin}"`);
+                
+                // Buscar si hay algún cliente con PIN similar (para debug)
+                const allWithPins = await this.prisma.client.findMany({
+                    where: { pin: { not: null } },
+                    select: { pin: true, firstName: true }
+                });
+                this.logger.log(`📋 Clientes con PIN en BD: ${allWithPins.map(c => `"${c.pin}" (${c.firstName})`).join(', ')}`);
+                
                 throw new UnauthorizedException('PIN inválido');
             }
 
-            this.logger.debug(`Cliente encontrado: ${client.email}`);
+            this.logger.log(`✅ Cliente encontrado: ${client.firstName} ${client.lastName} (${client.email})`);
             return this.generateToken(client);
         } catch (error) {
             // Si ya es una excepción HTTP, re-lanzarla
             if (error instanceof UnauthorizedException || error instanceof BadRequestException) {
                 throw error;
             }
-            this.logger.error('Error en loginByPin:', error);
+            this.logger.error('💥 Error en loginByPin:', error);
             throw new UnauthorizedException('Error al procesar el login');
         }
     }

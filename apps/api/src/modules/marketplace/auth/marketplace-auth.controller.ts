@@ -1,7 +1,7 @@
-import { Controller, Post, Body, BadRequestException, Logger, Get } from '@nestjs/common';
+import { Controller, Post, Body, BadRequestException, Logger, Get, Version, VERSION_NEUTRAL } from '@nestjs/common';
 import { MarketplaceAuthService } from './marketplace-auth.service';
 
-@Controller('marketplace/auth')
+@Controller({ path: 'marketplace/auth', version: VERSION_NEUTRAL })
 export class MarketplaceAuthController {
     private readonly logger = new Logger(MarketplaceAuthController.name);
 
@@ -19,27 +19,36 @@ export class MarketplaceAuthController {
 
     @Post('login-pin')
     async loginPin(@Body() body: any) {
-        this.logger.debug('Body recibido en login-pin:', JSON.stringify(body));
+        this.logger.log('=== LOGIN PIN REQUEST ===');
+        this.logger.log('Headers:', JSON.stringify(body));
         
         // Aceptar tanto { pin: "1234" } como variantes
         const pin = body?.pin || body?.PIN || body?.Pin;
         
         if (!pin) {
-            this.logger.error('PIN no proporcionado. Body completo:', JSON.stringify(body));
+            this.logger.error('❌ PIN no proporcionado. Body:', JSON.stringify(body));
             throw new BadRequestException('El PIN es requerido');
         }
         
         if (typeof pin !== 'string') {
-            this.logger.error(`PIN no es string. Tipo: ${typeof pin}, valor:`, pin);
+            this.logger.error(`❌ PIN no es string. Tipo: ${typeof pin}, valor:`, pin);
             throw new BadRequestException('El PIN debe ser texto');
         }
         
+        this.logger.log(`✅ PIN recibido: "${pin}"`);
         return this.authService.loginByPin(pin);
     }
 
     // Endpoint de diagnóstico para verificar qué clientes tienen PIN
     @Get('debug-pins')
     async debugPins() {
+        this.logger.log('=== DEBUG PINS REQUEST ===');
         return this.authService.debugPins();
+    }
+
+    // Health check simple
+    @Get('health')
+    health() {
+        return { status: 'ok', timestamp: new Date().toISOString(), service: 'marketplace-auth' };
     }
 }
