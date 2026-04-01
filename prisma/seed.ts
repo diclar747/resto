@@ -303,7 +303,12 @@ async function main() {
   const waiterHash = await bcrypt.hash('waiter123', 10);
   const waiterUser = await prisma.user.upsert({
     where: { email: 'camarero@restaurante.com' },
-    update: {},
+    update: {
+      pin: '1111',
+      passwordHash: waiterHash,
+      firstName: 'Carlos',
+      lastName: 'Camarero'
+    },
     create: {
       email: 'camarero@restaurante.com',
       passwordHash: waiterHash,
@@ -323,7 +328,12 @@ async function main() {
   const cashierHash = await bcrypt.hash('cajero123', 10);
   await prisma.user.upsert({
     where: { email: 'cajero@restaurante.com' },
-    update: {},
+    update: {
+      pin: '2222',
+      passwordHash: cashierHash,
+      firstName: 'María',
+      lastName: 'Cajera'
+    },
     create: {
       email: 'cajero@restaurante.com',
       passwordHash: cashierHash,
@@ -343,7 +353,12 @@ async function main() {
   const kitchenHash = await bcrypt.hash('cocina123', 10);
   await prisma.user.upsert({
     where: { email: 'cocina@restaurante.com' },
-    update: {},
+    update: {
+      pin: '3333',
+      passwordHash: kitchenHash,
+      firstName: 'Pedro',
+      lastName: 'Cocinero'
+    },
     create: {
       email: 'cocina@restaurante.com',
       passwordHash: kitchenHash,
@@ -363,7 +378,12 @@ async function main() {
   const passwordHash = await bcrypt.hash('admin123', 10);
   const adminUser = await prisma.user.upsert({
     where: { email: 'admin@restaurante.com' },
-    update: {},
+    update: {
+      pin: '0000',
+      passwordHash,
+      firstName: 'Admin',
+      lastName: 'Sistema'
+    },
     create: {
       email: 'admin@restaurante.com',
       passwordHash,
@@ -380,7 +400,12 @@ async function main() {
   const superHash = await bcrypt.hash('super123', 10);
   await prisma.user.upsert({
     where: { email: 'superadmin@restaurante.com' },
-    update: {},
+    update: {
+      pin: '9999',
+      passwordHash: superHash,
+      firstName: 'Super',
+      lastName: 'Admin'
+    },
     create: {
       email: 'superadmin@restaurante.com',
       passwordHash: superHash,
@@ -400,7 +425,12 @@ async function main() {
   const driverHash = await bcrypt.hash('driver123', 10);
   await prisma.user.upsert({
     where: { email: 'delivery@restaurante.com' },
-    update: {},
+    update: {
+      pin: '5555',
+      passwordHash: driverHash,
+      firstName: 'Diego',
+      lastName: 'Repartidor'
+    },
     create: {
       email: 'delivery@restaurante.com',
       passwordHash: driverHash,
@@ -420,7 +450,12 @@ async function main() {
   const managerHash = await bcrypt.hash('manager123', 10);
   await prisma.user.upsert({
     where: { email: 'gerente@restaurante.com' },
-    update: {},
+    update: {
+      pin: '4444',
+      passwordHash: managerHash,
+      firstName: 'Laura',
+      lastName: 'Gerente'
+    },
     create: {
       email: 'gerente@restaurante.com',
       passwordHash: managerHash,
@@ -440,7 +475,12 @@ async function main() {
   const waiter2Hash = await bcrypt.hash('waiter123', 10);
   await prisma.user.upsert({
     where: { email: 'camarero2@restaurante.com' },
-    update: {},
+    update: {
+      pin: '6666',
+      passwordHash: waiter2Hash,
+      firstName: 'Ana',
+      lastName: 'Camarera'
+    },
     create: {
       email: 'camarero2@restaurante.com',
       passwordHash: waiter2Hash,
