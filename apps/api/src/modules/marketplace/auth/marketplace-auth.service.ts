@@ -1,10 +1,12 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, BadRequestException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../../../prisma/prisma.service';
 
 @Injectable()
 export class MarketplaceAuthService {
+    private readonly logger = new Logger(MarketplaceAuthService.name);
+
     constructor(
         private prisma: PrismaService,
         private jwtService: JwtService,
@@ -71,38 +73,67 @@ export class MarketplaceAuthService {
     }
 
     async loginByPin(pin: string) {
-        const client = await this.prisma.client.findFirst({
-            where: { pin, isActive: true }
-        });
-
-        if (!client) {
-            throw new UnauthorizedException('PIN inválido');
+        // Validar que el PIN no esté vacío
+        if (!pin || pin.trim() === '') {
+            this.logger.warn('Intento de login con PIN vacío');
+            throw new BadRequestException('El PIN es requerido');
         }
 
-        return this.generateToken(client);
+        const trimmedPin = pin.trim();
+        this.logger.debug(`Buscando cliente con PIN: ${trimmedPin}`);
+
+        try {
+            const client = await this.prisma.client.findFirst({
+                where: { 
+                    pin: trimmedPin, 
+                    isActive: true 
+                }
+            });
+
+            if (!client) {
+                this.logger.warn(`Cliente no encontrado con PIN: ${trimmedPin}`);
+                throw new UnauthorizedException('PIN inválido');
+            }
+
+            this.logger.debug(`Cliente encontrado: ${client.email}`);
+            return this.generateToken(client);
+        } catch (error) {
+            // Si ya es una excepción HTTP, re-lanzarla
+            if (error instanceof UnauthorizedException || error instanceof BadRequestException) {
+                throw error;
+            }
+            this.logger.error('Error en loginByPin:', error);
+            throw new UnauthorizedException('Error al procesar el login');
+        }
     }
 
     private generateToken(client: any) {
-        const payload = {
-            sub: client.id,
-            email: client.email,
-            phone: client.phone,
-            firstName: client.firstName,
-            lastName: client.lastName,
-            role: 'client'
-        };
-
-        const token = this.jwtService.sign(payload);
-
-        return {
-            client: {
-                id: client.id,
+        try {
+            const payload = {
+                sub: client.id,
+                email: client.email || null,
+                phone: client.phone || null,
                 firstName: client.firstName,
                 lastName: client.lastName,
-                email: client.email,
-                phone: client.phone
-            },
-            token
-        };
+                role: 'client'
+            };
+
+            this.logger.debug('Generando token para cliente:', client.id);
+            const token = this.jwtService.sign(payload);
+
+            return {
+                client: {
+                    id: client.id,
+                    firstName: client.firstName,
+                    lastName: client.lastName,
+                    email: client.email || null,
+                    phone: client.phone || null
+                },
+                token
+            };
+        } catch (error) {
+            this.logger.error('Error generando token:', error);
+            throw new UnauthorizedException('Error al generar el token de autenticación');
+        }
     }
 }
