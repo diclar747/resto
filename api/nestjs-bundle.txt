@@ -96031,6 +96031,52 @@ var require_auth_service = __commonJS({
           throw new common_1.UnauthorizedException("Token de refresh inv\xE1lido");
         }
       }
+      async getProfile(userId) {
+        const user = await this.prisma.user.findUnique({
+          where: { id: userId },
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            phone: true,
+            avatarUrl: true,
+            isActive: true,
+            createdAt: true,
+            branches: { include: { role: true, branch: true } }
+          }
+        });
+        if (!user)
+          throw new common_1.UnauthorizedException("Usuario no encontrado");
+        return user;
+      }
+      async updateProfile(userId, data) {
+        const { firstName, lastName, phone, avatarUrl, pin } = data;
+        return this.prisma.user.update({
+          where: { id: userId },
+          data: { firstName, lastName, phone, avatarUrl, pin },
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            phone: true,
+            avatarUrl: true,
+            isActive: true
+          }
+        });
+      }
+      async changePassword(userId, currentPassword, newPassword) {
+        const user = await this.prisma.user.findUnique({ where: { id: userId } });
+        if (!user)
+          throw new common_1.UnauthorizedException("Usuario no encontrado");
+        const valid = await bcrypt.compare(currentPassword, user.passwordHash);
+        if (!valid)
+          throw new common_1.BadRequestException("Contrase\xF1a actual incorrecta");
+        const passwordHash = await bcrypt.hash(newPassword, 10);
+        await this.prisma.user.update({ where: { id: userId }, data: { passwordHash } });
+        return { message: "Contrase\xF1a actualizada" };
+      }
       generateTokens(payload) {
         const accessToken = this.jwtService.sign(payload);
         const refreshToken = this.jwtService.sign(payload, {
@@ -96241,7 +96287,13 @@ var require_auth_controller = __commonJS({
         return this.authService.refreshToken(dto.refreshToken);
       }
       async me(user) {
-        return user;
+        return this.authService.getProfile(user.id);
+      }
+      async updateProfile(user, body) {
+        return this.authService.updateProfile(user.id, body);
+      }
+      async changePassword(user, body) {
+        return this.authService.changePassword(user.id, body.currentPassword, body.newPassword);
       }
     };
     exports2.AuthController = AuthController;
@@ -96274,6 +96326,24 @@ var require_auth_controller = __commonJS({
       __metadata2("design:paramtypes", [Object]),
       __metadata2("design:returntype", Promise)
     ], AuthController.prototype, "me", null);
+    __decorate2([
+      (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+      (0, common_1.Patch)("profile"),
+      __param2(0, (0, current_user_decorator_1.CurrentUser)()),
+      __param2(1, (0, common_1.Body)()),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", [Object, Object]),
+      __metadata2("design:returntype", Promise)
+    ], AuthController.prototype, "updateProfile", null);
+    __decorate2([
+      (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+      (0, common_1.Patch)("password"),
+      __param2(0, (0, current_user_decorator_1.CurrentUser)()),
+      __param2(1, (0, common_1.Body)()),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", [Object, Object]),
+      __metadata2("design:returntype", Promise)
+    ], AuthController.prototype, "changePassword", null);
     exports2.AuthController = AuthController = __decorate2([
       (0, common_1.Controller)("auth"),
       __metadata2("design:paramtypes", [auth_service_1.AuthService])
@@ -96583,6 +96653,11 @@ var require_users_service = __commonJS({
       constructor(prisma) {
         this.prisma = prisma;
       }
+      async findAllRoles() {
+        return this.prisma.role.findMany({
+          orderBy: { name: "asc" }
+        });
+      }
       async findAll(branchId) {
         const where = branchId ? { branches: { some: { branchId } } } : {};
         return this.prisma.user.findMany({
@@ -96746,6 +96821,9 @@ var require_roles_guard = __commonJS({
           }
         }
         if (requiredPermissions && requiredPermissions.length > 0) {
+          if (user.role === "superadmin" || user.role === "admin") {
+            return true;
+          }
           const userPermissions = user.permissions || [];
           return requiredPermissions.every((perm) => userPermissions.includes(perm));
         }
@@ -96793,6 +96871,9 @@ var require_users_controller = __commonJS({
       findAll(branchId) {
         return this.usersService.findAll(branchId);
       }
+      findAllRoles() {
+        return this.usersService.findAllRoles();
+      }
       findById(id) {
         return this.usersService.findById(id);
       }
@@ -96824,6 +96905,13 @@ var require_users_controller = __commonJS({
       __metadata2("design:paramtypes", [String]),
       __metadata2("design:returntype", void 0)
     ], UsersController.prototype, "findAll", null);
+    __decorate2([
+      (0, common_1.Get)("roles"),
+      (0, permissions_decorator_1.RequirePermissions)("users.view"),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", []),
+      __metadata2("design:returntype", void 0)
+    ], UsersController.prototype, "findAllRoles", null);
     __decorate2([
       (0, common_1.Get)(":id"),
       (0, permissions_decorator_1.RequirePermissions)("users.view"),
@@ -96982,15 +97070,22 @@ var require_branches_service = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.BranchesService = void 0;
     var common_1 = require_common();
+    var bcrypt = require_umd();
     var prisma_service_1 = require_prisma_service();
     var BranchesService = class BranchesService {
       prisma;
       constructor(prisma) {
         this.prisma = prisma;
       }
-      async findAll() {
+      async findAll(includeInactive = false) {
         return this.prisma.branch.findMany({
-          where: { isActive: true },
+          where: includeInactive ? {} : { isActive: true },
+          include: {
+            users: {
+              include: { user: { select: { id: true, firstName: true, lastName: true, email: true, isActive: true } }, role: true }
+            },
+            _count: { select: { orders: true, tables: true } }
+          },
           orderBy: { name: "asc" }
         });
       }
@@ -97002,6 +97097,32 @@ var require_branches_service = __commonJS({
       }
       async create(data) {
         return this.prisma.branch.create({ data });
+      }
+      async createWithAdmin(branchData, adminData) {
+        const existing = await this.prisma.user.findUnique({ where: { email: adminData.email } });
+        if (existing)
+          throw new common_1.ConflictException("Email ya registrado");
+        const adminRole = await this.prisma.role.findFirst({ where: { name: "admin" } });
+        if (!adminRole)
+          throw new common_1.NotFoundException("Rol admin no encontrado");
+        const passwordHash = await bcrypt.hash(adminData.password, 10);
+        return this.prisma.$transaction(async (tx) => {
+          const branch = await tx.branch.create({ data: branchData });
+          const user = await tx.user.create({
+            data: {
+              email: adminData.email,
+              passwordHash,
+              firstName: adminData.firstName,
+              lastName: adminData.lastName,
+              phone: adminData.phone,
+              pin: adminData.pin,
+              branches: {
+                create: { branchId: branch.id, roleId: adminRole.id }
+              }
+            }
+          });
+          return { branch, admin: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName } };
+        });
       }
       async update(id, data) {
         return this.prisma.branch.update({ where: { id }, data });
@@ -97051,13 +97172,17 @@ var require_branches_controller = __commonJS({
       constructor(branchesService) {
         this.branchesService = branchesService;
       }
-      findAll() {
-        return this.branchesService.findAll();
+      findAll(includeInactive) {
+        return this.branchesService.findAll(includeInactive === "true");
       }
       findById(id) {
         return this.branchesService.findById(id);
       }
       create(body) {
+        if (body.admin) {
+          const { admin, ...branchData } = body;
+          return this.branchesService.createWithAdmin(branchData, admin);
+        }
         return this.branchesService.create(body);
       }
       update(id, body) {
@@ -97070,8 +97195,9 @@ var require_branches_controller = __commonJS({
     exports2.BranchesController = BranchesController;
     __decorate2([
       (0, common_1.Get)(),
+      __param2(0, (0, common_1.Query)("includeInactive")),
       __metadata2("design:type", Function),
-      __metadata2("design:paramtypes", []),
+      __metadata2("design:paramtypes", [String]),
       __metadata2("design:returntype", void 0)
     ], BranchesController.prototype, "findAll", null);
     __decorate2([
@@ -129606,6 +129732,7 @@ var require_tables_controller = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.TablesController = void 0;
     var common_1 = require_common();
+    var class_validator_1 = require_cjs();
     var tables_service_1 = require_tables_service();
     var tables_gateway_1 = require_tables_gateway();
     var jwt_auth_guard_1 = require_jwt_auth_guard();
@@ -129613,10 +129740,23 @@ var require_tables_controller = __commonJS({
     var UpdateStatusBody = class {
       status;
     };
+    __decorate2([
+      (0, class_validator_1.IsString)(),
+      __metadata2("design:type", String)
+    ], UpdateStatusBody.prototype, "status", void 0);
     var MergeTablesBody = class {
       tableIds;
       targetTableId;
     };
+    __decorate2([
+      (0, class_validator_1.IsArray)(),
+      (0, class_validator_1.IsString)({ each: true }),
+      __metadata2("design:type", Array)
+    ], MergeTablesBody.prototype, "tableIds", void 0);
+    __decorate2([
+      (0, class_validator_1.IsString)(),
+      __metadata2("design:type", String)
+    ], MergeTablesBody.prototype, "targetTableId", void 0);
     var SplitTableBody = class {
       tableId;
       itemIds;
@@ -129841,6 +129981,26 @@ var require_orders_service = __commonJS({
           orderBy: { createdAt: "desc" }
         });
       }
+      async findActiveByTable(tableId) {
+        return this.prisma.order.findFirst({
+          where: {
+            tableId,
+            status: { in: ["open", "in_progress"] }
+          },
+          include: {
+            table: true,
+            waiter: { select: { id: true, firstName: true, lastName: true } },
+            items: {
+              include: {
+                productVariant: { include: { product: true } },
+                modifiers: { include: { modifier: true } }
+              }
+            },
+            payments: true
+          },
+          orderBy: { createdAt: "desc" }
+        });
+      }
       async findById(id) {
         const order = await this.prisma.order.findUnique({
           where: { id },
@@ -129864,6 +130024,7 @@ var require_orders_service = __commonJS({
         return order;
       }
       async create(data) {
+        const { deliveryData, ...orderData } = data;
         const today = /* @__PURE__ */ new Date();
         today.setHours(0, 0, 0, 0);
         const tomorrow = new Date(today);
@@ -129878,7 +130039,7 @@ var require_orders_service = __commonJS({
         const orderNumber = (lastOrder?.orderNumber ?? 0) + 1;
         const order = await this.prisma.order.create({
           data: {
-            ...data,
+            ...orderData,
             orderNumber
           },
           include: {
@@ -129886,10 +130047,28 @@ var require_orders_service = __commonJS({
             waiter: { select: { id: true, firstName: true, lastName: true } }
           }
         });
-        if (data.tableId) {
+        if (orderData.tableId) {
           await this.prisma.table.update({
-            where: { id: data.tableId },
+            where: { id: orderData.tableId },
             data: { status: "occupied" }
+          });
+        }
+        if (orderData.type === "delivery" && deliveryData) {
+          const branch = await this.prisma.branch.findUnique({
+            where: { id: orderData.branchId },
+            select: { settings: true }
+          });
+          const settings = branch?.settings || {};
+          const deliveryFee = settings.deliveryFee || 0;
+          await this.prisma.delivery.create({
+            data: {
+              orderId: order.id,
+              customerName: deliveryData.customerName,
+              customerPhone: deliveryData.customerPhone,
+              deliveryAddress: deliveryData.deliveryAddress,
+              deliveryFee,
+              status: "pending"
+            }
           });
         }
         return order;
@@ -130259,6 +130438,9 @@ var require_orders_controller = __commonJS({
           to: to ? new Date(to) : void 0
         });
       }
+      findActiveByTable(tableId) {
+        return this.ordersService.findActiveByTable(tableId);
+      }
       findById(id) {
         return this.ordersService.findById(id);
       }
@@ -130312,6 +130494,14 @@ var require_orders_controller = __commonJS({
       __metadata2("design:paramtypes", [String, String, String, String, String, String, String]),
       __metadata2("design:returntype", void 0)
     ], OrdersController.prototype, "findAll", null);
+    __decorate2([
+      (0, common_1.Get)("active"),
+      (0, permissions_decorator_1.RequirePermissions)("orders.view"),
+      __param2(0, (0, common_1.Query)("tableId")),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", [String]),
+      __metadata2("design:returntype", void 0)
+    ], OrdersController.prototype, "findActiveByTable", null);
     __decorate2([
       (0, common_1.Get)(":id"),
       (0, permissions_decorator_1.RequirePermissions)("orders.view"),
@@ -131198,7 +131388,8 @@ var require_payments_service = __commonJS({
           throw new common_1.NotFoundException(`Order ${orderId} not found`);
         }
         let changeAmount;
-        if (method === "cash" && receivedAmount !== void 0) {
+        const normalizedMethod = method.toUpperCase();
+        if (normalizedMethod === "CASH" && receivedAmount !== void 0) {
           if (receivedAmount < amount) {
             throw new common_1.BadRequestException("Received amount is less than payment amount");
           }
@@ -131215,7 +131406,7 @@ var require_payments_service = __commonJS({
           },
           include: { order: true }
         });
-        await this._recordCashMovement(order.branchId, method === "cash" ? "cash_in" : "payment", amount, `Payment for order #${order.orderNumber} (${method})`, payment.id);
+        await this._recordCashMovement(order.branchId, normalizedMethod === "CASH" ? "cash_in" : "payment", amount, `Payment for order #${order.orderNumber} (${method})`, payment.id);
         return payment;
       }
       async splitPayment(orderId, payments) {
@@ -131331,23 +131522,69 @@ var require_payments_controller = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.PaymentsController = void 0;
     var common_1 = require_common();
+    var class_validator_1 = require_cjs();
+    var class_transformer_1 = require_cjs2();
     var payments_service_1 = require_payments_service();
     var jwt_auth_guard_1 = require_jwt_auth_guard();
     var roles_guard_1 = require_roles_guard();
     var permissions_decorator_1 = require_permissions_decorator();
+    var PaymentInputDto = class {
+      method;
+      amount;
+    };
+    __decorate2([
+      (0, class_validator_1.IsString)(),
+      __metadata2("design:type", String)
+    ], PaymentInputDto.prototype, "method", void 0);
+    __decorate2([
+      (0, class_validator_1.IsNumber)(),
+      __metadata2("design:type", Number)
+    ], PaymentInputDto.prototype, "amount", void 0);
     var ProcessPaymentDto = class {
       orderId;
       method;
       amount;
       receivedAmount;
     };
+    __decorate2([
+      (0, class_validator_1.IsString)(),
+      __metadata2("design:type", String)
+    ], ProcessPaymentDto.prototype, "orderId", void 0);
+    __decorate2([
+      (0, class_validator_1.IsString)(),
+      __metadata2("design:type", String)
+    ], ProcessPaymentDto.prototype, "method", void 0);
+    __decorate2([
+      (0, class_validator_1.IsNumber)(),
+      __metadata2("design:type", Number)
+    ], ProcessPaymentDto.prototype, "amount", void 0);
+    __decorate2([
+      (0, class_validator_1.IsOptional)(),
+      (0, class_validator_1.IsNumber)(),
+      __metadata2("design:type", Number)
+    ], ProcessPaymentDto.prototype, "receivedAmount", void 0);
     var SplitPaymentDto = class {
       orderId;
       payments;
     };
+    __decorate2([
+      (0, class_validator_1.IsString)(),
+      __metadata2("design:type", String)
+    ], SplitPaymentDto.prototype, "orderId", void 0);
+    __decorate2([
+      (0, class_validator_1.IsArray)(),
+      (0, class_validator_1.ValidateNested)({ each: true }),
+      (0, class_transformer_1.Type)(() => PaymentInputDto),
+      __metadata2("design:type", Array)
+    ], SplitPaymentDto.prototype, "payments", void 0);
     var RefundPaymentDto = class {
       amount;
     };
+    __decorate2([
+      (0, class_validator_1.IsOptional)(),
+      (0, class_validator_1.IsNumber)(),
+      __metadata2("design:type", Number)
+    ], RefundPaymentDto.prototype, "amount", void 0);
     var PaymentsController = class PaymentsController {
       paymentsService;
       constructor(paymentsService) {
@@ -134827,8 +135064,8 @@ var require_reports_service = __commonJS({
         for (const order of orders) {
           if (!order.closedAt)
             continue;
-          const key = groupBy === "hour" ? this.hourKey(order.closedAt) : this.dayKey(order.closedAt);
-          const label = groupBy === "hour" ? this.hourLabel(order.closedAt) : this.dayLabel(order.closedAt);
+          const key = groupBy === "hour" ? this.hourKey(order.closedAt) : groupBy === "week" ? this.weekKey(order.closedAt) : this.dayKey(order.closedAt);
+          const label = groupBy === "hour" ? this.hourLabel(order.closedAt) : groupBy === "week" ? this.weekLabel(order.closedAt) : this.dayLabel(order.closedAt);
           if (!buckets.has(key)) {
             buckets.set(key, { label, revenue: new library_1.Decimal(0), orderCount: 0 });
           }
@@ -135131,6 +135368,75 @@ var require_reports_service = __commonJS({
           }
         };
       }
+      async cashMovements(branchId, from, to, type) {
+        const movements = await this.prisma.cashRegisterMovement.findMany({
+          where: {
+            cashRegister: { branchId },
+            createdAt: { gte: from, lte: to },
+            ...type && type !== "all" ? { type } : {}
+          },
+          orderBy: { createdAt: "asc" }
+        });
+        let totalIncome = new library_1.Decimal(0);
+        let totalExpense = new library_1.Decimal(0);
+        const buckets = /* @__PURE__ */ new Map();
+        const categoryMap = /* @__PURE__ */ new Map();
+        for (const mov of movements) {
+          const amount = new library_1.Decimal(mov.amount.toString());
+          if (mov.type === "INCOME") {
+            totalIncome = totalIncome.add(amount);
+          } else {
+            totalExpense = totalExpense.add(amount);
+          }
+          const key = this.dayKey(mov.createdAt);
+          if (!buckets.has(key)) {
+            buckets.set(key, { label: key, income: new library_1.Decimal(0), expense: new library_1.Decimal(0) });
+          }
+          const bucket = buckets.get(key);
+          if (mov.type === "INCOME") {
+            bucket.income = bucket.income.add(amount);
+          } else {
+            bucket.expense = bucket.expense.add(amount);
+          }
+          if (mov.type === "EXPENSE") {
+            const cat = mov.description || "Sin categor\xEDa";
+            if (!categoryMap.has(cat)) {
+              categoryMap.set(cat, { total: new library_1.Decimal(0), count: 0 });
+            }
+            const entry = categoryMap.get(cat);
+            entry.total = entry.total.add(amount);
+            entry.count += 1;
+          }
+        }
+        const data = Array.from(buckets.entries()).sort(([a], [b]) => a.localeCompare(b)).map(([, b]) => ({
+          label: b.label,
+          income: b.income.toFixed(2),
+          expense: b.expense.toFixed(2),
+          balance: b.income.sub(b.expense).toFixed(2)
+        }));
+        const byCategory = Array.from(categoryMap.entries()).map(([category, e]) => ({
+          category,
+          total: e.total.toFixed(2),
+          count: e.count
+        })).sort((a, b) => parseFloat(b.total) - parseFloat(a.total));
+        return {
+          branchId,
+          from,
+          to,
+          totalIncome: totalIncome.toFixed(2),
+          totalExpense: totalExpense.toFixed(2),
+          balance: totalIncome.sub(totalExpense).toFixed(2),
+          data,
+          byCategory,
+          recentMovements: movements.slice(-20).reverse().map((m) => ({
+            id: m.id,
+            type: m.type,
+            amount: new library_1.Decimal(m.amount.toString()).toFixed(2),
+            description: m.description,
+            createdAt: m.createdAt
+          }))
+        };
+      }
       hourKey(date) {
         return `${date.getFullYear()}-${this.pad(date.getMonth() + 1)}-${this.pad(date.getDate())}T${this.pad(date.getHours())}`;
       }
@@ -135142,6 +135448,27 @@ var require_reports_service = __commonJS({
       }
       dayLabel(date) {
         return this.dayKey(date);
+      }
+      weekKey(date) {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        d.setDate(d.getDate() - d.getDay() + 1);
+        return `${d.getFullYear()}-W${this.pad(this.getISOWeek(d))}`;
+      }
+      weekLabel(date) {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        d.setDate(d.getDate() - d.getDay() + 1);
+        const end = new Date(d);
+        end.setDate(end.getDate() + 6);
+        return `${this.pad(d.getDate())}/${this.pad(d.getMonth() + 1)} - ${this.pad(end.getDate())}/${this.pad(end.getMonth() + 1)}`;
+      }
+      getISOWeek(date) {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+        const yearStart = new Date(d.getFullYear(), 0, 4);
+        return Math.round(((d.getTime() - yearStart.getTime()) / 864e5 + yearStart.getDay() + 1) / 7);
       }
       pad(n) {
         return String(n).padStart(2, "0");
@@ -135212,6 +135539,10 @@ var require_reports_controller = __commonJS({
       dailySummary(branchId, date) {
         this.requireParams({ branchId, date });
         return this.reportsService.dailySummary(branchId, new Date(date));
+      }
+      cashMovements(branchId, from, to, type) {
+        this.requireParams({ branchId, from, to });
+        return this.reportsService.cashMovements(branchId, new Date(from), new Date(to), type);
       }
       requireParams(params) {
         const missing = Object.entries(params).filter(([, v]) => !v).map(([k]) => k);
@@ -135284,6 +135615,16 @@ var require_reports_controller = __commonJS({
       __metadata2("design:paramtypes", [String, String]),
       __metadata2("design:returntype", void 0)
     ], ReportsController.prototype, "dailySummary", null);
+    __decorate2([
+      (0, common_1.Get)("movements"),
+      __param2(0, (0, common_1.Query)("branchId")),
+      __param2(1, (0, common_1.Query)("from")),
+      __param2(2, (0, common_1.Query)("to")),
+      __param2(3, (0, common_1.Query)("type")),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", [String, String, String, String]),
+      __metadata2("design:returntype", void 0)
+    ], ReportsController.prototype, "cashMovements", null);
     exports2.ReportsController = ReportsController = __decorate2([
       (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
       (0, permissions_decorator_1.RequirePermissions)("reports.view"),
@@ -135700,6 +136041,8 @@ var require_marketplace_service = __commonJS({
             name: true,
             address: true,
             phone: true,
+            whatsapp: true,
+            bannerUrl: true,
             settings: true,
             categories: {
               where: { isActive: true, parentId: null },
@@ -135738,6 +136081,16 @@ var require_marketplace_service = __commonJS({
           where: { branchId },
           orderBy: { createdAt: "desc" },
           take: 10
+        });
+      }
+      async addBranchReview(branchId, data) {
+        return this.prisma.branchReview.create({
+          data: {
+            branchId,
+            userName: data.userName,
+            rating: data.rating,
+            comment: data.comment
+          }
         });
       }
       async getBranchMenu(branchId) {
@@ -135790,6 +136143,7 @@ var require_marketplace_controller = __commonJS({
     exports2.MarketplaceController = void 0;
     var common_1 = require_common();
     var marketplace_service_1 = require_marketplace_service();
+    var jwt_auth_guard_1 = require_jwt_auth_guard();
     var MarketplaceController = class MarketplaceController {
       marketplaceService;
       constructor(marketplaceService) {
@@ -135803,6 +136157,14 @@ var require_marketplace_controller = __commonJS({
       }
       async getBranchReviews(id) {
         return this.marketplaceService.getBranchReviews(id);
+      }
+      async addBranchReview(id, req, data) {
+        const userName = req.user.firstName ? `${req.user.firstName} ${req.user.lastName || ""}`.trim() : "Cliente An\xF3nimo";
+        return this.marketplaceService.addBranchReview(id, {
+          userName,
+          rating: data.rating,
+          comment: data.comment
+        });
       }
     };
     exports2.MarketplaceController = MarketplaceController;
@@ -135826,10 +136188,879 @@ var require_marketplace_controller = __commonJS({
       __metadata2("design:paramtypes", [String]),
       __metadata2("design:returntype", Promise)
     ], MarketplaceController.prototype, "getBranchReviews", null);
+    __decorate2([
+      (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+      (0, common_1.Post)("branches/:id/reviews"),
+      __param2(0, (0, common_1.Param)("id")),
+      __param2(1, (0, common_1.Request)()),
+      __param2(2, (0, common_1.Body)()),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", [String, Object, Object]),
+      __metadata2("design:returntype", Promise)
+    ], MarketplaceController.prototype, "addBranchReview", null);
     exports2.MarketplaceController = MarketplaceController = __decorate2([
       (0, common_1.Controller)("marketplace"),
       __metadata2("design:paramtypes", [marketplace_service_1.MarketplaceService])
     ], MarketplaceController);
+  }
+});
+
+// apps/api/dist/modules/marketplace/auth/marketplace-auth.service.js
+var require_marketplace_auth_service = __commonJS({
+  "apps/api/dist/modules/marketplace/auth/marketplace-auth.service.js"(exports2) {
+    "use strict";
+    var __decorate2 = exports2 && exports2.__decorate || function(decorators, target, key, desc) {
+      var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+      if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+      else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+      return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata2 = exports2 && exports2.__metadata || function(k, v) {
+      if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var MarketplaceAuthService_1;
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.MarketplaceAuthService = void 0;
+    var common_1 = require_common();
+    var jwt_1 = require_jwt();
+    var bcrypt = require_umd();
+    var prisma_service_1 = require_prisma_service();
+    var MarketplaceAuthService = MarketplaceAuthService_1 = class MarketplaceAuthService {
+      prisma;
+      jwtService;
+      logger = new common_1.Logger(MarketplaceAuthService_1.name);
+      constructor(prisma, jwtService) {
+        this.prisma = prisma;
+        this.jwtService = jwtService;
+      }
+      async register(data) {
+        const { firstName, lastName, email, phone, password } = data;
+        const existingClient = await this.prisma.client.findFirst({
+          where: {
+            OR: [
+              { email: email || void 0 },
+              { phone: phone || void 0 }
+            ]
+          }
+        });
+        if (existingClient) {
+          throw new common_1.ConflictException("Ya existe un cliente con este email o tel\xE9fono");
+        }
+        const passwordHash = await bcrypt.hash(password, 10);
+        const client = await this.prisma.client.create({
+          data: {
+            firstName,
+            lastName,
+            email,
+            phone,
+            passwordHash
+          }
+        });
+        return this.generateToken(client);
+      }
+      async login(data) {
+        try {
+          const { identifier, password } = data;
+          this.logger.log(`\u{1F50D} Login con identifier: "${identifier}"`);
+          if (!identifier || !password) {
+            throw new common_1.BadRequestException("Email/tel\xE9fono y contrase\xF1a son requeridos");
+          }
+          const client = await this.prisma.client.findFirst({
+            where: {
+              OR: [
+                { email: identifier },
+                { phone: identifier }
+              ]
+            }
+          });
+          if (!client || !client.passwordHash) {
+            this.logger.warn(`\u274C Cliente no encontrado o sin password: "${identifier}"`);
+            throw new common_1.UnauthorizedException("Credenciales inv\xE1lidas");
+          }
+          const isPasswordValid = await bcrypt.compare(password, client.passwordHash);
+          if (!isPasswordValid) {
+            this.logger.warn(`\u274C Password incorrecto para: "${identifier}"`);
+            throw new common_1.UnauthorizedException("Credenciales inv\xE1lidas");
+          }
+          if (!client.isActive) {
+            throw new common_1.UnauthorizedException("Cuenta desactivada");
+          }
+          this.logger.log(`\u2705 Login exitoso: ${client.email}`);
+          return this.generateToken(client);
+        } catch (error) {
+          if (error instanceof common_1.UnauthorizedException || error instanceof common_1.BadRequestException) {
+            throw error;
+          }
+          this.logger.error("\u{1F4A5} Error en login:", error);
+          throw new common_1.UnauthorizedException("Error al procesar el login");
+        }
+      }
+      async loginByPin(pin) {
+        this.logger.log("=== LOGIN BY PIN SERVICE ===");
+        if (!pin || pin.trim() === "") {
+          this.logger.warn("\u274C Intento de login con PIN vac\xEDo");
+          throw new common_1.BadRequestException("El PIN es requerido");
+        }
+        const trimmedPin = pin.trim();
+        this.logger.log(`\u{1F50D} Buscando cliente con PIN: "${trimmedPin}"`);
+        try {
+          const totalClients = await this.prisma.client.count();
+          this.logger.log(`\u{1F4CA} Total clientes en BD: ${totalClients}`);
+          const client = await this.prisma.client.findFirst({
+            where: {
+              pin: trimmedPin,
+              isActive: true
+            }
+          });
+          if (!client) {
+            this.logger.warn(`\u274C Cliente NO encontrado con PIN: "${trimmedPin}"`);
+            const allWithPins = await this.prisma.client.findMany({
+              where: { pin: { not: null } },
+              select: { pin: true, firstName: true }
+            });
+            this.logger.log(`\u{1F4CB} Clientes con PIN en BD: ${allWithPins.map((c) => `"${c.pin}" (${c.firstName})`).join(", ")}`);
+            throw new common_1.UnauthorizedException("PIN inv\xE1lido");
+          }
+          this.logger.log(`\u2705 Cliente encontrado: ${client.firstName} ${client.lastName} (${client.email})`);
+          return this.generateToken(client);
+        } catch (error) {
+          if (error instanceof common_1.UnauthorizedException || error instanceof common_1.BadRequestException) {
+            throw error;
+          }
+          this.logger.error("\u{1F4A5} Error en loginByPin:", error);
+          throw new common_1.UnauthorizedException("Error al procesar el login");
+        }
+      }
+      generateToken(client) {
+        try {
+          const payload = {
+            sub: client.id,
+            email: client.email || null,
+            phone: client.phone || null,
+            firstName: client.firstName,
+            lastName: client.lastName,
+            role: "client"
+          };
+          this.logger.debug("Generando token para cliente:", client.id);
+          const token = this.jwtService.sign(payload);
+          return {
+            client: {
+              id: client.id,
+              firstName: client.firstName,
+              lastName: client.lastName,
+              email: client.email || null,
+              phone: client.phone || null
+            },
+            token
+          };
+        } catch (error) {
+          this.logger.error("Error generando token:", error);
+          throw new common_1.UnauthorizedException("Error al generar el token de autenticaci\xF3n");
+        }
+      }
+      async debugPins() {
+        try {
+          this.logger.log("\u{1F50D} Ejecutando debugPins...");
+          const clients = await this.prisma.client.findMany({
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+              pin: true,
+              isActive: true
+            }
+          });
+          this.logger.log(`\u{1F4CA} Encontrados ${clients.length} clientes`);
+          return {
+            totalClients: clients.length,
+            clientsWithPin: clients.filter((c) => c.pin !== null).length,
+            clients: clients.map((c) => ({
+              id: c.id,
+              name: `${c.firstName} ${c.lastName}`,
+              email: c.email,
+              pin: c.pin ? `${c.pin.substring(0, 2)}**` : null,
+              hasPin: c.pin !== null,
+              isActive: c.isActive
+            }))
+          };
+        } catch (error) {
+          this.logger.error("\u{1F4A5} Error en debugPins:", error);
+          throw error;
+        }
+      }
+      async checkDatabase() {
+        try {
+          await this.prisma.$queryRaw`SELECT 1`;
+          return true;
+        } catch (error) {
+          this.logger.error("\u{1F4A5} Error de conexi\xF3n a BD:", error);
+          return false;
+        }
+      }
+    };
+    exports2.MarketplaceAuthService = MarketplaceAuthService;
+    exports2.MarketplaceAuthService = MarketplaceAuthService = MarketplaceAuthService_1 = __decorate2([
+      (0, common_1.Injectable)(),
+      __metadata2("design:paramtypes", [
+        prisma_service_1.PrismaService,
+        jwt_1.JwtService
+      ])
+    ], MarketplaceAuthService);
+  }
+});
+
+// apps/api/dist/modules/marketplace/auth/marketplace-auth.controller.js
+var require_marketplace_auth_controller = __commonJS({
+  "apps/api/dist/modules/marketplace/auth/marketplace-auth.controller.js"(exports2) {
+    "use strict";
+    var __decorate2 = exports2 && exports2.__decorate || function(decorators, target, key, desc) {
+      var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+      if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+      else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+      return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata2 = exports2 && exports2.__metadata || function(k, v) {
+      if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __param2 = exports2 && exports2.__param || function(paramIndex, decorator) {
+      return function(target, key) {
+        decorator(target, key, paramIndex);
+      };
+    };
+    var MarketplaceAuthController_1;
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.MarketplaceAuthController = void 0;
+    var common_1 = require_common();
+    var marketplace_auth_service_1 = require_marketplace_auth_service();
+    var MarketplaceAuthController = MarketplaceAuthController_1 = class MarketplaceAuthController {
+      authService;
+      logger = new common_1.Logger(MarketplaceAuthController_1.name);
+      constructor(authService) {
+        this.authService = authService;
+      }
+      async register(body) {
+        try {
+          return await this.authService.register(body);
+        } catch (error) {
+          this.handleError(error, "register");
+        }
+      }
+      async login(body) {
+        this.logger.log("=== LOGIN REQUEST ===");
+        this.logger.log("Body:", JSON.stringify(body));
+        try {
+          return await this.authService.login(body);
+        } catch (error) {
+          this.handleError(error, "login");
+        }
+      }
+      async loginPin(body) {
+        this.logger.log("=== LOGIN PIN REQUEST ===");
+        this.logger.log("Body:", JSON.stringify(body));
+        try {
+          const pin = body?.pin || body?.PIN || body?.Pin;
+          if (!pin) {
+            this.logger.error("\u274C PIN no proporcionado. Body:", JSON.stringify(body));
+            throw new common_1.BadRequestException("El PIN es requerido");
+          }
+          if (typeof pin !== "string") {
+            this.logger.error(`\u274C PIN no es string. Tipo: ${typeof pin}, valor:`, pin);
+            throw new common_1.BadRequestException("El PIN debe ser texto");
+          }
+          this.logger.log(`\u2705 PIN recibido: "${pin}"`);
+          return await this.authService.loginByPin(pin);
+        } catch (error) {
+          this.handleError(error, "login-pin");
+        }
+      }
+      async debugPins() {
+        this.logger.log("=== DEBUG PINS REQUEST ===");
+        try {
+          return await this.authService.debugPins();
+        } catch (error) {
+          this.logger.error("Error en debug-pins:", error);
+          return {
+            error: "Error al obtener datos",
+            message: error.message,
+            stack: process.env.NODE_ENV === "development" ? error.stack : void 0
+          };
+        }
+      }
+      ping() {
+        return {
+          status: "ok",
+          timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+          service: "marketplace-auth",
+          version: "1.0.0"
+        };
+      }
+      async health() {
+        try {
+          const dbStatus = await this.authService.checkDatabase();
+          return {
+            status: dbStatus ? "ok" : "error",
+            timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+            service: "marketplace-auth",
+            database: dbStatus ? "connected" : "disconnected"
+          };
+        } catch (error) {
+          this.logger.error("Error en health check:", error);
+          return {
+            status: "error",
+            timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+            service: "marketplace-auth",
+            database: "error",
+            error: error.message
+          };
+        }
+      }
+      handleError(error, context) {
+        this.logger.error(`Error en ${context}:`, error);
+        if (error instanceof common_1.HttpException) {
+          throw error;
+        }
+        throw new common_1.InternalServerErrorException({
+          message: "Error interno del servidor",
+          error: error.message,
+          context
+        });
+      }
+    };
+    exports2.MarketplaceAuthController = MarketplaceAuthController;
+    __decorate2([
+      (0, common_1.Post)("register"),
+      __param2(0, (0, common_1.Body)()),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", [Object]),
+      __metadata2("design:returntype", Promise)
+    ], MarketplaceAuthController.prototype, "register", null);
+    __decorate2([
+      (0, common_1.Post)("login"),
+      __param2(0, (0, common_1.Body)()),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", [Object]),
+      __metadata2("design:returntype", Promise)
+    ], MarketplaceAuthController.prototype, "login", null);
+    __decorate2([
+      (0, common_1.Post)("login-pin"),
+      __param2(0, (0, common_1.Body)()),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", [Object]),
+      __metadata2("design:returntype", Promise)
+    ], MarketplaceAuthController.prototype, "loginPin", null);
+    __decorate2([
+      (0, common_1.Get)("debug-pins"),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", []),
+      __metadata2("design:returntype", Promise)
+    ], MarketplaceAuthController.prototype, "debugPins", null);
+    __decorate2([
+      (0, common_1.Get)("ping"),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", []),
+      __metadata2("design:returntype", void 0)
+    ], MarketplaceAuthController.prototype, "ping", null);
+    __decorate2([
+      (0, common_1.Get)("health"),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", []),
+      __metadata2("design:returntype", Promise)
+    ], MarketplaceAuthController.prototype, "health", null);
+    exports2.MarketplaceAuthController = MarketplaceAuthController = MarketplaceAuthController_1 = __decorate2([
+      (0, common_1.Controller)({ path: "marketplace/auth", version: common_1.VERSION_NEUTRAL }),
+      __metadata2("design:paramtypes", [marketplace_auth_service_1.MarketplaceAuthService])
+    ], MarketplaceAuthController);
+  }
+});
+
+// apps/api/dist/modules/marketplace/orders/marketplace-orders.controller.js
+var require_marketplace_orders_controller = __commonJS({
+  "apps/api/dist/modules/marketplace/orders/marketplace-orders.controller.js"(exports2) {
+    "use strict";
+    var __decorate2 = exports2 && exports2.__decorate || function(decorators, target, key, desc) {
+      var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+      if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+      else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+      return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata2 = exports2 && exports2.__metadata || function(k, v) {
+      if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __param2 = exports2 && exports2.__param || function(paramIndex, decorator) {
+      return function(target, key) {
+        decorator(target, key, paramIndex);
+      };
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.MarketplaceOrdersController = void 0;
+    var common_1 = require_common();
+    var jwt_auth_guard_1 = require_jwt_auth_guard();
+    var orders_service_1 = require_orders_service();
+    var MarketplaceOrdersController = class MarketplaceOrdersController {
+      ordersService;
+      constructor(ordersService) {
+        this.ordersService = ordersService;
+      }
+      async createOrder(req, data) {
+        const { branchId, type, items, notes } = data;
+        const clientId = req.user.id;
+        const order = await this.ordersService.create({
+          branchId,
+          type: type || "delivery",
+          clientId,
+          tableId: type === "dine_in" ? data.tableId : void 0,
+          notes: notes || "Pedido desde Marketplace",
+          deliveryData: type === "delivery" ? {
+            customerName: data.customerName,
+            customerPhone: data.customerPhone,
+            deliveryAddress: data.deliveryAddress
+          } : void 0
+        });
+        if (items && items.length > 0) {
+          await this.ordersService.addItems(order.id, items);
+        }
+        await this.ordersService.sendToKitchen(order.id);
+        return { success: true, orderId: order.id };
+      }
+    };
+    exports2.MarketplaceOrdersController = MarketplaceOrdersController;
+    __decorate2([
+      (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+      (0, common_1.Post)(),
+      __param2(0, (0, common_1.Request)()),
+      __param2(1, (0, common_1.Body)()),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", [Object, Object]),
+      __metadata2("design:returntype", Promise)
+    ], MarketplaceOrdersController.prototype, "createOrder", null);
+    exports2.MarketplaceOrdersController = MarketplaceOrdersController = __decorate2([
+      (0, common_1.Controller)("marketplace/orders"),
+      __metadata2("design:paramtypes", [orders_service_1.OrdersService])
+    ], MarketplaceOrdersController);
+  }
+});
+
+// apps/api/dist/modules/marketplace/clients/marketplace-clients.service.js
+var require_marketplace_clients_service = __commonJS({
+  "apps/api/dist/modules/marketplace/clients/marketplace-clients.service.js"(exports2) {
+    "use strict";
+    var __decorate2 = exports2 && exports2.__decorate || function(decorators, target, key, desc) {
+      var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+      if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+      else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+      return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata2 = exports2 && exports2.__metadata || function(k, v) {
+      if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.MarketplaceClientsService = void 0;
+    var common_1 = require_common();
+    var prisma_service_1 = require_prisma_service();
+    var bcrypt = require_umd();
+    var MarketplaceClientsService = class MarketplaceClientsService {
+      prisma;
+      constructor(prisma) {
+        this.prisma = prisma;
+      }
+      async getProfile(clientId) {
+        return this.prisma.client.findUnique({
+          where: { id: clientId },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+            avatarUrl: true,
+            address: true,
+            birthday: true,
+            loyaltyPoints: true,
+            totalSpent: true,
+            settings: true,
+            createdAt: true
+          }
+        });
+      }
+      async updateProfile(clientId, data) {
+        const { firstName, lastName, phone, address, avatarUrl, birthday } = data;
+        return this.prisma.client.update({
+          where: { id: clientId },
+          data: {
+            firstName,
+            lastName,
+            phone,
+            address,
+            avatarUrl,
+            birthday: birthday ? new Date(birthday) : void 0
+          }
+        });
+      }
+      async updateSecurity(clientId, data) {
+        const updateData = {};
+        if (data.password) {
+          updateData.passwordHash = await bcrypt.hash(data.password, 10);
+        }
+        if (data.pin) {
+          updateData.pin = data.pin;
+        }
+        return this.prisma.client.update({
+          where: { id: clientId },
+          data: updateData
+        });
+      }
+      async getOrders(clientId) {
+        return this.prisma.order.findMany({
+          where: { clientId },
+          orderBy: { createdAt: "desc" },
+          include: {
+            branch: {
+              select: {
+                name: true,
+                settings: true
+              }
+            },
+            items: {
+              include: {
+                productVariant: {
+                  include: {
+                    product: true
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+      async updateSettings(clientId, settings) {
+        return this.prisma.client.update({
+          where: { id: clientId },
+          data: { settings }
+        });
+      }
+    };
+    exports2.MarketplaceClientsService = MarketplaceClientsService;
+    exports2.MarketplaceClientsService = MarketplaceClientsService = __decorate2([
+      (0, common_1.Injectable)(),
+      __metadata2("design:paramtypes", [prisma_service_1.PrismaService])
+    ], MarketplaceClientsService);
+  }
+});
+
+// apps/api/dist/modules/marketplace/clients/marketplace-clients.controller.js
+var require_marketplace_clients_controller = __commonJS({
+  "apps/api/dist/modules/marketplace/clients/marketplace-clients.controller.js"(exports2) {
+    "use strict";
+    var __decorate2 = exports2 && exports2.__decorate || function(decorators, target, key, desc) {
+      var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+      if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+      else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+      return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata2 = exports2 && exports2.__metadata || function(k, v) {
+      if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __param2 = exports2 && exports2.__param || function(paramIndex, decorator) {
+      return function(target, key) {
+        decorator(target, key, paramIndex);
+      };
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.MarketplaceClientsController = void 0;
+    var common_1 = require_common();
+    var marketplace_clients_service_1 = require_marketplace_clients_service();
+    var jwt_auth_guard_1 = require_jwt_auth_guard();
+    var MarketplaceClientsController = class MarketplaceClientsController {
+      clientsService;
+      constructor(clientsService) {
+        this.clientsService = clientsService;
+      }
+      async getProfile(req) {
+        return this.clientsService.getProfile(req.user.id);
+      }
+      async updateProfile(req, data) {
+        return this.clientsService.updateProfile(req.user.id, data);
+      }
+      async updateSecurity(req, data) {
+        return this.clientsService.updateSecurity(req.user.id, data);
+      }
+      async getOrders(req) {
+        return this.clientsService.getOrders(req.user.id);
+      }
+      async updateSettings(req, settings) {
+        return this.clientsService.updateSettings(req.user.id, settings);
+      }
+    };
+    exports2.MarketplaceClientsController = MarketplaceClientsController;
+    __decorate2([
+      (0, common_1.Get)("profile"),
+      __param2(0, (0, common_1.Request)()),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", [Object]),
+      __metadata2("design:returntype", Promise)
+    ], MarketplaceClientsController.prototype, "getProfile", null);
+    __decorate2([
+      (0, common_1.Patch)("profile"),
+      __param2(0, (0, common_1.Request)()),
+      __param2(1, (0, common_1.Body)()),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", [Object, Object]),
+      __metadata2("design:returntype", Promise)
+    ], MarketplaceClientsController.prototype, "updateProfile", null);
+    __decorate2([
+      (0, common_1.Patch)("security"),
+      __param2(0, (0, common_1.Request)()),
+      __param2(1, (0, common_1.Body)()),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", [Object, Object]),
+      __metadata2("design:returntype", Promise)
+    ], MarketplaceClientsController.prototype, "updateSecurity", null);
+    __decorate2([
+      (0, common_1.Get)("orders"),
+      __param2(0, (0, common_1.Request)()),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", [Object]),
+      __metadata2("design:returntype", Promise)
+    ], MarketplaceClientsController.prototype, "getOrders", null);
+    __decorate2([
+      (0, common_1.Patch)("settings"),
+      __param2(0, (0, common_1.Request)()),
+      __param2(1, (0, common_1.Body)()),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", [Object, Object]),
+      __metadata2("design:returntype", Promise)
+    ], MarketplaceClientsController.prototype, "updateSettings", null);
+    exports2.MarketplaceClientsController = MarketplaceClientsController = __decorate2([
+      (0, common_1.Controller)("marketplace/client"),
+      (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+      __metadata2("design:paramtypes", [marketplace_clients_service_1.MarketplaceClientsService])
+    ], MarketplaceClientsController);
+  }
+});
+
+// apps/api/dist/modules/marketplace/auth/test.controller.js
+var require_test_controller = __commonJS({
+  "apps/api/dist/modules/marketplace/auth/test.controller.js"(exports2) {
+    "use strict";
+    var __decorate2 = exports2 && exports2.__decorate || function(decorators, target, key, desc) {
+      var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+      if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+      else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+      return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata2 = exports2 && exports2.__metadata || function(k, v) {
+      if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var TestController_1;
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.TestController = void 0;
+    var common_1 = require_common();
+    var TestController = TestController_1 = class TestController {
+      logger = new common_1.Logger(TestController_1.name);
+      simple() {
+        this.logger.log("Test simple endpoint llamado");
+        return {
+          message: "OK",
+          timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+          service: "test",
+          version: "2025-01-04-v2",
+          env: {
+            hasDatabaseUrl: !!process.env.DATABASE_URL,
+            hasJwtSecret: !!process.env.JWT_SECRET,
+            nodeEnv: process.env.NODE_ENV
+          }
+        };
+      }
+      version() {
+        return {
+          version: "2025-01-04-v2",
+          build: "manual",
+          timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+          features: [
+            "marketplace-auth",
+            "login-pin",
+            "login-email",
+            "setup-endpoint"
+          ]
+        };
+      }
+    };
+    exports2.TestController = TestController;
+    __decorate2([
+      (0, common_1.Get)("simple"),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", []),
+      __metadata2("design:returntype", void 0)
+    ], TestController.prototype, "simple", null);
+    __decorate2([
+      (0, common_1.Get)("version"),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", []),
+      __metadata2("design:returntype", void 0)
+    ], TestController.prototype, "version", null);
+    exports2.TestController = TestController = TestController_1 = __decorate2([
+      (0, common_1.Controller)("marketplace/test")
+    ], TestController);
+  }
+});
+
+// apps/api/dist/modules/marketplace/auth/setup.controller.js
+var require_setup_controller = __commonJS({
+  "apps/api/dist/modules/marketplace/auth/setup.controller.js"(exports2) {
+    "use strict";
+    var __decorate2 = exports2 && exports2.__decorate || function(decorators, target, key, desc) {
+      var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+      if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+      else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+      return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata2 = exports2 && exports2.__metadata || function(k, v) {
+      if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var __param2 = exports2 && exports2.__param || function(paramIndex, decorator) {
+      return function(target, key) {
+        decorator(target, key, paramIndex);
+      };
+    };
+    var SetupController_1;
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.SetupController = void 0;
+    var common_1 = require_common();
+    var prisma_service_1 = require_prisma_service();
+    var bcrypt = require_umd();
+    var SetupController = SetupController_1 = class SetupController {
+      prisma;
+      logger = new common_1.Logger(SetupController_1.name);
+      constructor(prisma) {
+        this.prisma = prisma;
+      }
+      async initData(body) {
+        if (body.secret !== "resto-setup-2024") {
+          throw new common_1.UnauthorizedException("Secret inv\xE1lido");
+        }
+        this.logger.log("=== INICIALIZANDO DATOS ===");
+        const results = [];
+        try {
+          this.logger.log("Creando roles...");
+          const roles = [
+            { name: "superadmin", permissions: ["all"] },
+            { name: "admin", permissions: ["orders.create", "orders.view", "menu.view", "menu.manage"] },
+            { name: "cashier", permissions: ["orders.create", "orders.view", "payments:create"] },
+            { name: "waiter", permissions: ["orders.create", "orders.view", "tables.view"] },
+            { name: "kitchen", permissions: ["kds.view", "kds.update"] },
+            { name: "manager", permissions: ["orders.view", "reports.view", "menu.view"] },
+            { name: "driver", permissions: ["delivery.view", "orders.view"] }
+          ];
+          for (const role of roles) {
+            await this.prisma.role.upsert({
+              where: { name: role.name },
+              update: {},
+              create: { name: role.name, permissions: role.permissions }
+            });
+          }
+          results.push(`\u2705 ${roles.length} roles creados`);
+          this.logger.log("Creando sucursal...");
+          const branch = await this.prisma.branch.upsert({
+            where: { id: "branch-main" },
+            update: {},
+            create: {
+              id: "branch-main",
+              name: "Restaurante Principal",
+              address: "Av. Corrientes 1234, Buenos Aires",
+              phone: "+5491145678900",
+              timezone: "America/Argentina/Buenos_Aires",
+              currency: "ARS"
+            }
+          });
+          results.push(`\u2705 Sucursal: ${branch.name}`);
+          this.logger.log("Creando usuarios POS...");
+          const users = [
+            { email: "admin@restaurante.com", password: "admin123", pin: "0000", firstName: "Admin", lastName: "Sistema", role: "admin" },
+            { email: "camarero@restaurante.com", password: "waiter123", pin: "1111", firstName: "Camarero", lastName: "Uno", role: "waiter" },
+            { email: "cajero@restaurante.com", password: "cajero123", pin: "2222", firstName: "Cajero", lastName: "Principal", role: "cashier" },
+            { email: "cocina@restaurante.com", password: "cocina123", pin: "3333", firstName: "Jefe", lastName: "Cocina", role: "kitchen" }
+          ];
+          for (const u of users) {
+            const hash = await bcrypt.hash(u.password, 10);
+            const role = await this.prisma.role.findUnique({ where: { name: u.role } });
+            if (!role) {
+              this.logger.warn(`Rol no encontrado: ${u.role}`);
+              continue;
+            }
+            await this.prisma.user.upsert({
+              where: { email: u.email },
+              update: { passwordHash: hash, pin: u.pin, isActive: true },
+              create: {
+                email: u.email,
+                passwordHash: hash,
+                pin: u.pin,
+                firstName: u.firstName,
+                lastName: u.lastName,
+                isActive: true,
+                branches: { create: { branchId: branch.id, roleId: role.id } }
+              }
+            });
+          }
+          results.push(`\u2705 ${users.length} usuarios POS creados`);
+          this.logger.log("Creando clientes marketplace...");
+          const clients = [
+            { firstName: "Juan", lastName: "P\xE9rez", email: "juan@gmail.com", phone: "+595981111111", pin: "1234" },
+            { firstName: "Mar\xEDa", lastName: "Gonz\xE1lez", email: "maria@gmail.com", phone: "+595982222222", pin: "5678" },
+            { firstName: "Carlos", lastName: "L\xF3pez", email: "carlos@gmail.com", phone: "+595983333333", pin: "4321" },
+            { firstName: "Ana", lastName: "Mart\xEDnez", email: "ana@gmail.com", phone: "+595984444444", pin: "8765" },
+            { firstName: "Roberto", lastName: "Fern\xE1ndez", email: "roberto@gmail.com", phone: "+595985555555", pin: "1122" }
+          ];
+          for (const c of clients) {
+            const hash = await bcrypt.hash("cliente123", 10);
+            await this.prisma.client.upsert({
+              where: { email: c.email },
+              update: { pin: c.pin, passwordHash: hash, isActive: true },
+              create: {
+                firstName: c.firstName,
+                lastName: c.lastName,
+                email: c.email,
+                phone: c.phone,
+                passwordHash: hash,
+                pin: c.pin,
+                isActive: true
+              }
+            });
+          }
+          results.push(`\u2705 ${clients.length} clientes marketplace creados`);
+          const totalClients = await this.prisma.client.count();
+          const clientsWithPin = await this.prisma.client.count({ where: { pin: { not: null } } });
+          return {
+            success: true,
+            message: "Datos inicializados correctamente",
+            results,
+            summary: {
+              totalClients,
+              clientsWithPin
+            }
+          };
+        } catch (error) {
+          this.logger.error("Error inicializando datos:", error);
+          return {
+            success: false,
+            error: error.message,
+            results
+          };
+        }
+      }
+    };
+    exports2.SetupController = SetupController;
+    __decorate2([
+      (0, common_1.Post)("init"),
+      __param2(0, (0, common_1.Body)()),
+      __metadata2("design:type", Function),
+      __metadata2("design:paramtypes", [Object]),
+      __metadata2("design:returntype", Promise)
+    ], SetupController.prototype, "initData", null);
+    exports2.SetupController = SetupController = SetupController_1 = __decorate2([
+      (0, common_1.Controller)("marketplace/setup"),
+      __metadata2("design:paramtypes", [prisma_service_1.PrismaService])
+    ], SetupController);
   }
 });
 
@@ -135846,17 +137077,45 @@ var require_marketplace_module = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.MarketplaceModule = void 0;
     var common_1 = require_common();
+    var jwt_1 = require_jwt();
+    var config_1 = require_config2();
     var marketplace_controller_1 = require_marketplace_controller();
     var marketplace_service_1 = require_marketplace_service();
     var prisma_module_1 = require_prisma_module();
+    var orders_module_1 = require_orders_module();
+    var marketplace_auth_controller_1 = require_marketplace_auth_controller();
+    var marketplace_auth_service_1 = require_marketplace_auth_service();
+    var marketplace_orders_controller_1 = require_marketplace_orders_controller();
+    var marketplace_clients_controller_1 = require_marketplace_clients_controller();
+    var marketplace_clients_service_1 = require_marketplace_clients_service();
+    var test_controller_1 = require_test_controller();
+    var setup_controller_1 = require_setup_controller();
     var MarketplaceModule = class MarketplaceModule {
     };
     exports2.MarketplaceModule = MarketplaceModule;
     exports2.MarketplaceModule = MarketplaceModule = __decorate2([
       (0, common_1.Module)({
-        imports: [prisma_module_1.PrismaModule],
-        controllers: [marketplace_controller_1.MarketplaceController],
-        providers: [marketplace_service_1.MarketplaceService],
+        imports: [
+          prisma_module_1.PrismaModule,
+          jwt_1.JwtModule.registerAsync({
+            imports: [config_1.ConfigModule],
+            useFactory: (config) => ({
+              secret: config.get("JWT_SECRET"),
+              signOptions: { expiresIn: "7d" }
+            }),
+            inject: [config_1.ConfigService]
+          }),
+          orders_module_1.OrdersModule
+        ],
+        controllers: [
+          marketplace_controller_1.MarketplaceController,
+          marketplace_auth_controller_1.MarketplaceAuthController,
+          marketplace_orders_controller_1.MarketplaceOrdersController,
+          marketplace_clients_controller_1.MarketplaceClientsController,
+          test_controller_1.TestController,
+          setup_controller_1.SetupController
+        ],
+        providers: [marketplace_service_1.MarketplaceService, marketplace_auth_service_1.MarketplaceAuthService, marketplace_clients_service_1.MarketplaceClientsService],
         exports: [marketplace_service_1.MarketplaceService]
       })
     ], MarketplaceModule);
