@@ -44,32 +44,49 @@ export class MarketplaceAuthService {
     }
 
     async login(data: any) {
-        const { identifier, password } = data;
+        try {
+            const { identifier, password } = data;
 
-        const client = await this.prisma.client.findFirst({
-            where: {
-                OR: [
-                    { email: identifier },
-                    { phone: identifier }
-                ]
+            this.logger.log(`🔍 Login con identifier: "${identifier}"`);
+
+            if (!identifier || !password) {
+                throw new BadRequestException('Email/teléfono y contraseña son requeridos');
             }
-        });
 
-        if (!client || !client.passwordHash) {
-            throw new UnauthorizedException('Credenciales inválidas');
+            const client = await this.prisma.client.findFirst({
+                where: {
+                    OR: [
+                        { email: identifier },
+                        { phone: identifier }
+                    ]
+                }
+            });
+
+            if (!client || !client.passwordHash) {
+                this.logger.warn(`❌ Cliente no encontrado o sin password: "${identifier}"`);
+                throw new UnauthorizedException('Credenciales inválidas');
+            }
+
+            const isPasswordValid = await bcrypt.compare(password, client.passwordHash);
+
+            if (!isPasswordValid) {
+                this.logger.warn(`❌ Password incorrecto para: "${identifier}"`);
+                throw new UnauthorizedException('Credenciales inválidas');
+            }
+
+            if (!client.isActive) {
+                throw new UnauthorizedException('Cuenta desactivada');
+            }
+
+            this.logger.log(`✅ Login exitoso: ${client.email}`);
+            return this.generateToken(client);
+        } catch (error) {
+            if (error instanceof UnauthorizedException || error instanceof BadRequestException) {
+                throw error;
+            }
+            this.logger.error('💥 Error en login:', error);
+            throw new UnauthorizedException('Error al procesar el login');
         }
-
-        const isPasswordValid = await bcrypt.compare(password, client.passwordHash);
-
-        if (!isPasswordValid) {
-            throw new UnauthorizedException('Credenciales inválidas');
-        }
-
-        if (!client.isActive) {
-            throw new UnauthorizedException('Cuenta desactivada');
-        }
-
-        return this.generateToken(client);
     }
 
     async loginByPin(pin: string) {
@@ -154,6 +171,8 @@ export class MarketplaceAuthService {
     // Método de diagnóstico para verificar PINs
     async debugPins() {
         try {
+            this.logger.log('🔍 Ejecutando debugPins...');
+            
             const clients = await this.prisma.client.findMany({
                 select: {
                     id: true,
@@ -165,6 +184,8 @@ export class MarketplaceAuthService {
                 }
             });
 
+            this.logger.log(`📊 Encontrados ${clients.length} clientes`);
+
             return {
                 totalClients: clients.length,
                 clientsWithPin: clients.filter(c => c.pin !== null).length,
@@ -172,14 +193,25 @@ export class MarketplaceAuthService {
                     id: c.id,
                     name: `${c.firstName} ${c.lastName}`,
                     email: c.email,
-                    pin: c.pin ? `${c.pin.substring(0, 2)}**` : null, // Ocultar parte del PIN por seguridad
+                    pin: c.pin ? `${c.pin.substring(0, 2)}**` : null,
                     hasPin: c.pin !== null,
                     isActive: c.isActive
                 }))
             };
         } catch (error) {
-            this.logger.error('Error en debugPins:', error);
-            return { error: error.message };
+            this.logger.error('💥 Error en debugPins:', error);
+            throw error;
+        }
+    }
+
+    // Verificar conexión a la base de datos
+    async checkDatabase(): Promise<boolean> {
+        try {
+            await this.prisma.$queryRaw`SELECT 1`;
+            return true;
+        } catch (error) {
+            this.logger.error('💥 Error de conexión a BD:', error);
+            return false;
         }
     }
 }
