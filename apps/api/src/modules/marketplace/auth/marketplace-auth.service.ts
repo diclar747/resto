@@ -136,4 +136,36 @@ export class MarketplaceAuthService {
             throw new UnauthorizedException('Error al generar el token de autenticación');
         }
     }
+
+    // Método de diagnóstico para verificar PINs
+    async debugPins() {
+        try {
+            const clients = await this.prisma.client.findMany({
+                select: {
+                    id: true,
+                    email: true,
+                    firstName: true,
+                    lastName: true,
+                    pin: true,
+                    isActive: true,
+                }
+            });
+
+            return {
+                totalClients: clients.length,
+                clientsWithPin: clients.filter(c => c.pin !== null).length,
+                clients: clients.map(c => ({
+                    id: c.id,
+                    name: `${c.firstName} ${c.lastName}`,
+                    email: c.email,
+                    pin: c.pin ? `${c.pin.substring(0, 2)}**` : null, // Ocultar parte del PIN por seguridad
+                    hasPin: c.pin !== null,
+                    isActive: c.isActive
+                }))
+            };
+        } catch (error) {
+            this.logger.error('Error en debugPins:', error);
+            return { error: error.message };
+        }
+    }
 }
