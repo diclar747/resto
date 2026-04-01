@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup - Inicializar Datos</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 { text-align: center; color: #333; }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        button:hover { background: #218838; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { 
+            background: #e7f3ff; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .loading { text-align: center; color: #666; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Setup - Inicializar Datos</h1>
+    
+    <div class="card">
+        <div class="info">
+            <strong>⚠️ Importante:</strong> Este proceso creará/actualizará todos los datos necesarios para que el sistema funcione:
+            <ul>
+                <li>Roles (admin, cashier, waiter, etc.)</li>
+                <li>Sucursal principal</li>
+                <li>Usuarios POS con PINs</li>
+                <li>Clientes marketplace con PINs</li>
+            </ul>
+        </div>
+
+        <label><strong>URL de la API:</strong></label>
+        <input type="text" id="apiUrl" value="https://resto-amber.vercel.app" placeholder="https://...">
+
+        <label><strong>Secret Key:</strong></label>
+        <input type="password" id="secretKey" placeholder="resto-setup-2024">
+
+        <button onclick="runSetup()" id="btn">🚀 Inicializar Datos</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function runSetup() {
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+            const secret = document.getElementById('secretKey').value.trim();
+            const btn = document.getElementById('btn');
+            const result = document.getElementById('result');
+
+            if (!apiUrl) {
+                result.className = 'result error';
+                result.textContent = '❌ Ingresa la URL de la API';
+                return;
+            }
+
+            btn.disabled = true;
+            result.className = 'result';
+            result.textContent = '⏳ Inicializando datos...';
+
+            try {
+                const response = await fetch(`${apiUrl}/api/marketplace/setup/init`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ secret: secret || 'resto-setup-2024' })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    result.className = 'result success';
+                    result.innerHTML = `✅ ${data.message}\n\n` +
+                        data.results.join('\n') +
+                        `\n\n📊 Resumen:\n` +
+                        `- Total clientes: ${data.summary.totalClients}\n` +
+                        `- Clientes con PIN: ${data.summary.clientsWithPin}`;
+                } else {
+                    result.className = 'result error';
+                    result.textContent = `❌ Error: ${data.error}\n\nProgreso:\n${data.results?.join('\n') || ''}`;
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.textContent = `❌ Error de conexión: ${error.message}`;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
