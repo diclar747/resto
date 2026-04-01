@@ -69,23 +69,36 @@ export class MarketplaceAuthController {
         }
     }
 
-    // Health check simple
+    // Health check simple - sin DB
+    @Get('ping')
+    ping() {
+        return { 
+            status: 'ok', 
+            timestamp: new Date().toISOString(), 
+            service: 'marketplace-auth',
+            version: '1.0.0'
+        };
+    }
+
+    // Health check con DB
     @Get('health')
     async health() {
         try {
             // Verificar que la BD responde
             const dbStatus = await this.authService.checkDatabase();
             return { 
-                status: 'ok', 
+                status: dbStatus ? 'ok' : 'error', 
                 timestamp: new Date().toISOString(), 
                 service: 'marketplace-auth',
                 database: dbStatus ? 'connected' : 'disconnected'
             };
         } catch (error) {
+            this.logger.error('Error en health check:', error);
             return { 
                 status: 'error', 
                 timestamp: new Date().toISOString(), 
                 service: 'marketplace-auth',
+                database: 'error',
                 error: error.message
             };
         }

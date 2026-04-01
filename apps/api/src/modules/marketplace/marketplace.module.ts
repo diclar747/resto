@@ -11,6 +11,7 @@ import { MarketplaceAuthService } from './auth/marketplace-auth.service';
 import { MarketplaceOrdersController } from './orders/marketplace-orders.controller';
 import { MarketplaceClientsController } from './clients/marketplace-clients.controller';
 import { MarketplaceClientsService } from './clients/marketplace-clients.service';
+import { TestController } from './auth/test.controller';
 
 @Module({
     imports: [
@@ -29,7 +30,8 @@ import { MarketplaceClientsService } from './clients/marketplace-clients.service
         MarketplaceController,
         MarketplaceAuthController,
         MarketplaceOrdersController,
-        MarketplaceClientsController
+        MarketplaceClientsController,
+        TestController
     ],
     providers: [MarketplaceService, MarketplaceAuthService, MarketplaceClientsService],
     exports: [MarketplaceService],
