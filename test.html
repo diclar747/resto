@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login - Resto</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 { text-align: center; color: #333; }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 4px;
+            background: #f8f9fa;
+            font-family: monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .error { color: #dc3545; }
+        .success { color: #28a745; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Login Resto</h1>
+
+    <div class="card">
+        <label><strong>API URL:</strong></label>
+        <input type="text" id="apiUrl" value="https://resto-amber.vercel.app" style="width: 100%;">
+    </div>
+
+    <div class="card">
+        <h3>1. Test Simple</h3>
+        <button onclick="testSimple()">Test /simple/test</button>
+        <div id="simpleResult" class="result" style="display:none"></div>
+    </div>
+
+    <div class="card">
+        <h3>2. Ver Clientes</h3>
+        <button onclick="getClients()">Ver Clientes en BD</button>
+        <div id="clientsResult" class="result" style="display:none"></div>
+    </div>
+
+    <div class="card">
+        <h3>3. Login con PIN</h3>
+        <input type="text" id="pinInput" placeholder="PIN (ej: 1234)" maxlength="4">
+        <button onclick="loginPin()">Login</button>
+        <div id="pinResult" class="result" style="display:none"></div>
+    </div>
+
+    <div class="card">
+        <h3>4. Login con Email</h3>
+        <input type="email" id="emailInput" placeholder="Email" value="juan@gmail.com">
+        <input type="password" id="passwordInput" placeholder="Contraseña" value="cliente123">
+        <button onclick="loginEmail()">Login</button>
+        <div id="emailResult" class="result" style="display:none"></div>
+    </div>
+
+    <script>
+        const getApiUrl = () => document.getElementById('apiUrl').value.trim();
+
+        async function testSimple() {
+            const result = document.getElementById('simpleResult');
+            result.style.display = 'block';
+            result.textContent = 'Cargando...';
+            
+            try {
+                const res = await fetch(`${getApiUrl()}/api/simple/test`);
+                const data = await res.json();
+                result.innerHTML = `<span class="${res.ok ? 'success' : 'error'}">Status: ${res.status}</span>\n${JSON.stringify(data, null, 2)}`;
+            } catch (e) {
+                result.innerHTML = `<span class="error">Error: ${e.message}</span>`;
+            }
+        }
+
+        async function getClients() {
+            const result = document.getElementById('clientsResult');
+            result.style.display = 'block';
+            result.textContent = 'Cargando...';
+            
+            try {
+                const res = await fetch(`${getApiUrl()}/api/marketplace/auth/debug`);
+                const data = await res.json();
+                result.innerHTML = `<span class="${res.ok ? 'success' : 'error'}">Status: ${res.status}</span>\n${JSON.stringify(data, null, 2)}`;
+            } catch (e) {
+                result.innerHTML = `<span class="error">Error: ${e.message}</span>`;
+            }
+        }
+
+        async function loginPin() {
+            const pin = document.getElementById('pinInput').value;
+            const result = document.getElementById('pinResult');
+            result.style.display = 'block';
+            result.textContent = 'Cargando...';
+            
+            try {
+                const res = await fetch(`${getApiUrl()}/api/marketplace/auth/login-pin`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pin })
+                });
+                const data = await res.json();
+                result.innerHTML = `<span class="${res.ok ? 'success' : 'error'}">Status: ${res.status}</span>\n${JSON.stringify(data, null, 2)}`;
+            } catch (e) {
+                result.innerHTML = `<span class="error">Error: ${e.message}</span>`;
+            }
+        }
+
+        async function loginEmail() {
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const result = document.getElementById('emailResult');
+            result.style.display = 'block';
+            result.textContent = 'Cargando...';
+            
+            try {
+                const res = await fetch(`${getApiUrl()}/api/marketplace/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identifier: email, password })
+                });
+                const data = await res.json();
+                result.innerHTML = `<span class="${res.ok ? 'success' : 'error'}">Status: ${res.status}</span>\n${JSON.stringify(data, null, 2)}`;
+            } catch (e) {
+                result.innerHTML = `<span class="error">Error: ${e.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
