@@ -1,178 +1,61 @@
-import { Injectable, UnauthorizedException, ConflictException, BadRequestException, Logger } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../../../prisma/prisma.service';
 
 @Injectable()
 export class MarketplaceAuthService {
-    private readonly logger = new Logger(MarketplaceAuthService.name);
-
     constructor(
         private prisma: PrismaService,
         private jwtService: JwtService,
     ) { }
 
-    async register(data: any) {
-        const { firstName, lastName, email, phone, password } = data;
+    async login(data: any) {
+        const { identifier, password } = data;
 
-        const existingClient = await this.prisma.client.findFirst({
+        if (!identifier || !password) {
+            throw new UnauthorizedException('Credenciales requeridas');
+        }
+
+        const client = await this.prisma.client.findFirst({
             where: {
                 OR: [
-                    { email: email || undefined },
-                    { phone: phone || undefined }
+                    { email: identifier },
+                    { phone: identifier }
                 ]
             }
         });
 
-        if (existingClient) {
-            throw new ConflictException('Ya existe un cliente con este email o teléfono');
+        if (!client || !client.passwordHash) {
+            throw new UnauthorizedException('Credenciales inválidas');
         }
 
-        const passwordHash = await bcrypt.hash(password, 10);
-
-        const client = await this.prisma.client.create({
-            data: {
-                firstName,
-                lastName,
-                email,
-                phone,
-                passwordHash
-            }
-        });
+        const isValid = await bcrypt.compare(password, client.passwordHash);
+        if (!isValid) {
+            throw new UnauthorizedException('Credenciales inválidas');
+        }
 
         return this.generateToken(client);
     }
 
-    async login(data: any) {
-        try {
-            const { identifier, password } = data;
-
-            this.logger.log(`🔍 Login con identifier: "${identifier}"`);
-
-            if (!identifier || !password) {
-                throw new BadRequestException('Email/teléfono y contraseña son requeridos');
-            }
-
-            const client = await this.prisma.client.findFirst({
-                where: {
-                    OR: [
-                        { email: identifier },
-                        { phone: identifier }
-                    ]
-                }
-            });
-
-            if (!client || !client.passwordHash) {
-                this.logger.warn(`❌ Cliente no encontrado o sin password: "${identifier}"`);
-                throw new UnauthorizedException('Credenciales inválidas');
-            }
-
-            const isPasswordValid = await bcrypt.compare(password, client.passwordHash);
-
-            if (!isPasswordValid) {
-                this.logger.warn(`❌ Password incorrecto para: "${identifier}"`);
-                throw new UnauthorizedException('Credenciales inválidas');
-            }
-
-            if (!client.isActive) {
-                throw new UnauthorizedException('Cuenta desactivada');
-            }
-
-            this.logger.log(`✅ Login exitoso: ${client.email}`);
-            return this.generateToken(client);
-        } catch (error) {
-            if (error instanceof UnauthorizedException || error instanceof BadRequestException) {
-                throw error;
-            }
-            this.logger.error('💥 Error en login:', error);
-            throw new UnauthorizedException('Error al procesar el login');
-        }
-    }
-
     async loginByPin(pin: string) {
-        this.logger.log('=== LOGIN BY PIN SERVICE ===');
-        
-        // Validar que el PIN no esté vacío
-        if (!pin || pin.trim() === '') {
-            this.logger.warn('❌ Intento de login con PIN vacío');
-            throw new BadRequestException('El PIN es requerido');
+        if (!pin) {
+            throw new UnauthorizedException('PIN requerido');
         }
 
-        const trimmedPin = pin.trim();
-        this.logger.log(`🔍 Buscando cliente con PIN: "${trimmedPin}"`);
+        const client = await this.prisma.client.findFirst({
+            where: { pin: pin.trim(), isActive: true }
+        });
 
-        try {
-            // Primero ver cuántos clientes hay en total
-            const totalClients = await this.prisma.client.count();
-            this.logger.log(`📊 Total clientes en BD: ${totalClients}`);
-
-            const client = await this.prisma.client.findFirst({
-                where: { 
-                    pin: trimmedPin, 
-                    isActive: true 
-                }
-            });
-
-            if (!client) {
-                this.logger.warn(`❌ Cliente NO encontrado con PIN: "${trimmedPin}"`);
-                
-                // Buscar si hay algún cliente con PIN similar (para debug)
-                const allWithPins = await this.prisma.client.findMany({
-                    where: { pin: { not: null } },
-                    select: { pin: true, firstName: true }
-                });
-                this.logger.log(`📋 Clientes con PIN en BD: ${allWithPins.map(c => `"${c.pin}" (${c.firstName})`).join(', ')}`);
-                
-                throw new UnauthorizedException('PIN inválido');
-            }
-
-            this.logger.log(`✅ Cliente encontrado: ${client.firstName} ${client.lastName} (${client.email})`);
-            return this.generateToken(client);
-        } catch (error) {
-            // Si ya es una excepción HTTP, re-lanzarla
-            if (error instanceof UnauthorizedException || error instanceof BadRequestException) {
-                throw error;
-            }
-            this.logger.error('💥 Error en loginByPin:', error);
-            throw new UnauthorizedException('Error al procesar el login');
+        if (!client) {
+            throw new UnauthorizedException('PIN inválido');
         }
+
+        return this.generateToken(client);
     }
 
-    private generateToken(client: any) {
-        try {
-            const payload = {
-                sub: client.id,
-                email: client.email || null,
-                phone: client.phone || null,
-                firstName: client.firstName,
-                lastName: client.lastName,
-                role: 'client'
-            };
-
-            this.logger.debug('Generando token para cliente:', client.id);
-            const token = this.jwtService.sign(payload);
-
-            return {
-                client: {
-                    id: client.id,
-                    firstName: client.firstName,
-                    lastName: client.lastName,
-                    email: client.email || null,
-                    phone: client.phone || null
-                },
-                token
-            };
-        } catch (error) {
-            this.logger.error('Error generando token:', error);
-            throw new UnauthorizedException('Error al generar el token de autenticación');
-        }
-    }
-
-    // Método de diagnóstico para verificar PINs
     async debugPins() {
         try {
-            this.logger.log('🔍 Ejecutando debugPins...');
-            
             const clients = await this.prisma.client.findMany({
                 select: {
                     id: true,
@@ -184,34 +67,40 @@ export class MarketplaceAuthService {
                 }
             });
 
-            this.logger.log(`📊 Encontrados ${clients.length} clientes`);
-
             return {
-                totalClients: clients.length,
-                clientsWithPin: clients.filter(c => c.pin !== null).length,
+                total: clients.length,
+                withPin: clients.filter(c => c.pin !== null).length,
                 clients: clients.map(c => ({
-                    id: c.id,
                     name: `${c.firstName} ${c.lastName}`,
-                    email: c.email,
                     pin: c.pin ? `${c.pin.substring(0, 2)}**` : null,
-                    hasPin: c.pin !== null,
-                    isActive: c.isActive
+                    active: c.isActive
                 }))
             };
         } catch (error) {
-            this.logger.error('💥 Error en debugPins:', error);
-            throw error;
+            return { error: error.message };
         }
     }
 
-    // Verificar conexión a la base de datos
-    async checkDatabase(): Promise<boolean> {
-        try {
-            await this.prisma.$queryRaw`SELECT 1`;
-            return true;
-        } catch (error) {
-            this.logger.error('💥 Error de conexión a BD:', error);
-            return false;
-        }
+    private generateToken(client: any) {
+        const payload = {
+            sub: client.id,
+            email: client.email,
+            firstName: client.firstName,
+            lastName: client.lastName,
+            role: 'client'
+        };
+
+        const token = this.jwtService.sign(payload);
+
+        return {
+            client: {
+                id: client.id,
+                firstName: client.firstName,
+                lastName: client.lastName,
+                email: client.email,
+                phone: client.phone
+            },
+            token
+        };
     }
 }

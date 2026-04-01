@@ -8,11 +8,7 @@ import { PrismaModule } from '../../prisma/prisma.module';
 import { OrdersModule } from '../orders/orders.module';
 import { MarketplaceAuthController } from './auth/marketplace-auth.controller';
 import { MarketplaceAuthService } from './auth/marketplace-auth.service';
-import { MarketplaceOrdersController } from './orders/marketplace-orders.controller';
-import { MarketplaceClientsController } from './clients/marketplace-clients.controller';
-import { MarketplaceClientsService } from './clients/marketplace-clients.service';
-import { TestController } from './auth/test.controller';
-import { SetupController } from './auth/setup.controller';
+import { SimpleController } from './auth/simple.controller';
 
 @Module({
     imports: [
@@ -21,7 +17,7 @@ import { SetupController } from './auth/setup.controller';
             imports: [ConfigModule],
             useFactory: (config: ConfigService) => ({
                 secret: config.get<string>('JWT_SECRET')!,
-                signOptions: { expiresIn: '7d' }, // Clients have 7 days token validity
+                signOptions: { expiresIn: '7d' },
             }),
             inject: [ConfigService],
         }),
@@ -29,13 +25,10 @@ import { SetupController } from './auth/setup.controller';
     ],
     controllers: [
         MarketplaceController,
+        SimpleController,
         MarketplaceAuthController,
-        MarketplaceOrdersController,
-        MarketplaceClientsController,
-        TestController,
-        SetupController
     ],
-    providers: [MarketplaceService, MarketplaceAuthService, MarketplaceClientsService],
+    providers: [MarketplaceService, MarketplaceAuthService],
     exports: [MarketplaceService],
 })
 export class MarketplaceModule { }
