@@ -156,6 +156,7 @@ export class QrOrderingService {
       subtotal: Decimal;
       notes?: string;
       modifierIds?: string[];
+      seat?: number;
     }> = [];
 
     for (const item of items) {
@@ -203,6 +204,7 @@ export class QrOrderingService {
         subtotal,
         notes: item.notes,
         modifierIds: item.modifierIds,
+        seat: item.seat,
       });
     }
 
@@ -229,6 +231,7 @@ export class QrOrderingService {
             subtotal: item.subtotal,
             notes: item.notes,
             status: 'pending',
+            sentToKitchenAt: new Date(),
             modifiers:
               item.modifierIds && item.modifierIds.length > 0
                 ? {
@@ -275,19 +278,11 @@ export class QrOrderingService {
       }
     }
 
-    // Update table status to occupied
+    // Update table status to waiting_food
     await this.prisma.table.update({
       where: { id: table.id },
-      data: { status: 'occupied' },
+      data: { status: 'waiting_food' },
     });
-
-    // Notify KDS stations
-    const stations = new Set(order.items.map(i => i.productVariant.product.kitchenStationId).filter(Boolean));
-    for (const stationId of stations) {
-      if (stationId) {
-        this.kdsGateway.emitNewTicket(order.branchId, stationId, order);
-      }
-    }
 
     return order;
   }

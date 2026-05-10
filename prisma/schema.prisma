@@ -8,10 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ============================================================
-// MULTI-BRANCH
-// ============================================================
-
 model Branch {
   id        String   @id @default(cuid())
   name      String
@@ -38,8 +34,43 @@ model Branch {
   kitchenStations   KitchenStation[]
   reviews           BranchReview[]
   dailySpecials     DailySpecial[]
+  halls             Hall[]
+  zones             Zone[]
 
   @@map("branches")
+}
+
+model Hall {
+  id        String   @id @default(cuid())
+  branchId  String
+  name      String
+  capacity  Int?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  branch Branch  @relation(fields: [branchId], references: [id])
+  tables Table[]
+  zones  Zone[]
+
+  @@map("halls")
+}
+
+model Zone {
+  id        String   @id @default(cuid())
+  branchId  String
+  hallId    String?
+  name      String
+  color     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  branch Branch? @relation(fields: [branchId], references: [id])
+  hall   Hall?  @relation(fields: [hallId], references: [id])
+  tables Table[]
+
+  @@map("zones")
 }
 
 model DailySpecial {
@@ -276,6 +307,8 @@ model ComboItem {
 model Table {
   id       String  @id @default(cuid())
   branchId String
+  hallId   String?
+  zoneId   String?
   number   Int
   name     String?
   zone     String?
@@ -287,7 +320,9 @@ model Table {
   isActive Boolean @default(true)
   qrCode   String? @unique
 
-  branch Branch  @relation(fields: [branchId], references: [id])
+  branch Branch @relation(fields: [branchId], references: [id])
+  hall   Hall?  @relation(fields: [hallId], references: [id])
+  zone   Zone?  @relation(fields: [zoneId], references: [id])
   orders Order[]
 
   @@unique([branchId, number])
@@ -749,6 +784,8 @@ model Delivery {
   pickedUpAt      DateTime?
   deliveredAt     DateTime?
   notes           String?
+  trackingCode    String?   @unique
+  statusHistory   Json?     @default("[]")
 
   order  Order @relation(fields: [orderId], references: [id])
   driver User? @relation("driver", fields: [driverId], references: [id])
