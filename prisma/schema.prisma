@@ -777,3 +777,29 @@ model AuditLog {
   @@index([createdAt])
   @@map("audit_logs")
 }
+
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
+
+model Notification {
+  id         String   @id @default(cuid())
+  type       String   // EMAIL, SMS, PUSH
+  recipient  String?  // Email or phone number
+  userId     String?  // Optional user reference
+  subject    String?
+  message    String
+  status     String   // PENDING, SENT, FAILED
+  errorMessage String?
+  metadata   Json?
+  sentAt     DateTime?
+  createdAt  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([recipient])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("notifications")
+}
