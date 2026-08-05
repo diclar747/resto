@@ -1,0 +1,167 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: restaurante-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: restaurante
+      POSTGRES_PASSWORD: restaurante_dev
+      POSTGRES_DB: restaurante
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./prisma/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - restaurante-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U restaurante -d restaurante"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis para caché y colas
+  redis:
+    image: redis:7-alpine
+    container_name: restaurante-redis
+    restart: unless-stopped
+    command: redis-server --requirepass restaurante_redis_pass
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - restaurante-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # API Backend
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api
+    container_name: restaurante-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://restaurante:restaurante_dev@postgres:5432/restaurante
+      REDIS_URL: redis://:restaurante_redis_pass@redis:6379
+      JWT_SECRET: ${JWT_SECRET:-cambia-este-secreto-en-produccion-min-32-caracteres}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-otro-secreto-diferente-para-refresh-min-32}
+      JWT_EXPIRATION: "15m"
+      JWT_REFRESH_EXPIRATION: "7d"
+      PORT: 3000
+      NODE_ENV: production
+      STORAGE_PROVIDER: local
+      FRONTEND_POS_URL: http://localhost:3001
+      FRONTEND_QR_URL: http://localhost:3002
+      FRONTEND_LANDING_URL: http://localhost:3003
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - restaurante-network
+    volumes:
+      - uploads_data:/app/uploads
+    command: >
+      sh -c "npx prisma migrate deploy && 
+             npx prisma db seed && 
+             node dist/main.js"
+
+  # POS Frontend
+  pos:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: pos
+    container_name: restaurante-pos
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: http://localhost:3000/api
+      NODE_ENV: production
+    ports:
+      - "3001:80"
+    depends_on:
+      - api
+    networks:
+      - restaurante-network
+
+  # Menú QR Frontend
+  qr-menu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: qr-menu
+    container_name: restaurante-qr-menu
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: http://localhost:3000/api
+      NODE_ENV: production
+    ports:
+      - "3002:80"
+    depends_on:
+      - api
+    networks:
+      - restaurante-network
+
+  # Landing Page
+  landing-page:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: landing-page
+    container_name: restaurante-landing-page
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: http://localhost:3000/api
+      NODE_ENV: production
+    ports:
+      - "3003:80"
+    depends_on:
+      - api
+    networks:
+      - restaurante-network
+
+  # Nginx como reverse proxy (opcional para producción)
+  nginx:
+    image: nginx:alpine
+    container_name: restaurante-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
+      - uploads_data:/var/www/uploads:ro
+    depends_on:
+      - api
+      - pos
+      - qr-menu
+      - landing-page
+    networks:
+      - restaurante-network
+    profiles:
+      - with-nginx
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+networks:
+  restaurante-network:
+    driver: bridge
